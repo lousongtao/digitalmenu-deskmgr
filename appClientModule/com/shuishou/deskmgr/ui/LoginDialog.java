@@ -43,7 +43,7 @@ public class LoginDialog extends JDialog {
 				Map<String, String> params = new HashMap<String, String>();
 				params.put("username", tfName.getText());
 				params.put("password", tfPassword.getText());
-				String response = HttpUtil.getJSONObjectByPost(ConstantValue.SERVER_URL + "login", params, "UTF-8");
+				String response = HttpUtil.getJSONObjectByPost(MainFrame.SERVER_URL + "login", params, "UTF-8");
 				JSONObject logResult = new JSONObject(response);
 				if ("ok".equals(logResult.getString("result"))){
 					LoginDialog.this.setVisible(false);

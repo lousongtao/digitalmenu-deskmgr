@@ -61,7 +61,7 @@ public class MainFrame extends JFrame implements ActionListener{
 	private final Logger logger = Logger.getLogger(MainFrame.class.getName());
 	private int deskColumnAmount = 6;
 	private Properties properties = null;
-	
+	public static String SERVER_URL;
 	private JPanel pDeskArea = null;
 	private JLabel lbStatusLogin = new JLabel();
 	private JLabel lbStatusDesks = new JLabel();
@@ -85,7 +85,8 @@ public class MainFrame extends JFrame implements ActionListener{
 	
 	private Gson gson = new Gson();
 	
-	public MainFrame(){
+	public MainFrame(String serverUrl){
+		SERVER_URL = serverUrl;
 		initUI();
 	}
 	
@@ -178,7 +179,7 @@ public class MainFrame extends JFrame implements ActionListener{
 	 */
 	private void loadMenu(){
 		String url = "menu/querymenu";
-		String response = HttpUtil.getJSONObjectByGet(ConstantValue.SERVER_URL + url);
+		String response = HttpUtil.getJSONObjectByGet(SERVER_URL + url);
 		if (response == null){
 			logger.error("get null from server for loading menu. URL = " + url);
 			JOptionPane.showMessageDialog(this, "get null from server for loading menu. URL = " + url);
@@ -195,7 +196,7 @@ public class MainFrame extends JFrame implements ActionListener{
 	
 	private void loadConfirmCode(){
 		String url = "common/getconfirmcode";
-		String response = HttpUtil.getJSONObjectByGet(ConstantValue.SERVER_URL + url);
+		String response = HttpUtil.getJSONObjectByGet(SERVER_URL + url);
 		if (response == null){
 			logger.error("get null from server for getting confirm code. URL = " + url);
 			JOptionPane.showMessageDialog(this, "get null from server for getting confirm code. URL = " + url);
@@ -212,7 +213,7 @@ public class MainFrame extends JFrame implements ActionListener{
 	
 	private void loadShiftDutyInfo(){
 		String url = "management/getcurrentduty";
-		String response = HttpUtil.getJSONObjectByGet(ConstantValue.SERVER_URL + url);
+		String response = HttpUtil.getJSONObjectByGet(SERVER_URL + url);
 		if (response == null){
 			logger.error("get null from server for duty employee info. URL = " + url);
 			JOptionPane.showMessageDialog(this, "get null from server for duty employee info. URL = " + url);
@@ -240,7 +241,7 @@ public class MainFrame extends JFrame implements ActionListener{
 	
 	private void loadDiscountTemplates(){
 		String url = "common/getdiscounttemplates";
-		String response = HttpUtil.getJSONObjectByGet(ConstantValue.SERVER_URL + url);
+		String response = HttpUtil.getJSONObjectByGet(SERVER_URL + url);
 		if (response == null){
 			logger.error("get null from server for discount templates. URL = " + url);
 			JOptionPane.showMessageDialog(this, "get null from server for discount templates. URL = " + url);
@@ -274,7 +275,7 @@ public class MainFrame extends JFrame implements ActionListener{
 	 */
 	public void loadDesks(){
 		String url = "common/getdesks";
-		String response = HttpUtil.getJSONObjectByGet(ConstantValue.SERVER_URL + url);
+		String response = HttpUtil.getJSONObjectByGet(SERVER_URL + url);
 		if (response == null){
 			logger.error("get null from server for desks list. URL = " + url);
 			JOptionPane.showMessageDialog(this, "get null from server for desks list. URL = " + url);
@@ -314,7 +315,7 @@ public class MainFrame extends JFrame implements ActionListener{
 		String url = "indent/queryindent";
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("status", "Unpaid");
-		String response = HttpUtil.getJSONObjectByPost(ConstantValue.SERVER_URL + url, params, "UTF-8");
+		String response = HttpUtil.getJSONObjectByPost(SERVER_URL + url, params, "UTF-8");
 		if (response == null){
 			logger.error("get null from server for query indent error. URL = " + url + ", param = "+ params);
 			JOptionPane.showMessageDialog(this, "get null from server for query indent info. URL = " + url);
@@ -360,7 +361,7 @@ public class MainFrame extends JFrame implements ActionListener{
 		String url = "management/startshiftwork";
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("userId", userId+"");
-		String response = HttpUtil.getJSONObjectByPost(ConstantValue.SERVER_URL + url, params, "UTF-8");
+		String response = HttpUtil.getJSONObjectByPost(SERVER_URL + url, params, "UTF-8");
 		if (response == null){
 			logger.error("get null from server for starting shiftwork. URL = " + url + ", param = "+ params);
 			JOptionPane.showMessageDialog(this, "get null from server for starting shiftwork. URL = " + url + ", param = "+ params);
@@ -389,7 +390,7 @@ public class MainFrame extends JFrame implements ActionListener{
 		params.put("userId", user.getId()+"");
 		params.put("printShiftTicket", Boolean.valueOf(print).toString());
 		params.put("startTime", ConstantValue.DFYMDHMS.format(user.getStartTime()));
-		String response = HttpUtil.getJSONObjectByPost(ConstantValue.SERVER_URL + url, params, "UTF-8");
+		String response = HttpUtil.getJSONObjectByPost(SERVER_URL + url, params, "UTF-8");
 		if (response == null){
 			logger.error("get null from server while off duty. URL = " + url + ", param = "+ params);
 			JOptionPane.showMessageDialog(this, "get null from server while off duty. URL = " + url + ", param = "+ params);
@@ -448,7 +449,7 @@ public class MainFrame extends JFrame implements ActionListener{
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("userId", onDutyUser.getId()+"");
 		params.put("deskId", deskid+"");
-		String response = HttpUtil.getJSONObjectByPost(ConstantValue.SERVER_URL + url, params, "UTF-8");
+		String response = HttpUtil.getJSONObjectByPost(SERVER_URL + url, params, "UTF-8");
 		if (response == null){
 			logger.error("get null from server while clear desks failed. URL = " + url + ", param = "+ params);
 			JOptionPane.showMessageDialog(this, "get null from server while clear desks failed. URL = " + url + ", param = "+ params);
@@ -499,7 +500,7 @@ public class MainFrame extends JFrame implements ActionListener{
 		params.put("userId", onDutyUser.getId()+"");
 		params.put("mainDeskId", mainDeskid+"");
 		params.put("subDeskId", subDeskIds);
-		String response = HttpUtil.getJSONObjectByPost(ConstantValue.SERVER_URL + url, params, "UTF-8");
+		String response = HttpUtil.getJSONObjectByPost(SERVER_URL + url, params, "UTF-8");
 		if (response == null){
 			logger.error("get null from server while do merge desks failed. URL = " + url + ", param = "+ params);
 			JOptionPane.showMessageDialog(this, "get null from server while do merge desks failed. URL = " + url + ", param = "+ params);
@@ -672,10 +673,11 @@ public class MainFrame extends JFrame implements ActionListener{
 				UIManager.put(key, ConstantValue.FONT_20PLAIN);
 			}
 		}
-		MainFrame f = new MainFrame();
+		MainFrame f = new MainFrame(prop.getProperty("SERVER_URL"));
+		
 		f.setSize(Integer.parseInt(prop.getProperty("mainframe.width")), Integer.parseInt(prop.getProperty("mainframe.height")));
 		f.setDeskColumnAmount(Integer.parseInt(prop.getProperty("onelinetables")));
-		f.setLocation(1700, 50);
+		f.setLocation(0, 0);
 		f.setTitle(Messages.getString("MainFrame.FrameTitle")); //$NON-NLS-1$
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		f.setVisible(true);

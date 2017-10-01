@@ -292,7 +292,7 @@ public class CheckoutDialog extends JDialog{
 			params.put("payWay", ConstantValue.INDENT_PAYWAY_MEMBER + "");
 			params.put("memberCard", tfMember.getText());
 		}
-		String response = HttpUtil.getJSONObjectByPost(ConstantValue.SERVER_URL + url, params, "UTF-8");
+		String response = HttpUtil.getJSONObjectByPost(MainFrame.SERVER_URL + url, params, "UTF-8");
 		JSONObject jsonObj = new JSONObject(response);
 		if (!jsonObj.getBoolean("success")){
 			logger.error("Do checkout failed. URL = " + url + ", param = "+ params);

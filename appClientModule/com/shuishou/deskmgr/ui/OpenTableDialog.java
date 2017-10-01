@@ -230,7 +230,7 @@ public class OpenTableDialog extends JDialog {
 		params.put("indents", ja.toString());
 		params.put("deskid", desk.getId()+"");
 		params.put("customerAmount", tfCustomerAmount.getText());
-		String response = HttpUtil.getJSONObjectByPost(ConstantValue.SERVER_URL + url, params, "UTF-8");
+		String response = HttpUtil.getJSONObjectByPost(MainFrame.SERVER_URL + url, params, "UTF-8");
 		if (response == null){
 			logger.error("get null from server while making order. URL = " + url + ", param = "+ params);
 			JOptionPane.showMessageDialog(this, "get null from server while making order. URL = " + url + ", param = "+ params);
@@ -260,7 +260,7 @@ public class OpenTableDialog extends JDialog {
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("indents", ja.toString());
 		params.put("deskid", desk.getId()+"");
-		String response = HttpUtil.getJSONObjectByPost(ConstantValue.SERVER_URL + url, params, "UTF-8");
+		String response = HttpUtil.getJSONObjectByPost(MainFrame.SERVER_URL + url, params, "UTF-8");
 		if (response == null){
 			logger.error("get null from server while add dish to order. URL = " + url + ", param = "+ params);
 			JOptionPane.showMessageDialog(this, "get null from server while add dish to order. URL = " + url + ", param = "+ params);

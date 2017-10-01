@@ -9,9 +9,6 @@ public class ConstantValue {
 	public static final DateFormat DFHMS = new SimpleDateFormat("HH:mm:ss");
 	public static final DateFormat DFYMD = new SimpleDateFormat("yyyy/MM/dd");
 	
-	
-	public static final String SERVER_URL = "http://lousongtaopc:8080/digitalmenu/";
-	
 	public static final Font FONT_30BOLD = new Font(null, Font.BOLD, 30);
 	public static final Font FONT_30PLAIN = new Font(null, Font.PLAIN, 30);	
 	public static final Font FONT_20BOLD = new Font(null, Font.BOLD, 20);
