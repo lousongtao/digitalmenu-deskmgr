@@ -564,6 +564,10 @@ public class MainFrame extends JFrame implements ActionListener{
 				JOptionPane.showMessageDialog(this, Messages.getString("MainFrame.TableIsUsed"), Messages.getString("MainFrame.Error"), JOptionPane.YES_OPTION); //$NON-NLS-1$ //$NON-NLS-2$
 				return;
 			}
+			if (selectDC.get(0).getDesk().getMergeTo() != null){
+				JOptionPane.showMessageDialog(this, Messages.getString("MainFrame.TableIsUsed"), Messages.getString("MainFrame.Error"), JOptionPane.YES_OPTION); //$NON-NLS-1$ //$NON-NLS-2$
+				return;
+			}
 			OpenTableDialog dlg = new OpenTableDialog(this, Messages.getString("MainFrame.OpenDesk"), true, selectDC.get(0).getDesk(), OpenTableDialog.MAKENEWORDER); //$NON-NLS-1$
 			dlg.setVisible(true);
 		} else if (e.getSource() == btnAddDish){

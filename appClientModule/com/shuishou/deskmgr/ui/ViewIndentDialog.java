@@ -78,15 +78,11 @@ public class ViewIndentDialog extends JDialog {
 		lbDeskNo.setFont(ConstantValue.FONT_30BOLD);
 		
 		lbPrice.setFont(ConstantValue.FONT_30BOLD);
-		lbPrice.setText(Messages.getString("ViewIndentDialog.Price"));
+		lbPrice.setText(Messages.getString("ViewIndentDialog.Price")+" $" + indent.getTotalPrice());
 		btnRemove.setPreferredSize(new Dimension(100, 50));
 		btnChangeAmount.setPreferredSize(new Dimension(100,50));
 		btnClose.setPreferredSize(new Dimension(100, 50));
-		tableHeader.add(Messages.getString("ViewIndentDialog.Header.ChineseName"));
-		tableHeader.add(Messages.getString("ViewIndentDialog.Header.EnglishName"));
-		tableHeader.add(Messages.getString("ViewIndentDialog.Header.Amount"));
-		tableHeader.add(Messages.getString("ViewIndentDialog.Header.Price"));
-		tableHeader.add(Messages.getString("ViewIndentDialog.Header.Requirements"));
+		
 		Vector vData = new Vector();
 //		for (int i = 0; i < indent.getItems().size(); i++) {
 //			Vector vRow = new Vector();
@@ -106,6 +102,11 @@ public class ViewIndentDialog extends JDialog {
 		tableModel = new IndentDetailModel(indent.getItems());
 		tabIndentDetail.setModel(tableModel);
 		tabIndentDetail.setRowHeight(50);
+		tabIndentDetail.getColumnModel().getColumn(0).setPreferredWidth(150);
+		tabIndentDetail.getColumnModel().getColumn(1).setPreferredWidth(150);
+		tabIndentDetail.getColumnModel().getColumn(2).setPreferredWidth(50);
+		tabIndentDetail.getColumnModel().getColumn(3).setPreferredWidth(80);
+		tabIndentDetail.getColumnModel().getColumn(4).setPreferredWidth(300);
 		JScrollPane jspTable = new JScrollPane(tabIndentDetail, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 		JPanel pTop = new JPanel(new GridBagLayout());
 		pTop.add(lbDeskNo, 		new GridBagConstraints(0, 0, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
@@ -141,7 +142,7 @@ public class ViewIndentDialog extends JDialog {
 			public void actionPerformed(ActionEvent e) {
 				doChangeAmount();
 			}});
-		this.setSize(new Dimension(800, 600));
+		this.setSize(new Dimension(1000, 600));
 		this.setLocation((int)(mainFrame.getWidth() / 2 - this.getWidth() /2 + mainFrame.getLocation().getX()), 
 				(int)(mainFrame.getHeight() / 2 - this.getHeight() / 2 + mainFrame.getLocation().getY()));
 		
@@ -252,6 +253,23 @@ public class ViewIndentDialog extends JDialog {
 			}
 			return "";
 		}
+		
+		@Override
+		public String getColumnName(int column) {
+			switch(column){
+			case 0:
+				return Messages.getString("ViewIndentDialog.Header.ChineseName");
+			case 1:
+				return Messages.getString("ViewIndentDialog.Header.EnglishName");
+			case 2:
+				return Messages.getString("ViewIndentDialog.Header.Amount");
+			case 3:
+				return Messages.getString("ViewIndentDialog.Header.Price");
+			case 4:
+				return Messages.getString("ViewIndentDialog.Header.Requirements");
+			}
+			return "";
+	    }
 		
 		public void setData(List<IndentDetail> items){
 			this.items = items;
