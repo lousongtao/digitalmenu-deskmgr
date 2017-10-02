@@ -225,7 +225,7 @@ public class MainFrame extends JFrame implements ActionListener{
 			JOptionPane.showMessageDialog(this, "return false while get duty employee info. URL = " + url);
 			return;
 		}
-		if (result.data != null){
+		if (result.data != null && result.data.currentDutyId > 0){
 			Date startTime = null;
 			try {
 				startTime = ConstantValue.DFYMDHMS.parse(result.data.startTime);
@@ -331,15 +331,17 @@ public class MainFrame extends JFrame implements ActionListener{
 		for (int i = 0; i < deskcellList.size(); i++) {
 			DeskCell dc = deskcellList.get(i);
 			dc.setIndent(null);
-			for (int j = 0; j < result.data.size(); j++) {
-				Indent indent = result.data.get(j);
-				if (indent.getDeskName().equals(dc.getDesk().getName())){
-					dc.setIndent(indent);
-					break;
+			if (result.data != null){
+				for (int j = 0; j < result.data.size(); j++) {
+					Indent indent = result.data.get(j);
+					if (indent.getDeskName().equals(dc.getDesk().getName())){
+						dc.setIndent(indent);
+						break;
+					}
 				}
 			}
+			
 		}
-		
 		refreshDeskStatus();
 	}
 	
