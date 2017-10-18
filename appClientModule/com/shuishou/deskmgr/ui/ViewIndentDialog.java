@@ -78,7 +78,7 @@ public class ViewIndentDialog extends JDialog {
 		lbDeskNo.setFont(ConstantValue.FONT_30BOLD);
 		
 		lbPrice.setFont(ConstantValue.FONT_30BOLD);
-		lbPrice.setText(Messages.getString("ViewIndentDialog.Price")+" $" + indent.getTotalPrice());
+		lbPrice.setText(Messages.getString("ViewIndentDialog.Price")+" $" + indent.getFormatTotalPrice());
 		btnRemove.setPreferredSize(new Dimension(100, 50));
 		btnChangeAmount.setPreferredSize(new Dimension(100,50));
 		btnClose.setPreferredSize(new Dimension(100, 50));
@@ -151,7 +151,7 @@ public class ViewIndentDialog extends JDialog {
 	private void refreshData(){
 		tableModel.setData(indent.getItems());
 		tableModel.fireTableDataChanged();
-		lbPrice.setText(Messages.getString("ViewIndentDialog.Price")+" $" + indent.getTotalPrice());
+		lbPrice.setText(Messages.getString("ViewIndentDialog.Price")+" $" + indent.getFormatTotalPrice());
 	}
 	
 	private void doRemoveDish(){

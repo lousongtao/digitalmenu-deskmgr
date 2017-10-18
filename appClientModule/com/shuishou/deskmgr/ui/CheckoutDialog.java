@@ -146,8 +146,8 @@ public class CheckoutDialog extends JDialog{
 		lbPrice.setFont(ConstantValue.FONT_30BOLD);
 		lbDiscountPrice.setFont(ConstantValue.FONT_30BOLD);
 		lbDeskNo.setText(Messages.getString("CheckoutDialog.TableNo") + desk.getName()); //$NON-NLS-1$
-		lbPrice.setText(Messages.getString("CheckoutDialog.Price") + indent.getTotalPrice()); //$NON-NLS-1$
-		lbDiscountPrice.setText(Messages.getString("CheckoutDialog.DiscountPrice") + discountPrice); //$NON-NLS-1$
+		lbPrice.setText(Messages.getString("CheckoutDialog.Price") + indent.getFormatTotalPrice()); //$NON-NLS-1$
+		lbDiscountPrice.setText(Messages.getString("CheckoutDialog.DiscountPrice") + String.format("%.2f", discountPrice)); //$NON-NLS-1$
 		
 		btnClose.addActionListener(new ActionListener(){
 
@@ -280,7 +280,7 @@ public class CheckoutDialog extends JDialog{
 		}
 		String url = "indent/operateindent";
 		Map<String, String> params = new HashMap<String, String>();
-		params.put("userId", mainFrame.getLoginUser().getId() + "");
+		params.put("userId", mainFrame.getOnDutyUser().getId() + "");
 		params.put("id", indent.getId() + "");
 		params.put("operatetype", ConstantValue.INDENT_OPERATIONTYPE_PAY+"");
 		params.put("paidPrice", discountPrice + "");
