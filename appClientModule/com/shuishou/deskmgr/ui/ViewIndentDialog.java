@@ -187,7 +187,7 @@ public class ViewIndentDialog extends JDialog {
 		int row = tabIndentDetail.getSelectedRow();
 		if (row < 0)
 			return;
-		String inputvalue = JOptionPane.showInputDialog(Messages.getString("ViewIndentDialog.ChangeAmountMessage"));
+		String inputvalue = JOptionPane.showInputDialog(this, Messages.getString("ViewIndentDialog.ChangeAmountMessage"));
 		if (inputvalue == null || inputvalue.length() == 0)
 			return;
 		int newAmount = 0;

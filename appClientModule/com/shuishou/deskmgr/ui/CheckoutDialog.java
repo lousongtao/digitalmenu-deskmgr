@@ -62,7 +62,7 @@ public class CheckoutDialog extends JDialog{
 
 	private JFormattedTextField tfDiscountPrice = null;
 	private JTextField tfMember = new JTextField();
-	private JButton btnPay = new JButton(Messages.getString("CheckoutDialog.PayButton")); //$NON-NLS-1$
+	private JBlockedButton btnPay = new JBlockedButton(Messages.getString("CheckoutDialog.PayButton")); //$NON-NLS-1$
 	private JButton btnClose = new JButton(Messages.getString("CheckoutDialog.CloseButton")); //$NON-NLS-1$
 	
 	private double discountPrice = 0;
@@ -302,6 +302,9 @@ public class CheckoutDialog extends JDialog{
 		CheckoutDialog.this.setVisible(false);
 		mainFrame.loadDesks();
 		mainFrame.loadCurrentIndentInfo();
+		if (rbPayCash.isSelected()){
+			mainFrame.doOpenCashdrawer();
+		}
 	}
 	
 	class DiscountTemplateRadioButton extends JRadioButton{

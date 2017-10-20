@@ -26,7 +26,7 @@ public class LoginDialog extends JDialog {
 
 	private JTextField tfName = new JTextField();
 	private JTextField tfPassword = new JTextField();
-	private JButton btnLogin = new JButton(Messages.getString("LoginDialog.LoginButton")); //$NON-NLS-1$
+	private JBlockedButton btnLogin = new JBlockedButton(Messages.getString("LoginDialog.LoginButton")); //$NON-NLS-1$
 	private String loginURL = "login";
 	private MainFrame mainFrame;
 	public LoginDialog(MainFrame mainFrame){

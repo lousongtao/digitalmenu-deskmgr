@@ -1,8 +1,11 @@
 package com.shuishou.deskmgr.beans;
 
 import com.google.gson.annotations.SerializedName;
+import com.shuishou.deskmgr.ConstantValue;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Administrator on 2016/12/22.
@@ -33,6 +36,25 @@ public class Dish implements Serializable{
     private int hotLevel;
 
     private String abbreviation;
+    
+    /**
+	 * 点菜时动作     1.	默认值, 直接点菜     2.	强制选择特定子类         3.	提示信息后点菜       4.	提示信息后不点菜, 即只提示信息
+	 */
+	private int chooseMode;
+	
+	private DishChoosePopinfo choosePopInfo;
+	
+	/**
+	 * initial this property as a null list;
+	 * if I need to add/remove or delete all elements from the list, remember not to replace this list as a new list,
+	 * if do so, hibernate will error, 
+	 */
+	private List<DishChooseSubitem> chooseSubItems = new ArrayList<>();
+
+	private int subitemAmount = 0;
+	
+	//set whether merge to one record while customer choose this dish more than one time
+	private boolean autoMergeWhileChoose = true;
 
     public Dish(){
 
@@ -48,11 +70,52 @@ public class Dish implements Serializable{
 //        this.category2 = category2;
 //    }
 
+    
     public String getAbbreviation() {
         return abbreviation;
     }
 
-    public void setAbbreviation(String abbreviation) {
+    public int getChooseMode() {
+		return chooseMode;
+	}
+
+	public void setChooseMode(int chooseMode) {
+		this.chooseMode = chooseMode;
+	}
+
+	public DishChoosePopinfo getChoosePopInfo() {
+		return choosePopInfo;
+	}
+
+	public void setChoosePopInfo(DishChoosePopinfo choosePopInfo) {
+		this.choosePopInfo = choosePopInfo;
+	}
+
+	public List<DishChooseSubitem> getChooseSubItems() {
+		return chooseSubItems;
+	}
+
+	public void setChooseSubItems(List<DishChooseSubitem> chooseSubItems) {
+		this.chooseSubItems = chooseSubItems;
+	}
+
+	public int getSubitemAmount() {
+		return subitemAmount;
+	}
+
+	public void setSubitemAmount(int subitemAmount) {
+		this.subitemAmount = subitemAmount;
+	}
+
+	public boolean isAutoMergeWhileChoose() {
+		return autoMergeWhileChoose;
+	}
+
+	public void setAutoMergeWhileChoose(boolean autoMergeWhileChoose) {
+		this.autoMergeWhileChoose = autoMergeWhileChoose;
+	}
+
+	public void setAbbreviation(String abbreviation) {
         this.abbreviation = abbreviation;
     }
 

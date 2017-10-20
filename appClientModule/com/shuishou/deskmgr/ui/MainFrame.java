@@ -13,6 +13,7 @@ import java.awt.event.ActionListener;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -57,6 +58,11 @@ import com.shuishou.deskmgr.beans.Indent;
 import com.shuishou.deskmgr.beans.UserData;
 import com.shuishou.deskmgr.http.HttpUtil;
 
+import gnu.io.CommPortIdentifier;
+import gnu.io.PortInUseException;
+import gnu.io.SerialPort;
+import gnu.io.UnsupportedCommOperationException;
+
 public class MainFrame extends JFrame implements ActionListener{
 	private final Logger logger = Logger.getLogger(MainFrame.class.getName());
 	public static int DESK_COLUMN_AMOUNT;
@@ -68,6 +74,9 @@ public class MainFrame extends JFrame implements ActionListener{
 	public static int WINDOW_LOCATIONY;
 	public static String language;
 	public static String SERVER_URL;
+	private OutputStream outputStreamCashdrawer;
+	public static String portCashdrawer;
+	
 	private JPanel pDeskArea = null;
 	private JLabel lbStatusLogin = new JLabel();
 	private JLabel lbStatusDesks = new JLabel();
@@ -75,12 +84,13 @@ public class MainFrame extends JFrame implements ActionListener{
 	private JButton btnAddDish = new JButton(Messages.getString("MainFrame.AddDish")); //$NON-NLS-1$
 	private JButton btnViewIndent = new JButton(Messages.getString("MainFrame.ViewIndent")); //$NON-NLS-1$
 	private JButton btnCheckout = new JButton(Messages.getString("MainFrame.Checkout")); //$NON-NLS-1$
-	private JButton btnChangeDesk = new JButton(Messages.getString("MainFrame.ChangeDesk")); //$NON-NLS-1$
+	private JBlockedButton btnChangeDesk = new JBlockedButton(Messages.getString("MainFrame.ChangeDesk")); //$NON-NLS-1$
+	private JBlockedButton btnOpenCashdrawer = new JBlockedButton(Messages.getString("MainFrame.OpenCashdrawer")); //$NON-NLS-1$
 	private JButton btnMergeDesk = new JButton(Messages.getString("MainFrame.MergeDesk")); //$NON-NLS-1$
-	private JButton btnCleatDesk = new JButton(Messages.getString("MainFrame.ClearDesk")); //$NON-NLS-1$
+	private JButton btnClearDesk = new JButton(Messages.getString("MainFrame.ClearDesk")); //$NON-NLS-1$
 	private JButton btnPrintTicket = new JButton(Messages.getString("MainFrame.PrintTicket")); //$NON-NLS-1$
 	private JButton btnShiftWork = new JButton(Messages.getString("MainFrame.ShiftWork")); //$NON-NLS-1$
-	private JButton btnRefresh = new JButton(Messages.getString("MainFrame.Refresh")); //$NON-NLS-1$
+	private JBlockedButton btnRefresh = new JBlockedButton(Messages.getString("MainFrame.Refresh")); //$NON-NLS-1$
 	
 	private ArrayList<Desk> deskList = new ArrayList<>();
 	private ArrayList<DiscountTemplate> discountTemplateList = new ArrayList<>(); 
@@ -137,20 +147,21 @@ public class MainFrame extends JFrame implements ActionListener{
 		pFunction.add(btnCheckout, 	new GridBagConstraints(0, row++, 1, 1,1,1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(10,0,0,0),0,0));
 		pFunction.add(btnChangeDesk, 	new GridBagConstraints(0, row++, 1, 1,1,1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(10,0,0,0),0,0));
 		pFunction.add(btnMergeDesk, new GridBagConstraints(0, row++, 1, 1,1,1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(10,0,0,0),0,0));
-		pFunction.add(btnCleatDesk, new GridBagConstraints(0, row++, 1, 1,1,1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(10,0,0,0),0,0));
+		pFunction.add(btnClearDesk, new GridBagConstraints(0, row++, 1, 1,1,1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(10,0,0,0),0,0));
 		pFunction.add(btnPrintTicket, new GridBagConstraints(0, row++, 1, 1,1,1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(10,0,0,0),0,0));
 		pFunction.add(btnRefresh, 	new GridBagConstraints(0, row++, 1, 1,1,1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(10,0,0,0),0,0));
 		pFunction.add(btnShiftWork, new GridBagConstraints(0, row++, 1, 1,1,1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(10,0,0,0),0,0));
-		
+		pFunction.add(btnOpenCashdrawer, new GridBagConstraints(0, row++, 1, 1,1,1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(10,0,0,0),0,0));
 		pFunction.setPreferredSize(new Dimension(180, 0));
 		
 		btnOpenDesk.addActionListener(this);
 		btnAddDish.addActionListener(this);
 		btnViewIndent.addActionListener(this);
 		btnCheckout.addActionListener(this);
+		btnOpenCashdrawer.addActionListener(this);
 		btnChangeDesk.addActionListener(this);
 		btnMergeDesk.addActionListener(this);
-		btnCleatDesk.addActionListener(this);
+		btnClearDesk.addActionListener(this);
 		btnPrintTicket.addActionListener(this);
 		btnRefresh.addActionListener(this);
 		btnShiftWork.addActionListener(this);
@@ -460,6 +471,8 @@ public class MainFrame extends JFrame implements ActionListener{
 			JOptionPane.showMessageDialog(this, Messages.getString("MainFrame.SelectOverONETable"), Messages.getString("MainFrame.Error"), JOptionPane.YES_OPTION); //$NON-NLS-1$ //$NON-NLS-2$
 			return;
 		}
+		if (JOptionPane.NO_OPTION == JOptionPane.showConfirmDialog(this, Messages.getString("MainFrame.ConfirmForClearDesk"), Messages.getString("MainFrame.confirm"), JOptionPane.YES_NO_OPTION))
+			return;
 		int deskid = selectDC.get(0).getDesk().getId();
 		
 		String url = "indent/cleardesk";
@@ -569,7 +582,7 @@ public class MainFrame extends JFrame implements ActionListener{
 			
 		} else if (e.getSource() == btnMergeDesk){
 			doMergeTables();
-		} else if (e.getSource() == btnCleatDesk){
+		} else if (e.getSource() == btnClearDesk){
 			doClearDesk();
 		} else if (e.getSource() == btnRefresh){
 			loadCurrentIndentInfo();
@@ -577,6 +590,34 @@ public class MainFrame extends JFrame implements ActionListener{
 			doSwiftWork();
 		} else if (e.getSource() == btnChangeDesk){
 			doChangeDesk();
+		} else if (e.getSource() == btnOpenCashdrawer){
+			doOpenCashdrawer();
+		}
+	}
+	
+	public void doOpenCashdrawer(){
+		if (outputStreamCashdrawer == null){
+			Enumeration portList = CommPortIdentifier.getPortIdentifiers();
+			while (portList.hasMoreElements()) {
+				CommPortIdentifier portId = (CommPortIdentifier) portList.nextElement();
+				if (portId.getPortType() == CommPortIdentifier.PORT_SERIAL) {
+					if (portId.getName().equals(portCashdrawer)) {
+						try {
+							SerialPort serialPort = (SerialPort) portId.open("SimpleWriteApp", 2000);
+							outputStreamCashdrawer = serialPort.getOutputStream();
+							serialPort.setSerialPortParams(9600, SerialPort.DATABITS_8, SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
+						} catch (PortInUseException | IOException | UnsupportedCommOperationException e) {
+							logger.error(e);
+						}
+						break;
+					}
+				}
+			}
+		}
+		try {
+			outputStreamCashdrawer.write("A".getBytes());// any string is ok
+		} catch (IOException e) {
+			logger.error(e);
 		}
 	}
 	
@@ -768,6 +809,7 @@ public class MainFrame extends JFrame implements ActionListener{
 		MainFrame.WINDOW_LOCATIONX = Integer.parseInt(prop.getProperty("mainframe.locationx"));
 		MainFrame.WINDOW_LOCATIONY = Integer.parseInt(prop.getProperty("mainframe.locationy"));
 		MainFrame.language = prop.getProperty("language");
+		MainFrame.portCashdrawer=prop.getProperty("portCashdrawer");
 		MainFrame f = new MainFrame();
 		
 		f.setVisible(true);
