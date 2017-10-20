@@ -64,7 +64,7 @@ import gnu.io.SerialPort;
 import gnu.io.UnsupportedCommOperationException;
 
 public class MainFrame extends JFrame implements ActionListener{
-	private final Logger logger = Logger.getLogger(MainFrame.class.getName());
+	public final static Logger logger = Logger.getLogger(MainFrame.class.getName());
 	public static int DESK_COLUMN_AMOUNT;
 	public static int TABLECELL_WIDTH;
 	public static int TABLECELL_HEIGHT;
@@ -767,6 +767,13 @@ public class MainFrame extends JFrame implements ActionListener{
 	}
 	
 	public static void main(String[] args){
+		Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+			
+			@Override
+			public void uncaughtException(Thread t, Throwable e) {
+				MainFrame.logger.error("", e);
+			}
+		});
 		//load properties
 		Properties prop = new Properties();
 		InputStream input = null;
@@ -811,7 +818,6 @@ public class MainFrame extends JFrame implements ActionListener{
 		MainFrame.language = prop.getProperty("language");
 		MainFrame.portCashdrawer=prop.getProperty("portCashdrawer");
 		MainFrame f = new MainFrame();
-		
 		f.setVisible(true);
 		f.startLogin();
 	}
