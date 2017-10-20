@@ -287,7 +287,7 @@ public class OpenTableDialog extends JDialog {
 			//do this type as normal
 		}
 		String requirements = null;
-		if (dish.getChooseSubItems() != null){
+		if (dish.getChooseSubItems() != null && !dish.getChooseSubItems().isEmpty()){
 			DishSubitemDialog dlg = new DishSubitemDialog(this, Messages.getString("OpenTableDialog.ChooseSubitem"), dish);
 			dlg.setVisible(true);
 			if (dlg.choosed == null || dlg.choosed.isEmpty()){
