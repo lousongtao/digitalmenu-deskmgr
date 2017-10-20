@@ -23,13 +23,13 @@ public class Indent {
 	
 	private double totalPrice;
 	
-	private double paidPrice;//Êµ¼Ê¸¶¿î½ð¶î
+	private double paidPrice;//Êµï¿½Ê¸ï¿½ï¿½ï¿½ï¿½ï¿½
 	
-	private byte payWay;//¸¶¿î·½Ê½
+	private byte payWay;//ï¿½ï¿½ï¿½î·½Ê½
 	
 	private byte status = ConstantValue.INDENT_STATUS_OPEN;
 
-	//¶©µ¥ÐòºÅ, Ã¿ÈÕ´Ó1¿ªÊ¼,
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½, Ã¿ï¿½Õ´ï¿½1ï¿½ï¿½Ê¼,
 	private int dailySequence = -1;
 	
 	public int getId() {
@@ -76,6 +76,9 @@ public class Indent {
 		return paidPrice;
 	}
 
+	public String getFormatPaidPrice(){
+		return String.format("%.2f", paidPrice);
+	}
 	public void setPaidPrice(double paidPrice) {
 		this.paidPrice = paidPrice;
 	}
@@ -96,6 +99,10 @@ public class Indent {
 
 	public double getTotalPrice() {
 		return totalPrice;
+	}
+	
+	public String getFormatTotalPrice(){
+		return String.format("%.2f", totalPrice);
 	}
 
 	public void setTotalPrice(double totalPrice) {

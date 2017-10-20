@@ -13,6 +13,7 @@ import java.awt.event.ActionListener;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -57,11 +58,25 @@ import com.shuishou.deskmgr.beans.Indent;
 import com.shuishou.deskmgr.beans.UserData;
 import com.shuishou.deskmgr.http.HttpUtil;
 
+import gnu.io.CommPortIdentifier;
+import gnu.io.PortInUseException;
+import gnu.io.SerialPort;
+import gnu.io.UnsupportedCommOperationException;
+
 public class MainFrame extends JFrame implements ActionListener{
 	private final Logger logger = Logger.getLogger(MainFrame.class.getName());
-	private int deskColumnAmount = 6;
-	private Properties properties = null;
+	public static int DESK_COLUMN_AMOUNT;
+	public static int TABLECELL_WIDTH;
+	public static int TABLECELL_HEIGHT;
+	public static int WINDOW_WIDTH;
+	public static int WINDOW_HEIGHT;
+	public static int WINDOW_LOCATIONX;
+	public static int WINDOW_LOCATIONY;
+	public static String language;
 	public static String SERVER_URL;
+	private OutputStream outputStreamCashdrawer;
+	public static String portCashdrawer;
+	
 	private JPanel pDeskArea = null;
 	private JLabel lbStatusLogin = new JLabel();
 	private JLabel lbStatusDesks = new JLabel();
@@ -69,38 +84,40 @@ public class MainFrame extends JFrame implements ActionListener{
 	private JButton btnAddDish = new JButton(Messages.getString("MainFrame.AddDish")); //$NON-NLS-1$
 	private JButton btnViewIndent = new JButton(Messages.getString("MainFrame.ViewIndent")); //$NON-NLS-1$
 	private JButton btnCheckout = new JButton(Messages.getString("MainFrame.Checkout")); //$NON-NLS-1$
+	private JBlockedButton btnChangeDesk = new JBlockedButton(Messages.getString("MainFrame.ChangeDesk")); //$NON-NLS-1$
+	private JBlockedButton btnOpenCashdrawer = new JBlockedButton(Messages.getString("MainFrame.OpenCashdrawer")); //$NON-NLS-1$
 	private JButton btnMergeDesk = new JButton(Messages.getString("MainFrame.MergeDesk")); //$NON-NLS-1$
-	private JButton btnCleatDesk = new JButton(Messages.getString("MainFrame.ClearDesk")); //$NON-NLS-1$
+	private JButton btnClearDesk = new JButton(Messages.getString("MainFrame.ClearDesk")); //$NON-NLS-1$
 	private JButton btnPrintTicket = new JButton(Messages.getString("MainFrame.PrintTicket")); //$NON-NLS-1$
 	private JButton btnShiftWork = new JButton(Messages.getString("MainFrame.ShiftWork")); //$NON-NLS-1$
-	private JButton btnRefresh = new JButton(Messages.getString("MainFrame.Refresh")); //$NON-NLS-1$
+	private JBlockedButton btnRefresh = new JBlockedButton(Messages.getString("MainFrame.Refresh")); //$NON-NLS-1$
 	
 	private ArrayList<Desk> deskList = new ArrayList<>();
 	private ArrayList<DiscountTemplate> discountTemplateList = new ArrayList<>(); 
 	private ArrayList<DeskCell> deskcellList = new ArrayList<>();
 	private ArrayList<Category1> category1List = new ArrayList<>();
-	private UserData loginUser = null;
+//	private UserData loginUser = null;
 	private UserData onDutyUser = null;//在值班状态用户名称
 	private String confirmCode = null;
 	
 	private Gson gson = new Gson();
 	
-	public MainFrame(String serverUrl){
-		SERVER_URL = serverUrl;
+	public MainFrame(){
 		initUI();
-	}
-	
-	public void setDeskColumnAmount(int deskColumnAmount) {
-		this.deskColumnAmount = deskColumnAmount;
-	}
-
-	public UserData getLoginUser() {
-		return loginUser;
+		setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
+		setLocation(WINDOW_LOCATIONX, WINDOW_LOCATIONY);
+		setTitle(Messages.getString("MainFrame.FrameTitle")); //$NON-NLS-1$
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
 	}
 
-	public void setLoginUser(UserData loginUser) {
-		this.loginUser = loginUser;
-	}
+//	public UserData getLoginUser() {
+//		return loginUser;
+//	}
+//
+//	public void setLoginUser(UserData loginUser) {
+//		this.loginUser = loginUser;
+//	}
 
 	public List<DiscountTemplate> getDiscountTemplateList() {
 		return discountTemplateList;
@@ -118,27 +135,33 @@ public class MainFrame extends JFrame implements ActionListener{
 	public void initUI(){
 		pDeskArea = new JPanel(new GridBagLayout());
 		JScrollPane jspDeskArea = new JScrollPane(pDeskArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		
+		pDeskArea.setBackground(Color.white);
 		JPanel pFunction = new JPanel(new GridBagLayout());
+		pFunction.setBackground(Color.white);
+		
+		
 		int row = 0;
 		pFunction.add(btnOpenDesk, 	new GridBagConstraints(0, row++, 1, 1,1,1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(10,0,0,0),0,0));
 		pFunction.add(btnAddDish, 	new GridBagConstraints(0, row++, 1, 1,1,1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(10,0,0,0),0,0));
 		pFunction.add(btnViewIndent, 	new GridBagConstraints(0, row++, 1, 1,1,1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(10,0,0,0),0,0));
 		pFunction.add(btnCheckout, 	new GridBagConstraints(0, row++, 1, 1,1,1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(10,0,0,0),0,0));
+		pFunction.add(btnChangeDesk, 	new GridBagConstraints(0, row++, 1, 1,1,1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(10,0,0,0),0,0));
 		pFunction.add(btnMergeDesk, new GridBagConstraints(0, row++, 1, 1,1,1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(10,0,0,0),0,0));
-		pFunction.add(btnCleatDesk, new GridBagConstraints(0, row++, 1, 1,1,1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(10,0,0,0),0,0));
+		pFunction.add(btnClearDesk, new GridBagConstraints(0, row++, 1, 1,1,1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(10,0,0,0),0,0));
 		pFunction.add(btnPrintTicket, new GridBagConstraints(0, row++, 1, 1,1,1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(10,0,0,0),0,0));
 		pFunction.add(btnRefresh, 	new GridBagConstraints(0, row++, 1, 1,1,1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(10,0,0,0),0,0));
 		pFunction.add(btnShiftWork, new GridBagConstraints(0, row++, 1, 1,1,1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(10,0,0,0),0,0));
-		
+		pFunction.add(btnOpenCashdrawer, new GridBagConstraints(0, row++, 1, 1,1,1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(10,0,0,0),0,0));
 		pFunction.setPreferredSize(new Dimension(180, 0));
 		
 		btnOpenDesk.addActionListener(this);
 		btnAddDish.addActionListener(this);
 		btnViewIndent.addActionListener(this);
 		btnCheckout.addActionListener(this);
+		btnOpenCashdrawer.addActionListener(this);
+		btnChangeDesk.addActionListener(this);
 		btnMergeDesk.addActionListener(this);
-		btnCleatDesk.addActionListener(this);
+		btnClearDesk.addActionListener(this);
 		btnPrintTicket.addActionListener(this);
 		btnRefresh.addActionListener(this);
 		btnShiftWork.addActionListener(this);
@@ -162,6 +185,8 @@ public class MainFrame extends JFrame implements ActionListener{
 		loadConfirmCode();
 		initRefreshTimer();
 		buildDeskCells();
+//		loadCurrentIndentInfo();
+		
 	}
 	
 	private void initRefreshTimer(){
@@ -264,7 +289,7 @@ public class MainFrame extends JFrame implements ActionListener{
 		
 		for (int i = 0; i < deskList.size(); i++) {
 			DeskCell dc = new DeskCell(deskList.get(i));
-			pDeskArea.add(dc, new GridBagConstraints(i % deskColumnAmount, (int)(i / deskColumnAmount), 1, 1,1,1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,0,0),0,0));
+			pDeskArea.add(dc, new GridBagConstraints(i % DESK_COLUMN_AMOUNT, (int)(i / DESK_COLUMN_AMOUNT), 1, 1,1,1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,0,0),0,0));
 			deskcellList.add(dc);
 		}
 		pDeskArea.updateUI();
@@ -310,7 +335,7 @@ public class MainFrame extends JFrame implements ActionListener{
 	 * load the unpaid indent info, attaching the intenddetail info.
 	 */
 	public void loadCurrentIndentInfo(){
-		if (loginUser == null)
+		if (onDutyUser == null)
 			return;
 		String url = "indent/queryindent";
 		Map<String, String> params = new HashMap<String, String>();
@@ -359,10 +384,11 @@ public class MainFrame extends JFrame implements ActionListener{
 		lbStatusDesks.setText(Messages.getString("MainFrame.OpenedTables") + openDesk + Messages.getString("MainFrame.CurrentCustomers") + customers); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
-	public void doOnDuty(int userId){
+	public void doOnDuty(int userId, boolean printLastDutyTicket){
 		String url = "management/startshiftwork";
 		Map<String, String> params = new HashMap<String, String>();
-		params.put("userId", userId+"");
+		params.put("userId", String.valueOf(userId));
+		params.put("printLastDutyTicket", String.valueOf(printLastDutyTicket));
 		String response = HttpUtil.getJSONObjectByPost(SERVER_URL + url, params, "UTF-8");
 		if (response == null){
 			logger.error("get null from server for starting shiftwork. URL = " + url + ", param = "+ params);
@@ -389,7 +415,7 @@ public class MainFrame extends JFrame implements ActionListener{
 	public void doOffDuty(UserData user, boolean print){
 		String url = "management/endshiftwork";
 		Map<String, String> params = new HashMap<String, String>();
-		params.put("userId", user.getId()+"");
+		params.put("userId", String.valueOf(user.getId()));
 		params.put("printShiftTicket", Boolean.valueOf(print).toString());
 		params.put("startTime", ConstantValue.DFYMDHMS.format(user.getStartTime()));
 		String response = HttpUtil.getJSONObjectByPost(SERVER_URL + url, params, "UTF-8");
@@ -445,12 +471,14 @@ public class MainFrame extends JFrame implements ActionListener{
 			JOptionPane.showMessageDialog(this, Messages.getString("MainFrame.SelectOverONETable"), Messages.getString("MainFrame.Error"), JOptionPane.YES_OPTION); //$NON-NLS-1$ //$NON-NLS-2$
 			return;
 		}
+		if (JOptionPane.NO_OPTION == JOptionPane.showConfirmDialog(this, Messages.getString("MainFrame.ConfirmForClearDesk"), Messages.getString("MainFrame.confirm"), JOptionPane.YES_NO_OPTION))
+			return;
 		int deskid = selectDC.get(0).getDesk().getId();
 		
 		String url = "indent/cleardesk";
 		Map<String, String> params = new HashMap<String, String>();
-		params.put("userId", onDutyUser.getId()+"");
-		params.put("deskId", deskid+"");
+		params.put("userId", String.valueOf(onDutyUser.getId()));
+		params.put("deskId", String.valueOf(deskid));
 		String response = HttpUtil.getJSONObjectByPost(SERVER_URL + url, params, "UTF-8");
 		if (response == null){
 			logger.error("get null from server while clear desks failed. URL = " + url + ", param = "+ params);
@@ -499,8 +527,8 @@ public class MainFrame extends JFrame implements ActionListener{
 		
 		String url = "common/mergedesks";
 		Map<String, String> params = new HashMap<String, String>();
-		params.put("userId", onDutyUser.getId()+"");
-		params.put("mainDeskId", mainDeskid+"");
+		params.put("userId", String.valueOf(onDutyUser.getId()));
+		params.put("mainDeskId", String.valueOf(mainDeskid));
 		params.put("subDeskId", subDeskIds);
 		String response = HttpUtil.getJSONObjectByPost(SERVER_URL + url, params, "UTF-8");
 		if (response == null){
@@ -543,87 +571,175 @@ public class MainFrame extends JFrame implements ActionListener{
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == btnCheckout){
-			List<DeskCell> selectDC = getSelectedDesks();
-			if (selectDC.isEmpty())
-				return;
-			if (selectDC.size() > 1){
-				JOptionPane.showMessageDialog(this, Messages.getString("MainFrame.SelectOverONETable"), Messages.getString("MainFrame.Error"), JOptionPane.YES_OPTION); //$NON-NLS-1$ //$NON-NLS-2$
-				return;
-			}
-			if (selectDC.get(0).getIndent() == null)
-				return;
-			CheckoutDialog dlg = new CheckoutDialog(this, Messages.getString("MainFrame.CheckoutTitle"), true, selectDC.get(0).getDesk(), selectDC.get(0).getIndent()); //$NON-NLS-1$
-			dlg.setVisible(true);
+			doCheckout();
 		} else if (e.getSource() == btnOpenDesk){
-			List<DeskCell> selectDC = getSelectedDesks();
-			if (selectDC.isEmpty())
-				return;
-			if (selectDC.size() > 1){
-				JOptionPane.showMessageDialog(this, Messages.getString("MainFrame.SelectOverONETable"), Messages.getString("MainFrame.Error"), JOptionPane.YES_OPTION); //$NON-NLS-1$ //$NON-NLS-2$
-				return;
-			}
-			if (selectDC.get(0).getIndent() != null){
-				JOptionPane.showMessageDialog(this, Messages.getString("MainFrame.TableIsUsed"), Messages.getString("MainFrame.Error"), JOptionPane.YES_OPTION); //$NON-NLS-1$ //$NON-NLS-2$
-				return;
-			}
-			if (selectDC.get(0).getDesk().getMergeTo() != null){
-				JOptionPane.showMessageDialog(this, Messages.getString("MainFrame.TableIsUsed"), Messages.getString("MainFrame.Error"), JOptionPane.YES_OPTION); //$NON-NLS-1$ //$NON-NLS-2$
-				return;
-			}
-			OpenTableDialog dlg = new OpenTableDialog(this, Messages.getString("MainFrame.OpenDesk"), true, selectDC.get(0).getDesk(), OpenTableDialog.MAKENEWORDER); //$NON-NLS-1$
-			dlg.setVisible(true);
+			doOpenDesk();
 		} else if (e.getSource() == btnAddDish){
-			List<DeskCell> selectDC = getSelectedDesks();
-			if (selectDC.isEmpty())
-				return;
-			if (selectDC.size() > 1){
-				JOptionPane.showMessageDialog(this, Messages.getString("MainFrame.SelectOverONETable"), Messages.getString("MainFrame.Error"), JOptionPane.YES_OPTION); //$NON-NLS-1$ //$NON-NLS-2$
-				return;
-			}
-			if (selectDC.get(0).getIndent() == null){
-				JOptionPane.showMessageDialog(this, Messages.getString("MainFrame.NoIndentOnTable"), Messages.getString("MainFrame.Error"), JOptionPane.YES_OPTION); //$NON-NLS-1$ //$NON-NLS-2$
-				return;
-			}
-			OpenTableDialog dlg = new OpenTableDialog(this, Messages.getString("MainFrame.AddDish"), true, selectDC.get(0).getDesk(), OpenTableDialog.ADDDISH); //$NON-NLS-1$
-			dlg.setVisible(true);
+			doAddDish();
 		} else if (e.getSource() == btnViewIndent){
-			List<DeskCell> selectDC = getSelectedDesks();
-			if (selectDC.isEmpty())
-				return;
-			if (selectDC.size() > 1){
-				JOptionPane.showMessageDialog(this, Messages.getString("MainFrame.SelectOverONETable"), Messages.getString("MainFrame.Error"), JOptionPane.YES_OPTION); //$NON-NLS-1$ //$NON-NLS-2$
-				return;
-			}
-			if (selectDC.get(0).getIndent() == null){
-				JOptionPane.showMessageDialog(this, Messages.getString("MainFrame.NoIndentOnTable"), Messages.getString("MainFrame.Error"), JOptionPane.YES_OPTION); //$NON-NLS-1$ //$NON-NLS-2$
-				return;
-			}
-			ViewIndentDialog dlg = new ViewIndentDialog(this, Messages.getString("MainFrame.ViewIndent"), true, selectDC.get(0).getDesk(), selectDC.get(0).getIndent()); //$NON-NLS-1$
-			dlg.setVisible(true);
+			doViewIndent();
 		} else if (e.getSource() == btnPrintTicket){
 			
 		} else if (e.getSource() == btnMergeDesk){
 			doMergeTables();
-		} else if (e.getSource() == btnCleatDesk){
+		} else if (e.getSource() == btnClearDesk){
 			doClearDesk();
 		} else if (e.getSource() == btnRefresh){
 			loadCurrentIndentInfo();
 		} else if (e.getSource() == btnShiftWork){
-			if(onDutyUser == null && loginUser != null){
-				String msg = Messages.getString("LoginDialog.NoDutyMsg") +loginUser.getName(); //$NON-NLS-1$
-				if (JOptionPane.showConfirmDialog(this, msg, Messages.getString("LoginDialog.OnDutyTitle"), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION){ //$NON-NLS-1$
-					doOnDuty(loginUser.getId());
+			doSwiftWork();
+		} else if (e.getSource() == btnChangeDesk){
+			doChangeDesk();
+		} else if (e.getSource() == btnOpenCashdrawer){
+			doOpenCashdrawer();
+		}
+	}
+	
+	public void doOpenCashdrawer(){
+		if (outputStreamCashdrawer == null){
+			Enumeration portList = CommPortIdentifier.getPortIdentifiers();
+			while (portList.hasMoreElements()) {
+				CommPortIdentifier portId = (CommPortIdentifier) portList.nextElement();
+				if (portId.getPortType() == CommPortIdentifier.PORT_SERIAL) {
+					if (portId.getName().equals(portCashdrawer)) {
+						try {
+							SerialPort serialPort = (SerialPort) portId.open("SimpleWriteApp", 2000);
+							outputStreamCashdrawer = serialPort.getOutputStream();
+							serialPort.setSerialPortParams(9600, SerialPort.DATABITS_8, SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
+						} catch (PortInUseException | IOException | UnsupportedCommOperationException e) {
+							logger.error(e);
+						}
+						break;
+					}
 				}
-			} else {
-				String msg = Messages.getString("MainFrame.OffDutyMsg") + onDutyUser.getName(); //$NON-NLS-1$
-				Object[] options = {"ShiftWork", "ShiftWork & Print", "Close"};
-				int n = JOptionPane.showOptionDialog(this, msg, Messages.getString("MainFrame.ShiftWorkTitle"), 
-						JOptionPane.YES_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
-				if (n == 0){ 
-					doOffDuty(onDutyUser, false);
-				} else if (n == 1){
-					doOffDuty(onDutyUser, true);
-				}
+			}
+		}
+		try {
+			outputStreamCashdrawer.write("A".getBytes());// any string is ok
+		} catch (IOException e) {
+			logger.error(e);
+		}
+	}
+	
+	private void doChangeDesk(){
+		List<DeskCell> selectDC = getSelectedDesks();
+		if (selectDC.size() != 2){
+			JOptionPane.showMessageDialog(this, Messages.getString("MainFrame.NeedSelectTwoTable"), Messages.getString("MainFrame.Error"), JOptionPane.YES_OPTION); //$NON-NLS-1$ //$NON-NLS-2$
+			return;
+		}
+		if (!(
+				(selectDC.get(0).getIndent() == null && selectDC.get(1).getIndent() != null)
+				|| (selectDC.get(0).getIndent() != null && selectDC.get(1).getIndent() == null))){
+			JOptionPane.showMessageDialog(this, Messages.getString("MainFrame.NeedSelectOneEmptyOneOccupied"), Messages.getString("MainFrame.Error"), JOptionPane.YES_OPTION); //$NON-NLS-1$ //$NON-NLS-2$
+			return;
+		}
+		String url = "indent/changedesks";
+		Map<String, String> params = new HashMap<String, String>();
+		params.put("userId", onDutyUser.getId() + "");
+		params.put("deskId1", selectDC.get(0).getDesk().getId() + "");
+		params.put("deskId2", selectDC.get(1).getDesk().getId() + "");
+		String response = HttpUtil.getJSONObjectByPost(MainFrame.SERVER_URL + url, params, "UTF-8");
+		if (response == null){
+			logger.error("get null from server while changing tables. URL = " + url + ", param = "+ params);
+			JOptionPane.showMessageDialog(this, "get null from server while changing tables. URL = " + url + ", param = "+ params);
+			return;
+		}
+		HttpResult<Integer> result = new Gson().fromJson(response, new TypeToken<HttpResult<Integer>>(){}.getType());
+		if (!result.success){
+			logger.error("return false while changing tables. URL = " + url);
+			JOptionPane.showMessageDialog(this, "return false while changing tables. URL = " + url);
+			return;
+		}
+		loadCurrentIndentInfo();
+	}
+	
+	private void doCheckout(){
+		List<DeskCell> selectDC = getSelectedDesks();
+		if (selectDC.isEmpty())
+			return;
+		if (selectDC.size() > 1){
+			JOptionPane.showMessageDialog(this, Messages.getString("MainFrame.SelectOverONETable"), Messages.getString("MainFrame.Error"), JOptionPane.YES_OPTION); //$NON-NLS-1$ //$NON-NLS-2$
+			return;
+		}
+		if (selectDC.get(0).getIndent() == null)
+			return;
+		CheckoutDialog dlg = new CheckoutDialog(this, Messages.getString("MainFrame.CheckoutTitle"), true, selectDC.get(0).getDesk(), selectDC.get(0).getIndent()); //$NON-NLS-1$
+		dlg.setVisible(true);
+	}
+	
+	private void doOpenDesk(){
+		List<DeskCell> selectDC = getSelectedDesks();
+		if (selectDC.isEmpty())
+			return;
+		if (selectDC.size() > 1){
+			JOptionPane.showMessageDialog(this, Messages.getString("MainFrame.SelectOverONETable"), Messages.getString("MainFrame.Error"), JOptionPane.YES_OPTION); //$NON-NLS-1$ //$NON-NLS-2$
+			return;
+		}
+		if (selectDC.get(0).getIndent() != null){
+			JOptionPane.showMessageDialog(this, Messages.getString("MainFrame.TableIsUsed"), Messages.getString("MainFrame.Error"), JOptionPane.YES_OPTION); //$NON-NLS-1$ //$NON-NLS-2$
+			return;
+		}
+		if (selectDC.get(0).getDesk().getMergeTo() != null){
+			JOptionPane.showMessageDialog(this, Messages.getString("MainFrame.TableIsUsed"), Messages.getString("MainFrame.Error"), JOptionPane.YES_OPTION); //$NON-NLS-1$ //$NON-NLS-2$
+			return;
+		}
+		OpenTableDialog dlg = new OpenTableDialog(this, Messages.getString("MainFrame.OpenDesk"), true, selectDC.get(0).getDesk(), OpenTableDialog.MAKENEWORDER); //$NON-NLS-1$
+		dlg.setVisible(true);
+	}
+	
+	private void doAddDish(){
+		List<DeskCell> selectDC = getSelectedDesks();
+		if (selectDC.isEmpty())
+			return;
+		if (selectDC.size() > 1){
+			JOptionPane.showMessageDialog(this, Messages.getString("MainFrame.SelectOverONETable"), Messages.getString("MainFrame.Error"), JOptionPane.YES_OPTION); //$NON-NLS-1$ //$NON-NLS-2$
+			return;
+		}
+		if (selectDC.get(0).getIndent() == null){
+			JOptionPane.showMessageDialog(this, Messages.getString("MainFrame.NoIndentOnTable"), Messages.getString("MainFrame.Error"), JOptionPane.YES_OPTION); //$NON-NLS-1$ //$NON-NLS-2$
+			return;
+		}
+		OpenTableDialog dlg = new OpenTableDialog(this, Messages.getString("MainFrame.AddDish"), true, selectDC.get(0).getDesk(), OpenTableDialog.ADDDISH); //$NON-NLS-1$
+		dlg.setVisible(true);
+	}
+	
+	private void doViewIndent(){
+		List<DeskCell> selectDC = getSelectedDesks();
+		if (selectDC.isEmpty())
+			return;
+		if (selectDC.size() > 1){
+			JOptionPane.showMessageDialog(this, Messages.getString("MainFrame.SelectOverONETable"), Messages.getString("MainFrame.Error"), JOptionPane.YES_OPTION); //$NON-NLS-1$ //$NON-NLS-2$
+			return;
+		}
+		if (selectDC.get(0).getIndent() == null){
+			JOptionPane.showMessageDialog(this, Messages.getString("MainFrame.NoIndentOnTable"), Messages.getString("MainFrame.Error"), JOptionPane.YES_OPTION); //$NON-NLS-1$ //$NON-NLS-2$
+			return;
+		}
+		ViewIndentDialog dlg = new ViewIndentDialog(this, Messages.getString("MainFrame.ViewIndent"), true, selectDC.get(0).getDesk(), selectDC.get(0).getIndent()); //$NON-NLS-1$
+		dlg.setVisible(true);
+	}
+
+	/**
+	 * if there is no duty user currently, do nother
+	 * if there is a duty user, as whether print the swift ticket.
+	 */
+	public void doSwiftWork() {
+		if (onDutyUser == null) {
+//			String msg = Messages.getString("LoginDialog.NoDutyMsg") + loginUser.getName(); //$NON-NLS-1$
+//			if (JOptionPane.showConfirmDialog(this, msg, Messages.getString("LoginDialog.OnDutyTitle"), //$NON-NLS-1$
+//					JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+//				doOnDuty(loginUser.getId());
+//			}
+		} else {
+			String msg = Messages.getString("MainFrame.OffDutyMsg") + onDutyUser.getName(); //$NON-NLS-1$
+			Object[] options = { Messages.getString("MainFrame.ShiftWork"),
+					Messages.getString("MainFrame.ShiftWorkPrint"), Messages.getString("MainFrame.Cancel") };
+			int n = JOptionPane.showOptionDialog(this, msg, Messages.getString("MainFrame.ShiftWorkTitle"),
+					JOptionPane.YES_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+			if (n == 0) {
+				doOffDuty(onDutyUser, false);
+			} else if (n == 1) {
+				doOffDuty(onDutyUser, true);
 			}
 		}
 	}
@@ -638,6 +754,14 @@ public class MainFrame extends JFrame implements ActionListener{
 		return dishes;
 	}
 	
+	public ArrayList<Category2> getAllCategory2s(){
+		ArrayList<Category2> c2s = new ArrayList<>();
+		for(Category1 c1 : this.category1List){
+			c2s.addAll(c1.getCategory2s());
+		}
+		return c2s;
+	}
+	
 	public String getConfirmCode(){
 		return confirmCode;
 	}
@@ -647,7 +771,6 @@ public class MainFrame extends JFrame implements ActionListener{
 		Properties prop = new Properties();
 		InputStream input = null;
 		try {
-//			input = new FileInputStream("config.properties");
 			input = MainFrame.class.getClassLoader().getResourceAsStream("config.properties");
 			// load a properties file
 			prop.load(input);
@@ -664,9 +787,7 @@ public class MainFrame extends JFrame implements ActionListener{
 		}
 		Messages.initResourceBundle(prop.getProperty("language"));
 		try {
-//			UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName()); //java 格式
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());//windows 格式
-//			UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");//Windows 格式
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
 				| UnsupportedLookAndFeelException e) {
 			e.printStackTrace();
@@ -679,13 +800,18 @@ public class MainFrame extends JFrame implements ActionListener{
 				UIManager.put(key, ConstantValue.FONT_20PLAIN);
 			}
 		}
-		MainFrame f = new MainFrame(prop.getProperty("SERVER_URL"));
+		MainFrame.SERVER_URL = prop.getProperty("SERVER_URL");
+		MainFrame.DESK_COLUMN_AMOUNT = Integer.parseInt(prop.getProperty("onelinetables"));
+		MainFrame.TABLECELL_WIDTH = Integer.parseInt(prop.getProperty("tablecell.width"));
+		MainFrame.TABLECELL_HEIGHT = Integer.parseInt(prop.getProperty("tablecell.height"));
+		MainFrame.WINDOW_WIDTH = Integer.parseInt(prop.getProperty("mainframe.width"));
+		MainFrame.WINDOW_HEIGHT = Integer.parseInt(prop.getProperty("mainframe.height"));
+		MainFrame.WINDOW_LOCATIONX = Integer.parseInt(prop.getProperty("mainframe.locationx"));
+		MainFrame.WINDOW_LOCATIONY = Integer.parseInt(prop.getProperty("mainframe.locationy"));
+		MainFrame.language = prop.getProperty("language");
+		MainFrame.portCashdrawer=prop.getProperty("portCashdrawer");
+		MainFrame f = new MainFrame();
 		
-		f.setSize(Integer.parseInt(prop.getProperty("mainframe.width")), Integer.parseInt(prop.getProperty("mainframe.height")));
-		f.setDeskColumnAmount(Integer.parseInt(prop.getProperty("onelinetables")));
-		f.setLocation(0, 0);
-		f.setTitle(Messages.getString("MainFrame.FrameTitle")); //$NON-NLS-1$
-		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		f.setVisible(true);
 		f.startLogin();
 	}

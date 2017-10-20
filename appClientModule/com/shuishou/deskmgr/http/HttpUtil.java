@@ -57,6 +57,8 @@ public class HttpUtil {
         } catch (Exception e) {
         	logger.error(e);
         }
+        if (httpResponse == null)
+        	return null;
         int statusCode=httpResponse.getStatusLine().getStatusCode();
         HttpEntity httpEntity=httpResponse.getEntity();
         if (httpEntity!=null) {

@@ -62,7 +62,7 @@ public class CheckoutDialog extends JDialog{
 
 	private JFormattedTextField tfDiscountPrice = null;
 	private JTextField tfMember = new JTextField();
-	private JButton btnPay = new JButton(Messages.getString("CheckoutDialog.PayButton")); //$NON-NLS-1$
+	private JBlockedButton btnPay = new JBlockedButton(Messages.getString("CheckoutDialog.PayButton")); //$NON-NLS-1$
 	private JButton btnClose = new JButton(Messages.getString("CheckoutDialog.CloseButton")); //$NON-NLS-1$
 	
 	private double discountPrice = 0;
@@ -146,8 +146,8 @@ public class CheckoutDialog extends JDialog{
 		lbPrice.setFont(ConstantValue.FONT_30BOLD);
 		lbDiscountPrice.setFont(ConstantValue.FONT_30BOLD);
 		lbDeskNo.setText(Messages.getString("CheckoutDialog.TableNo") + desk.getName()); //$NON-NLS-1$
-		lbPrice.setText(Messages.getString("CheckoutDialog.Price") + indent.getTotalPrice()); //$NON-NLS-1$
-		lbDiscountPrice.setText(Messages.getString("CheckoutDialog.DiscountPrice") + discountPrice); //$NON-NLS-1$
+		lbPrice.setText(Messages.getString("CheckoutDialog.Price") + indent.getFormatTotalPrice()); //$NON-NLS-1$
+		lbDiscountPrice.setText(Messages.getString("CheckoutDialog.DiscountPrice") + String.format("%.2f", discountPrice)); //$NON-NLS-1$
 		
 		btnClose.addActionListener(new ActionListener(){
 
@@ -280,7 +280,7 @@ public class CheckoutDialog extends JDialog{
 		}
 		String url = "indent/operateindent";
 		Map<String, String> params = new HashMap<String, String>();
-		params.put("userId", mainFrame.getLoginUser().getId() + "");
+		params.put("userId", mainFrame.getOnDutyUser().getId() + "");
 		params.put("id", indent.getId() + "");
 		params.put("operatetype", ConstantValue.INDENT_OPERATIONTYPE_PAY+"");
 		params.put("paidPrice", discountPrice + "");
@@ -302,6 +302,9 @@ public class CheckoutDialog extends JDialog{
 		CheckoutDialog.this.setVisible(false);
 		mainFrame.loadDesks();
 		mainFrame.loadCurrentIndentInfo();
+		if (rbPayCash.isSelected()){
+			mainFrame.doOpenCashdrawer();
+		}
 	}
 	
 	class DiscountTemplateRadioButton extends JRadioButton{

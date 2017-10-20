@@ -78,7 +78,7 @@ public class ViewIndentDialog extends JDialog {
 		lbDeskNo.setFont(ConstantValue.FONT_30BOLD);
 		
 		lbPrice.setFont(ConstantValue.FONT_30BOLD);
-		lbPrice.setText(Messages.getString("ViewIndentDialog.Price")+" $" + indent.getTotalPrice());
+		lbPrice.setText(Messages.getString("ViewIndentDialog.Price")+" $" + indent.getFormatTotalPrice());
 		btnRemove.setPreferredSize(new Dimension(100, 50));
 		btnChangeAmount.setPreferredSize(new Dimension(100,50));
 		btnClose.setPreferredSize(new Dimension(100, 50));
@@ -151,7 +151,7 @@ public class ViewIndentDialog extends JDialog {
 	private void refreshData(){
 		tableModel.setData(indent.getItems());
 		tableModel.fireTableDataChanged();
-		lbPrice.setText(Messages.getString("ViewIndentDialog.Price")+" $" + indent.getTotalPrice());
+		lbPrice.setText(Messages.getString("ViewIndentDialog.Price")+" $" + indent.getFormatTotalPrice());
 	}
 	
 	private void doRemoveDish(){
@@ -187,7 +187,7 @@ public class ViewIndentDialog extends JDialog {
 		int row = tabIndentDetail.getSelectedRow();
 		if (row < 0)
 			return;
-		String inputvalue = JOptionPane.showInputDialog(Messages.getString("ViewIndentDialog.ChangeAmountMessage"));
+		String inputvalue = JOptionPane.showInputDialog(this, Messages.getString("ViewIndentDialog.ChangeAmountMessage"));
 		if (inputvalue == null || inputvalue.length() == 0)
 			return;
 		int newAmount = 0;

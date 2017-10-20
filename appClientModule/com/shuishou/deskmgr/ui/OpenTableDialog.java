@@ -1,11 +1,14 @@
 package com.shuishou.deskmgr.ui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -15,6 +18,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -35,24 +39,23 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.shuishou.deskmgr.ConstantValue;
 import com.shuishou.deskmgr.Messages;
+import com.shuishou.deskmgr.beans.Category2;
 import com.shuishou.deskmgr.beans.Desk;
 import com.shuishou.deskmgr.beans.Dish;
 import com.shuishou.deskmgr.beans.HttpResult;
 import com.shuishou.deskmgr.http.HttpUtil;
 
 public class OpenTableDialog extends JDialog {
-	private final Logger logger = Logger.getLogger(CheckoutDialog.class.getName());
+	private final Logger logger = Logger.getLogger(OpenTableDialog.class.getName());
 	private MainFrame mainFrame;
 	private Desk desk;
 	
 	private JTextField tfSearchCode = new JTextField();
 	private JTextField tfCustomerAmount = new JTextField();
-	private JButton btnAdd = new JButton(Messages.getString("OpenTableDialog.AddDish"));
 	private JButton btnRemove = new JButton(Messages.getString("OpenTableDialog.RemoveDish"));
 	private JButton btnClose = new JButton(Messages.getString("CloseDialog"));
-	private JButton btnConfirm = new JButton(Messages.getString("OpenTableDialog.ConfirmOrder"));
-	private JList<Dish> listSearchResult = new JList<>();
-	private DefaultListModel<Dish> listModelSearchResult = new DefaultListModel<>();
+	private JBlockedButton btnConfirm = new JBlockedButton(Messages.getString("OpenTableDialog.ConfirmOrder"));
+	private JPanel pDishes = new JPanel(new FlowLayout(FlowLayout.LEFT));
 	private JList<ChoosedDish> listChoosedDish = new JList<>();
 	private DefaultListModel<ChoosedDish> listModelChoosedDish = new DefaultListModel<>();
 	
@@ -78,45 +81,48 @@ public class OpenTableDialog extends JDialog {
 			lbCustomerAmount.setVisible(false);
 			tfCustomerAmount.setVisible(false);
 		}
+		
 		JLabel lbSearchCode = new JLabel(Messages.getString("OpenTableDialog.SearchCode"));
-		listSearchResult.setModel(listModelSearchResult);
-		listSearchResult.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		listSearchResult.setCellRenderer(new SearchResultRenderer());
-		listSearchResult.setFixedCellHeight(50);
 		listChoosedDish.setModel(listModelChoosedDish);
 		listChoosedDish.setCellRenderer(new ChoosedDishRenderer());
 		listChoosedDish.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		listChoosedDish.setFixedCellHeight(50);
-		btnAdd.setPreferredSize(new Dimension(100, 50));
-		btnRemove.setPreferredSize(new Dimension(100, 50));
-		btnClose.setPreferredSize(new Dimension(100, 50));
+		btnRemove.setPreferredSize(new Dimension(150, 50));
+		btnClose.setPreferredSize(new Dimension(150, 50));
 		btnConfirm.setPreferredSize(new Dimension(100, 50));
 		
-		JScrollPane jspSearchResult = new JScrollPane(listSearchResult, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 		JScrollPane jspChooseDish = new JScrollPane(listChoosedDish, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-		JPanel pLeft = new JPanel(new GridBagLayout());
-		pLeft.add(lbDeskNo, 		new GridBagConstraints(0, 0, 2, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
-		pLeft.add(lbCustomerAmount, new GridBagConstraints(0, 1, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
-		pLeft.add(tfCustomerAmount, new GridBagConstraints(1, 1, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
-		pLeft.add(lbSearchCode, 	new GridBagConstraints(0, 2, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
-		pLeft.add(tfSearchCode, 	new GridBagConstraints(1, 2, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
-		pLeft.add(jspSearchResult, 	new GridBagConstraints(0, 3, 2, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+		pDishes.setBorder(BorderFactory.createTitledBorder("Dishes"));
+		pDishes.setBackground(Color.white);
+		JPanel pDishDishplay = new JPanel(new GridBagLayout());
 		
-		JPanel pCenter = new JPanel(new GridBagLayout());
-		pCenter.add(btnAdd, 		new GridBagConstraints(0, 0, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
-		pCenter.add(btnRemove, 		new GridBagConstraints(0, 1, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
+		JPanel pSearch = new JPanel(new BorderLayout());
+		pSearch.setPreferredSize(new Dimension(200, 50));
+		pSearch.add(lbSearchCode, BorderLayout.WEST);
+		pSearch.add(tfSearchCode, BorderLayout.CENTER);
 		
-		JPanel pRight = new JPanel(new GridBagLayout());
-		pRight.add(jspChooseDish, 	new GridBagConstraints(0, 0, 2, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
-		pRight.add(btnClose,	 	new GridBagConstraints(0, 1, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
-		pRight.add(btnConfirm,		new GridBagConstraints(1, 1, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
+		JPanel pCategory2 = new JPanel(new GridLayout(0, 5, 5, 5));
+		pCategory2.add(pSearch, 0);
+		generateCategory2Panel(pCategory2);
+		JScrollPane jspCategory2 = new JScrollPane(pCategory2, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		
+		
+		pDishDishplay.add(jspCategory2, 	new GridBagConstraints(0, 0, 1, 1, 1, 0.2, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+		pDishDishplay.add(pDishes, 			new GridBagConstraints(0, 1, 1, 1, 1, 0.5, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+		
+		JPanel pChoosedDish = new JPanel(new GridBagLayout());
+		pChoosedDish.add(lbDeskNo, 			new GridBagConstraints(0, 0, 2, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
+		pChoosedDish.add(lbCustomerAmount, 	new GridBagConstraints(0, 1, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
+		pChoosedDish.add(tfCustomerAmount, 	new GridBagConstraints(1, 1, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
+		pChoosedDish.add(jspChooseDish, 	new GridBagConstraints(0, 2, 2, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+		pChoosedDish.add(btnClose,	 		new GridBagConstraints(0, 3, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
+		pChoosedDish.add(btnRemove,	 		new GridBagConstraints(1, 3, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
+		pChoosedDish.add(btnConfirm,		new GridBagConstraints(0, 4, 2, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(20, 0, 0, 0), 0, 0));
 		
 		Container c = this.getContentPane();
-		c.setLayout(new GridBagLayout());
-		c.add(pLeft, 	new GridBagConstraints(0, 0, 1, 1, 5, 1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
-		c.add(pCenter, 	new GridBagConstraints(1, 0, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.VERTICAL, new Insets(0, 0, 0, 0), 0, 0));
-		c.add(pRight, 	new GridBagConstraints(2, 0, 1, 1, 5, 1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
-		
+		c.setLayout(new BorderLayout());
+		c.add(pChoosedDish, BorderLayout.WEST);
+		c.add(pDishDishplay,BorderLayout.CENTER);
 		btnClose.addActionListener(new ActionListener(){
 
 			@Override
@@ -140,12 +146,6 @@ public class OpenTableDialog extends JDialog {
 					}
 				}
 			}});
-		btnAdd.addActionListener(new ActionListener(){
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				doChooseDish();
-			}});
 		btnRemove.addActionListener(new ActionListener(){
 
 			@Override
@@ -166,43 +166,36 @@ public class OpenTableDialog extends JDialog {
 				} 
 			}
 		});
-		this.setSize(new Dimension(800, 600));
+		this.setSize(new Dimension(MainFrame.WINDOW_WIDTH, MainFrame.WINDOW_HEIGHT));
 		this.setLocation((int)(mainFrame.getWidth() / 2 - this.getWidth() /2 + mainFrame.getLocation().getX()), 
 				(int)(mainFrame.getHeight() / 2 - this.getHeight() / 2 + mainFrame.getLocation().getY()));
 	}
 	
+	private void generateCategory2Panel(JPanel p ){
+//		JPanel p = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		ArrayList<Category2> c2s = mainFrame.getAllCategory2s();
+		for (int i = 0; i < c2s.size(); i++) {
+			Category2Button btn = new Category2Button(c2s.get(i));
+			p.add(btn);
+		}
+//		return p;
+	}
+	
 	private void doSearchDish(){
-		listModelSearchResult.clear();
+		pDishes.removeAll();
 		if (tfSearchCode.getText() == null || this.tfSearchCode.getText().length() < 2)
 			return;
 		ArrayList<Dish> allDishes = mainFrame.getAllDishes();
 		for(Dish dish : allDishes){
 			if (dish.getEnglishName().toLowerCase().indexOf(tfSearchCode.getText().toLowerCase()) >= 0){
-				this.listModelSearchResult.addElement(dish);
+				pDishes.add(new DishButton(dish));
 			} else if (dish.getAbbreviation() != null && dish.getAbbreviation().toLowerCase().indexOf(tfSearchCode.getText().toLowerCase()) >= 0){
-				this.listModelSearchResult.addElement(dish);
+				pDishes.add(new DishButton(dish));
 			}
 		}
-		if (listModelSearchResult.size() > 0)
-			listSearchResult.setSelectedIndex(0);
+		pDishes.updateUI();
 	}
 	
-	private void doChooseDish(){
-		Dish dish = listSearchResult.getSelectedValue();
-		if (dish == null)
-			return;
-		for(int i = 0; i< this.listModelChoosedDish.size(); i++){
-			if (listModelChoosedDish.getElementAt(i).dish.getId() == dish.getId()){
-				listModelChoosedDish.getElementAt(i).amount = listModelChoosedDish.getElementAt(i).amount + 1;
-				listChoosedDish.updateUI();
-				return;
-			}
-		}
-		ChoosedDish cd = new ChoosedDish();
-		cd.dish = dish;
-		cd.amount = 1;
-		listModelChoosedDish.addElement(cd);
-	}
 	
 	private void doRemoveDish(){
 		if (listChoosedDish.getSelectedIndex() < 0)
@@ -222,6 +215,8 @@ public class OpenTableDialog extends JDialog {
 			JSONObject jo = new JSONObject();
 			jo.put("id", listModelChoosedDish.getElementAt(i).dish.getId());
 			jo.put("amount", listModelChoosedDish.getElementAt(i).amount);
+			if (listModelChoosedDish.getElementAt(i).requirements != null)
+				jo.put("addtionalRequirements", listModelChoosedDish.getElementAt(i).requirements);
 			ja.put(jo);
 		}
 		String url = "indent/makeindent";
@@ -245,6 +240,7 @@ public class OpenTableDialog extends JDialog {
 		return true;
 	}
 	
+	//add dish to an exist order, used for order exsting on a table
 	private boolean doAddDish(){
 		if (listModelChoosedDish.getSize() == 0)
 			return false;
@@ -254,6 +250,8 @@ public class OpenTableDialog extends JDialog {
 			JSONObject jo = new JSONObject();
 			jo.put("id", listModelChoosedDish.getElementAt(i).dish.getId());
 			jo.put("amount", listModelChoosedDish.getElementAt(i).amount);
+			if (listModelChoosedDish.getElementAt(i).requirements != null)
+				jo.put("addtionalRequirements", listModelChoosedDish.getElementAt(i).requirements);
 			ja.put(jo);
 		}
 		String url = "indent/adddishtoindent";
@@ -274,6 +272,59 @@ public class OpenTableDialog extends JDialog {
 		}
 		return true;
 	}
+	
+	private void doCategory2ButtonClick(Category2 c2){
+		pDishes.removeAll();
+		for(Dish dish : c2.getDishes()){
+			DishButton btn = new DishButton(dish);
+			pDishes.add(btn);
+		}
+		pDishes.updateUI();
+	}
+	
+	private void doDishButtonClick(Dish dish){
+		if (dish.getChoosePopInfo() != null){
+			//do this type as normal
+		}
+		String requirements = null;
+		if (dish.getChooseSubItems() != null){
+			DishSubitemDialog dlg = new DishSubitemDialog(this, Messages.getString("OpenTableDialog.ChooseSubitem"), dish);
+			dlg.setVisible(true);
+			if (dlg.choosed == null || dlg.choosed.isEmpty()){
+				return;
+			}
+			requirements = dlg.choosed.get(0).getChineseName();
+			for (int i = 1; i < dlg.choosed.size(); i++) {
+				requirements += dlg.choosed.get(i).getChineseName();
+			}
+		}
+		if (dish.isAutoMergeWhileChoose()) {
+			boolean foundexist = false;
+			for (int i = 0; i < this.listModelChoosedDish.size(); i++) {
+				if (listModelChoosedDish.getElementAt(i).dish.getId() == dish.getId()) {
+					listModelChoosedDish.getElementAt(i).amount = listModelChoosedDish.getElementAt(i).amount + 1;
+					listChoosedDish.updateUI();
+					foundexist = true;
+					break;
+				}
+			}
+			if (!foundexist) {
+				ChoosedDish cd = new ChoosedDish();
+				cd.dish = dish;
+				cd.amount = 1;
+				cd.requirements = requirements;
+				listModelChoosedDish.addElement(cd);
+			}
+		} else {
+			ChoosedDish cd = new ChoosedDish();
+			cd.dish = dish;
+			cd.amount = 1;
+			cd.requirements = requirements;
+			listModelChoosedDish.addElement(cd);
+		}
+	}
+	
+	
 	
 	class SearchResultRenderer extends JPanel implements ListCellRenderer{
 		private JLabel lb= new JLabel();
@@ -334,5 +385,50 @@ public class OpenTableDialog extends JDialog {
 	class ChoosedDish {
 		public int amount;
 		public Dish dish;
+		public String requirements;
+	}
+	
+	class Category2Button extends JButton{
+		private final Category2 c2;
+		public Category2Button(Category2 category2){
+			this.c2 = category2;
+			if ("cn".equals(MainFrame.language)){
+				this.setText(c2.getChineseName());
+			} else {
+				this.setText(c2.getEnglishName());
+			}
+			this.addActionListener(new ActionListener(){
+
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					
+					doCategory2ButtonClick(c2);
+				}
+				
+			});
+			this.setPreferredSize(new Dimension(200, 50));
+		}
+	}
+	
+	class DishButton extends JButton{
+		private final Dish dish;
+		public DishButton(Dish d){
+			dish = d;
+			if ("cn".equals(MainFrame.language)){
+				this.setText(d.getChineseName());
+			} else {
+				this.setText(d.getEnglishName());
+			}
+			this.addActionListener(new ActionListener(){
+
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					
+					doDishButtonClick(dish);
+				}
+				
+			});
+			this.setPreferredSize(new Dimension(200, 50));
+		}
 	}
 }

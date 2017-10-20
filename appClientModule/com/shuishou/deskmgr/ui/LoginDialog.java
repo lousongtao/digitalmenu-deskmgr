@@ -26,7 +26,7 @@ public class LoginDialog extends JDialog {
 
 	private JTextField tfName = new JTextField();
 	private JTextField tfPassword = new JTextField();
-	private JButton btnLogin = new JButton(Messages.getString("LoginDialog.LoginButton")); //$NON-NLS-1$
+	private JBlockedButton btnLogin = new JBlockedButton(Messages.getString("LoginDialog.LoginButton")); //$NON-NLS-1$
 	private String loginURL = "login";
 	private MainFrame mainFrame;
 	public LoginDialog(MainFrame mainFrame){
@@ -40,22 +40,7 @@ public class LoginDialog extends JDialog {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				Map<String, String> params = new HashMap<String, String>();
-				params.put("username", tfName.getText());
-				params.put("password", tfPassword.getText());
-				String response = HttpUtil.getJSONObjectByPost(MainFrame.SERVER_URL + "login", params, "UTF-8");
-				JSONObject logResult = new JSONObject(response);
-				if ("ok".equals(logResult.getString("result"))){
-					LoginDialog.this.setVisible(false);
-					mainFrame.setLoginUser(new UserData(logResult.getInt("userId"), logResult.getString("userName")));
-					mainFrame.loadCurrentIndentInfo();
-					if (mainFrame.getOnDutyUser() == null){
-						String msg = Messages.getString("LoginDialog.NoDutyMsg") + tfName.getText(); //$NON-NLS-1$
-						if (JOptionPane.showConfirmDialog(mainFrame, msg, Messages.getString("LoginDialog.OnDutyTitle"), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION){ //$NON-NLS-1$
-							mainFrame.doOnDuty(logResult.getInt("userId"));
-						}
-					}
-				}
+				doLogin();
 			}});
 		Container c = this.getContentPane();
 		
@@ -72,5 +57,53 @@ public class LoginDialog extends JDialog {
 //		this.setUndecorated(true);
 		tfName.setText("admin");
 		tfPassword.setText("admin");
+	}
+	
+	
+	private void doLogin(){
+		Map<String, String> params = new HashMap<String, String>();
+		params.put("username", tfName.getText());
+		params.put("password", tfPassword.getText());
+		String response = HttpUtil.getJSONObjectByPost(MainFrame.SERVER_URL + "login", params, "UTF-8");
+		if (response == null){
+			JOptionPane.showMessageDialog(mainFrame, "cannot connect with server");
+			return;
+		}
+		JSONObject logResult = new JSONObject(response);
+		if ("ok".equals(logResult.getString("result"))){
+			/**
+			 * while UserA login:
+			 * if find currently nobody onduty, then do onduty automatically;
+			 * if find there is UserB onduty, then ask if replace UserB:
+			 * if choose replace, then UserA onduty & UserB offduty;
+			 * if choose cancel, then return to the login dialog
+			 */
+			UserData loginUser = new UserData();
+			loginUser.setId(logResult.getInt("userId"));
+			loginUser.setName(logResult.getString("userName"));
+			if (mainFrame.getOnDutyUser() == null){
+				LoginDialog.this.setVisible(false);
+				mainFrame.doOnDuty(loginUser.getId(), false);
+			}else if (!mainFrame.getOnDutyUser().getName().equals(loginUser.getName())){
+				String msg = Messages.getString("LoginDialog.swiftDuty") + mainFrame.getOnDutyUser().getName(); //$NON-NLS-1$
+				Object[] options = { Messages.getString("MainFrame.ShiftWork"),
+						Messages.getString("MainFrame.ShiftWorkPrint"), Messages.getString("MainFrame.Cancel") };
+				int choose = JOptionPane.showOptionDialog(this, msg, Messages.getString("MainFrame.ShiftWorkTitle"),
+						JOptionPane.YES_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+				if (choose == 2){
+					return;
+				} else if (choose == 1){
+					LoginDialog.this.setVisible(false);
+					mainFrame.doOnDuty(loginUser.getId(), true);
+				} else if (choose == 0){
+					LoginDialog.this.setVisible(false);
+					mainFrame.doOnDuty(loginUser.getId(), false);
+				}
+			} else {
+				LoginDialog.this.setVisible(false);
+			}
+		} else if ("invalid_password".equals(logResult.getString("result"))){
+			JOptionPane.showMessageDialog(LoginDialog.this, "Password Error");
+		}
 	}
 }

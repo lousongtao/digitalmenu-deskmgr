@@ -68,7 +68,7 @@ public class DeskCell extends JPanel {
 					DeskCell.this.setBackground(Color.white);
 				} else {
 					isSelected = true;
-					DeskCell.this.setBackground(Color.LIGHT_GRAY);
+					DeskCell.this.setBackground(new Color(132,227,247));
 				}
 			}
 		});
@@ -76,7 +76,7 @@ public class DeskCell extends JPanel {
 //		
 //		this.setMaximumSize(new Dimension(50, 50));
 //		this.setMinimumSize(new Dimension(50, 50));
-		this.setPreferredSize(new Dimension(150, 150));
+		this.setPreferredSize(new Dimension(MainFrame.TABLECELL_WIDTH, MainFrame.TABLECELL_HEIGHT));
 	}
 	
 	public void setIndentInfo(Indent indent){
@@ -116,7 +116,7 @@ public class DeskCell extends JPanel {
 			lbStartTime.setText("");
 		} else if (indent.getId() > 0){
 			lbCustomerAmount.setText(Messages.getString("DeskCell.CustomerAmount") + indent.getCustomerAmount()); //$NON-NLS-1$
-			lbPrice.setText(Messages.getString("DeskCell.Price") + indent.getTotalPrice()); //$NON-NLS-1$
+			lbPrice.setText(Messages.getString("DeskCell.Price") + indent.getFormatTotalPrice()); //$NON-NLS-1$
 			lbStartTime.setText(ConstantValue.DFHMS.format(indent.getStartTime()));
 		} 
 	}
