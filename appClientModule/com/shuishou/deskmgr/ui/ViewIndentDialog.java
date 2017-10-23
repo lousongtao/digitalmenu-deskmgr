@@ -103,11 +103,12 @@ public class ViewIndentDialog extends JDialog {
 		tableModel = new IndentDetailModel(indent.getItems());
 		tabIndentDetail.setModel(tableModel);
 		tabIndentDetail.setRowHeight(50);
-		tabIndentDetail.getColumnModel().getColumn(0).setPreferredWidth(150);
-		tabIndentDetail.getColumnModel().getColumn(1).setPreferredWidth(150);
-		tabIndentDetail.getColumnModel().getColumn(2).setPreferredWidth(50);
-		tabIndentDetail.getColumnModel().getColumn(3).setPreferredWidth(80);
-		tabIndentDetail.getColumnModel().getColumn(4).setPreferredWidth(300);
+		tabIndentDetail.getColumnModel().getColumn(0).setPreferredWidth(120);
+		tabIndentDetail.getColumnModel().getColumn(1).setPreferredWidth(120);
+		tabIndentDetail.getColumnModel().getColumn(2).setPreferredWidth(30);
+		tabIndentDetail.getColumnModel().getColumn(3).setPreferredWidth(50);
+		tabIndentDetail.getColumnModel().getColumn(4).setPreferredWidth(50);
+		tabIndentDetail.getColumnModel().getColumn(5).setPreferredWidth(400);
 		JScrollPane jspTable = new JScrollPane(tabIndentDetail, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 		JPanel pTop = new JPanel(new GridBagLayout());
 		pTop.add(lbDeskNo, 		new GridBagConstraints(0, 0, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
@@ -143,7 +144,7 @@ public class ViewIndentDialog extends JDialog {
 			public void actionPerformed(ActionEvent e) {
 				doChangeAmount();
 			}});
-		this.setSize(new Dimension(1000, 600));
+		this.setSize(new Dimension(1200, 600));
 		this.setLocation((int)(mainFrame.getWidth() / 2 - this.getWidth() /2 + mainFrame.getLocation().getX()), 
 				(int)(mainFrame.getHeight() / 2 - this.getHeight() / 2 + mainFrame.getLocation().getY()));
 		
@@ -219,6 +220,14 @@ public class ViewIndentDialog extends JDialog {
 	
 	class IndentDetailModel extends AbstractTableModel{
 		private List<IndentDetail> items;
+		private String[] header = new String[]{
+				Messages.getString("ViewIndentDialog.Header.ChineseName"),
+				Messages.getString("ViewIndentDialog.Header.EnglishName"),
+				Messages.getString("ViewIndentDialog.Header.Amount"),
+				Messages.getString("ViewIndentDialog.Header.Price"),
+				Messages.getString("ViewIndentDialog.Header.Weight"),
+				Messages.getString("ViewIndentDialog.Header.Requirements")
+		};
 		public IndentDetailModel(List<IndentDetail> items){
 			this.items = items;
 		}
@@ -229,7 +238,7 @@ public class ViewIndentDialog extends JDialog {
 
 		@Override
 		public int getColumnCount() {
-			return 5;
+			return header.length;
 		}
 
 		@Override
@@ -245,31 +254,18 @@ public class ViewIndentDialog extends JDialog {
 			case 3:
 				return d.getDishPrice();
 			case 4:
-				String req = "";
-				if (d.getAdditionalRequirements() != null)
-					req += d.getAdditionalRequirements();
 				if (d.getWeight() > 0)
-					req += d.getWeight();
-				return req;
+					return d.getWeight()+"";
+				else return "";
+			case 5:
+				return d.getAdditionalRequirements();
 			}
 			return "";
 		}
 		
 		@Override
 		public String getColumnName(int column) {
-			switch(column){
-			case 0:
-				return Messages.getString("ViewIndentDialog.Header.ChineseName");
-			case 1:
-				return Messages.getString("ViewIndentDialog.Header.EnglishName");
-			case 2:
-				return Messages.getString("ViewIndentDialog.Header.Amount");
-			case 3:
-				return Messages.getString("ViewIndentDialog.Header.Price");
-			case 4:
-				return Messages.getString("ViewIndentDialog.Header.Requirements");
-			}
-			return "";
+			return header[column];
 	    }
 		
 		public void setData(List<IndentDetail> items){
