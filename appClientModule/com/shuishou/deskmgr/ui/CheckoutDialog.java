@@ -45,6 +45,8 @@ import com.shuishou.deskmgr.beans.Desk;
 import com.shuishou.deskmgr.beans.DiscountTemplate;
 import com.shuishou.deskmgr.beans.Indent;
 import com.shuishou.deskmgr.http.HttpUtil;
+import com.shuishou.deskmgr.ui.components.JBlockedButton;
+import com.shuishou.deskmgr.ui.components.NumberTextField;
 
 public class CheckoutDialog extends JDialog{
 	private final Logger logger = Logger.getLogger(CheckoutDialog.class.getName());
@@ -60,11 +62,13 @@ public class CheckoutDialog extends JDialog{
 	private JRadioButton rbDiscountTemp = new JRadioButton(Messages.getString("CheckoutDialog.TempDiscount"), false); //$NON-NLS-1$
 	private JRadioButton rbDiscountDirect = new JRadioButton(Messages.getString("CheckoutDialog.DirectDiscount"), false); //$NON-NLS-1$
 
-	private JFormattedTextField tfDiscountPrice = null;
+	private NumberTextField tfDiscountPrice = null;
 	private JTextField tfMember = new JTextField();
-	private JBlockedButton btnPay = new JBlockedButton(Messages.getString("CheckoutDialog.PayButton")); //$NON-NLS-1$
+	private JBlockedButton btnPay = new JBlockedButton(Messages.getString("CheckoutDialog.PayButton"), null); //$NON-NLS-1$
 	private JButton btnClose = new JButton(Messages.getString("CheckoutDialog.CloseButton")); //$NON-NLS-1$
-	
+	private JButton btnCancelOrder = new JButton(Messages.getString("CheckoutDialog.CancelOrderButton")); //$NON-NLS-1$
+	private NumberTextField numGetCash;
+	private JLabel lbCharge;
 	private double discountPrice = 0;
 	
 	private List<DiscountTemplateRadioButton> discountTempRadioButtonList = new ArrayList<DiscountTemplateRadioButton>();
@@ -87,18 +91,24 @@ public class CheckoutDialog extends JDialog{
 //		numberFormatter.setAllowsInvalid(false); //this is the key!!
 //		numberFormatter.setMinimum(0l); //Optional
 //		tfDiscountPrice = new JFormattedTextField(numberFormatter);
-		tfDiscountPrice = new JFormattedTextField();
+		tfDiscountPrice = new NumberTextField(this, true);
 		
+		numGetCash = new NumberTextField(this, true);
+		JLabel lbGetCash = new JLabel(Messages.getString("CheckoutDialog.GetCash"));
+		lbCharge = new JLabel();
 		JPanel pPayway = new JPanel(new GridBagLayout());
 		pPayway.setBorder(BorderFactory.createTitledBorder(Messages.getString("CheckoutDialog.PayWay"))); //$NON-NLS-1$
 		ButtonGroup bgPayway = new ButtonGroup();
 		bgPayway.add(rbPayCash);
 		bgPayway.add(rbPayBankCard);
 		bgPayway.add(rbPayMember);
-		pPayway.add(rbPayCash, new GridBagConstraints(0, 0, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
-		pPayway.add(rbPayBankCard, new GridBagConstraints(1, 0, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
-		pPayway.add(rbPayMember,new GridBagConstraints(0, 1, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(10, 0, 0, 0), 0, 0));
-		pPayway.add(tfMember, new GridBagConstraints(1, 1, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 0, 0, 0), 0, 0));
+		pPayway.add(rbPayCash, 		new GridBagConstraints(0, 0, 1, 1, 0, 1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+		pPayway.add(lbGetCash, 		new GridBagConstraints(1, 0, 1, 1, 0, 1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 50, 0, 0), 0, 0));
+		pPayway.add(numGetCash, 	new GridBagConstraints(2, 0, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 20, 0, 0), 0, 0));
+		pPayway.add(lbCharge, 		new GridBagConstraints(3, 0, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 20, 0, 0), 0, 0));
+		pPayway.add(rbPayBankCard, 	new GridBagConstraints(0, 1, 1, 1, 0, 1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+		pPayway.add(rbPayMember,	new GridBagConstraints(0, 2, 1, 1, 0, 1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(10, 0, 0, 0), 0, 0));
+		pPayway.add(tfMember, 		new GridBagConstraints(1, 2, 3, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 50, 0, 0), 0, 0));
 		
 		JPanel pDiscountTemplate = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 5));
 		pDiscountTemplate.setBorder(BorderFactory.createTitledBorder(Messages.getString("CheckoutDialog.DiscountTemplateBorderTitle")));
@@ -130,17 +140,19 @@ public class CheckoutDialog extends JDialog{
 		bgDiscount.add(rbDiscountNon);
 		bgDiscount.add(rbDiscountTemp);
 		bgDiscount.add(rbDiscountDirect);
-		pDiscount.add(rbDiscountNon, new GridBagConstraints(0, 0, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
-		pDiscount.add(rbDiscountTemp, new GridBagConstraints(0, 1, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(10, 0, 0, 0), 0, 0));
-		pDiscount.add(pDiscountTemplate, new GridBagConstraints(0, 2, 2, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 0, 0, 0), 0, 0));
-		pDiscount.add(rbDiscountDirect, new GridBagConstraints(0, 3, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(10, 0, 0, 0), 0, 0));
-		pDiscount.add(tfDiscountPrice, new GridBagConstraints(1, 3, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 0, 0, 0), 0, 0));
+		pDiscount.add(rbDiscountNon, 	new GridBagConstraints(0, 0, 1, 1, 0, 1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+		pDiscount.add(rbDiscountTemp, 	new GridBagConstraints(0, 1, 1, 1, 0, 1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(10, 0, 0, 0), 0, 0));
+		pDiscount.add(pDiscountTemplate,new GridBagConstraints(0, 2, 2, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 0, 0, 0), 0, 0));
+		pDiscount.add(rbDiscountDirect, new GridBagConstraints(0, 3, 1, 1, 0, 1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(10, 0, 0, 0), 0, 0));
+		pDiscount.add(tfDiscountPrice, 	new GridBagConstraints(1, 3, 1, 1, 0, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 50, 0, 0), 0, 0));
 		
-		JPanel pButton = new JPanel(new FlowLayout(FlowLayout.LEFT, 60, 5));
-		btnPay.setPreferredSize(new Dimension(150, 40));
-		btnClose.setPreferredSize(new Dimension(150, 40));
+		JPanel pButton = new JPanel(new FlowLayout(FlowLayout.LEFT, 30, 5));
+		btnPay.setPreferredSize(new Dimension(150, 50));
+		btnClose.setPreferredSize(new Dimension(150, 50));
+		btnCancelOrder.setPreferredSize(new Dimension(150, 50));
 		pButton.add(btnPay);
 		pButton.add(btnClose);
+		pButton.add(btnCancelOrder);
 		
 		lbDeskNo.setFont(ConstantValue.FONT_30BOLD);
 		lbPrice.setFont(ConstantValue.FONT_30BOLD);
@@ -148,6 +160,19 @@ public class CheckoutDialog extends JDialog{
 		lbDeskNo.setText(Messages.getString("CheckoutDialog.TableNo") + desk.getName()); //$NON-NLS-1$
 		lbPrice.setText(Messages.getString("CheckoutDialog.Price") + indent.getFormatTotalPrice()); //$NON-NLS-1$
 		lbDiscountPrice.setText(Messages.getString("CheckoutDialog.DiscountPrice") + String.format("%.2f", discountPrice)); //$NON-NLS-1$
+		
+		Container c = this.getContentPane();
+		c.setLayout(new GridBagLayout());
+		c.add(lbDeskNo, 		new GridBagConstraints(1, 0, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
+		c.add(lbPrice, 			new GridBagConstraints(0, 0, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
+		c.add(pPayway, 			new GridBagConstraints(0, 2, 2, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
+		c.add(pDiscount, 		new GridBagConstraints(0, 3, 2, 1, 1, 3, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
+		c.add(lbDiscountPrice, 	new GridBagConstraints(0, 4, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
+		c.add(pButton, 			new GridBagConstraints(0, 5, 2, 1, 1, 2, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
+		
+		this.setSize(new Dimension(600, 640));
+		this.setLocation((int)(mainFrame.getWidth() / 2 - this.getWidth() /2 + mainFrame.getLocation().getX()), 
+				(int)(mainFrame.getHeight() / 2 - this.getHeight() / 2 + mainFrame.getLocation().getY()));
 		
 		btnClose.addActionListener(new ActionListener(){
 
@@ -163,23 +188,50 @@ public class CheckoutDialog extends JDialog{
 				doPay();
 			}});
 		
-		tfDiscountPrice.addKeyListener(new KeyAdapter() {
-			public void keyTyped(KeyEvent e) {
-				char c = e.getKeyChar();
-				if (!((c >= '0') && (c <= '9') || (c == KeyEvent.VK_BACK_SPACE) || (c == KeyEvent.VK_DELETE) || (c == '.'))) {
-					getToolkit().beep();
-					e.consume();
-				} 
-				if (c == '.'){
-					if (tfDiscountPrice.getText() != null && tfDiscountPrice.getText().indexOf(".") >= 0){
-						getToolkit().beep();
-						e.consume();
-					}
-				}
-				
-			}
-		});
+		btnCancelOrder.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				doCancelOrder();
+			}});
 		
+//		tfDiscountPrice.addKeyListener(new KeyAdapter() {
+//			public void keyTyped(KeyEvent e) {
+//				char c = e.getKeyChar();
+//				if (!((c >= '0') && (c <= '9') || (c == KeyEvent.VK_BACK_SPACE) || (c == KeyEvent.VK_DELETE) || (c == '.'))) {
+//					getToolkit().beep();
+//					e.consume();
+//				} 
+//				if (c == '.'){
+//					if (tfDiscountPrice.getText() != null && tfDiscountPrice.getText().indexOf(".") >= 0){
+//						getToolkit().beep();
+//						e.consume();
+//					}
+//				}
+//				
+//			}
+//		});
+		
+		numGetCash.getDocument().addDocumentListener(new DocumentListener(){
+
+			
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				rbPayCash.setSelected(true);
+				showChargeText();
+			}
+
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				rbPayCash.setSelected(true);
+				showChargeText();
+			}
+
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+				rbPayCash.setSelected(true);
+				showChargeText();
+			}});
 		tfDiscountPrice.getDocument().addDocumentListener(new DocumentListener(){
 
 			@Override
@@ -198,6 +250,23 @@ public class CheckoutDialog extends JDialog{
 			public void changedUpdate(DocumentEvent e) {
 				rbDiscountDirect.setSelected(true);
 				calculatePaidPrice();
+			}});
+		
+		tfMember.getDocument().addDocumentListener(new DocumentListener(){
+
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				rbPayMember.setSelected(true);
+			}
+
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				rbPayMember.setSelected(true);
+			}
+
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+				rbPayMember.setSelected(true);
 			}});
 		
 		rbDiscountNon.addItemListener(new ItemListener(){
@@ -227,19 +296,19 @@ public class CheckoutDialog extends JDialog{
 			}
 		});
 		
-		Container c = this.getContentPane();
-		c.setLayout(new GridBagLayout());
-		c.add(lbDeskNo, new GridBagConstraints(0, 0, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
-		c.add(lbPrice, new GridBagConstraints(0, 1, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
-		c.add(pPayway, new GridBagConstraints(0, 2, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
-		c.add(pDiscount, new GridBagConstraints(0, 3, 1, 1, 1, 3, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
-		c.add(lbDiscountPrice, new GridBagConstraints(0, 4, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
-		c.add(pButton, new GridBagConstraints(0, 5, 1, 1, 1, 2, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
 		
-		this.setSize(new Dimension(600, 600));
-		this.setLocation((int)(mainFrame.getWidth() / 2 - this.getWidth() /2 + mainFrame.getLocation().getX()), 
-				(int)(mainFrame.getHeight() / 2 - this.getHeight() / 2 + mainFrame.getLocation().getY()));
 		
+	}
+	
+	private void showChargeText(){
+		if (!rbPayCash.isSelected())
+			return;
+		if (numGetCash.getText() == null || numGetCash.getText().length() == 0){
+			lbCharge.setText("");
+			return;
+		}
+		double value = Double.parseDouble(numGetCash.getText());
+		lbCharge.setText(Messages.getString("CheckoutDialog.Charge")+" $" + String.format("%.2f", value - discountPrice));
 	}
 	
 	private DiscountTemplateRadioButton getSelectedDiscountTemplateRadioButton(){
@@ -269,6 +338,7 @@ public class CheckoutDialog extends JDialog{
 		}
 		
 		lbDiscountPrice.setText(Messages.getString("CheckoutDialog.DiscountPrice") + new DecimalFormat("0.00").format(discountPrice)); //$NON-NLS-1$
+		showChargeText();
 	}
 	
 	private void doPay(){
@@ -305,6 +375,26 @@ public class CheckoutDialog extends JDialog{
 		if (rbPayCash.isSelected()){
 			mainFrame.doOpenCashdrawer();
 		}
+	}
+	
+	private void doCancelOrder(){
+		if (JOptionPane.showConfirmDialog(this, Messages.getString("CheckoutDialog.ConfirmCancelOrder"), "Confirm", JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION)
+			return;
+		String url = "indent/operateindent";
+		Map<String, String> params = new HashMap<String, String>();
+		params.put("userId", mainFrame.getOnDutyUser().getId() + "");
+		params.put("id", indent.getId() + "");
+		params.put("operatetype", ConstantValue.INDENT_OPERATIONTYPE_CANCEL+"");
+		String response = HttpUtil.getJSONObjectByPost(MainFrame.SERVER_URL + url, params, "UTF-8");
+		JSONObject jsonObj = new JSONObject(response);
+		if (!jsonObj.getBoolean("success")){
+			logger.error("Do checkout failed. URL = " + url + ", param = "+ params);
+			JOptionPane.showMessageDialog(mainFrame, Messages.getString("CheckoutDialog.FailPayMsg")); //$NON-NLS-1$
+		}
+		//clean table
+		CheckoutDialog.this.setVisible(false);
+		mainFrame.loadDesks();
+		mainFrame.loadCurrentIndentInfo();
 	}
 	
 	class DiscountTemplateRadioButton extends JRadioButton{

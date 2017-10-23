@@ -7,9 +7,11 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,13 +28,16 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Timer;
 
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
@@ -57,6 +62,8 @@ import com.shuishou.deskmgr.beans.HttpResult;
 import com.shuishou.deskmgr.beans.Indent;
 import com.shuishou.deskmgr.beans.UserData;
 import com.shuishou.deskmgr.http.HttpUtil;
+import com.shuishou.deskmgr.ui.components.IconButton;
+import com.shuishou.deskmgr.ui.components.JBlockedButton;
 
 import gnu.io.CommPortIdentifier;
 import gnu.io.PortInUseException;
@@ -80,17 +87,17 @@ public class MainFrame extends JFrame implements ActionListener{
 	private JPanel pDeskArea = null;
 	private JLabel lbStatusLogin = new JLabel();
 	private JLabel lbStatusDesks = new JLabel();
-	private JButton btnOpenDesk = new JButton(Messages.getString("MainFrame.OpenDesk")); //$NON-NLS-1$
-	private JButton btnAddDish = new JButton(Messages.getString("MainFrame.AddDish")); //$NON-NLS-1$
-	private JButton btnViewIndent = new JButton(Messages.getString("MainFrame.ViewIndent")); //$NON-NLS-1$
-	private JButton btnCheckout = new JButton(Messages.getString("MainFrame.Checkout")); //$NON-NLS-1$
-	private JBlockedButton btnChangeDesk = new JBlockedButton(Messages.getString("MainFrame.ChangeDesk")); //$NON-NLS-1$
-	private JBlockedButton btnOpenCashdrawer = new JBlockedButton(Messages.getString("MainFrame.OpenCashdrawer")); //$NON-NLS-1$
-	private JButton btnMergeDesk = new JButton(Messages.getString("MainFrame.MergeDesk")); //$NON-NLS-1$
-	private JButton btnClearDesk = new JButton(Messages.getString("MainFrame.ClearDesk")); //$NON-NLS-1$
-	private JButton btnPrintTicket = new JButton(Messages.getString("MainFrame.PrintTicket")); //$NON-NLS-1$
-	private JButton btnShiftWork = new JButton(Messages.getString("MainFrame.ShiftWork")); //$NON-NLS-1$
-	private JBlockedButton btnRefresh = new JBlockedButton(Messages.getString("MainFrame.Refresh")); //$NON-NLS-1$
+	private IconButton btnOpenDesk = new IconButton(Messages.getString("MainFrame.OpenDesk"), "/resource/opentable.png"); //$NON-NLS-1$
+	private IconButton btnAddDish = new IconButton(Messages.getString("MainFrame.AddDish"), "/resource/adddish.png"); //$NON-NLS-1$
+	private IconButton btnViewIndent = new IconButton(Messages.getString("MainFrame.ViewIndent"), "/resource/viewindent.png"); //$NON-NLS-1$
+	private IconButton btnCheckout = new IconButton(Messages.getString("MainFrame.Checkout"), "/resource/pay.png"); //$NON-NLS-1$
+	private IconButton btnChangeDesk = new IconButton(Messages.getString("MainFrame.ChangeDesk"), "/resource/changedesk.png"); //$NON-NLS-1$
+	private JBlockedButton btnOpenCashdrawer = new JBlockedButton(Messages.getString("MainFrame.OpenCashdrawer"), "/resource/cashdrawer.png"); //$NON-NLS-1$
+	private IconButton btnMergeDesk = new IconButton(Messages.getString("MainFrame.MergeDesk"), "/resource/mergedesk.png"); //$NON-NLS-1$
+	private IconButton btnClearDesk = new IconButton(Messages.getString("MainFrame.ClearDesk"), "/resource/cleardesk.png"); //$NON-NLS-1$
+	private IconButton btnPrintTicket = new IconButton(Messages.getString("MainFrame.PrintTicket"), "/resource/printer.png"); //$NON-NLS-1$
+	private IconButton btnShiftWork = new IconButton(Messages.getString("MainFrame.ShiftWork"), "/resource/swiftwork.png"); //$NON-NLS-1$
+	private JBlockedButton btnRefresh = new JBlockedButton(Messages.getString("MainFrame.Refresh"), "/resource/refresh.png"); //$NON-NLS-1$
 	
 	private ArrayList<Desk> deskList = new ArrayList<>();
 	private ArrayList<DiscountTemplate> discountTemplateList = new ArrayList<>(); 
@@ -101,6 +108,8 @@ public class MainFrame extends JFrame implements ActionListener{
 	private String confirmCode = null;
 	
 	private Gson gson = new Gson();
+	private int gapButtons = 5; // the gap between buttons for top
+	
 	
 	public MainFrame(){
 		initUI();
@@ -110,14 +119,6 @@ public class MainFrame extends JFrame implements ActionListener{
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 	}
-
-//	public UserData getLoginUser() {
-//		return loginUser;
-//	}
-//
-//	public void setLoginUser(UserData loginUser) {
-//		this.loginUser = loginUser;
-//	}
 
 	public List<DiscountTemplate> getDiscountTemplateList() {
 		return discountTemplateList;
@@ -133,25 +134,27 @@ public class MainFrame extends JFrame implements ActionListener{
 	}
 	
 	public void initUI(){
+		Color colorBackground = new Color(235, 255, 244);
 		pDeskArea = new JPanel(new GridBagLayout());
 		JScrollPane jspDeskArea = new JScrollPane(pDeskArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		pDeskArea.setBackground(Color.white);
+		pDeskArea.setBackground(colorBackground);
 		JPanel pFunction = new JPanel(new GridBagLayout());
-		pFunction.setBackground(Color.white);
+		pFunction.setBackground(colorBackground);
 		
 		
 		int row = 0;
-		pFunction.add(btnOpenDesk, 	new GridBagConstraints(0, row++, 1, 1,1,1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(10,0,0,0),0,0));
-		pFunction.add(btnAddDish, 	new GridBagConstraints(0, row++, 1, 1,1,1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(10,0,0,0),0,0));
-		pFunction.add(btnViewIndent, 	new GridBagConstraints(0, row++, 1, 1,1,1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(10,0,0,0),0,0));
-		pFunction.add(btnCheckout, 	new GridBagConstraints(0, row++, 1, 1,1,1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(10,0,0,0),0,0));
-		pFunction.add(btnChangeDesk, 	new GridBagConstraints(0, row++, 1, 1,1,1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(10,0,0,0),0,0));
-		pFunction.add(btnMergeDesk, new GridBagConstraints(0, row++, 1, 1,1,1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(10,0,0,0),0,0));
-		pFunction.add(btnClearDesk, new GridBagConstraints(0, row++, 1, 1,1,1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(10,0,0,0),0,0));
-		pFunction.add(btnPrintTicket, new GridBagConstraints(0, row++, 1, 1,1,1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(10,0,0,0),0,0));
-		pFunction.add(btnRefresh, 	new GridBagConstraints(0, row++, 1, 1,1,1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(10,0,0,0),0,0));
-		pFunction.add(btnShiftWork, new GridBagConstraints(0, row++, 1, 1,1,1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(10,0,0,0),0,0));
-		pFunction.add(btnOpenCashdrawer, new GridBagConstraints(0, row++, 1, 1,1,1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(10,0,0,0),0,0));
+		Insets insets = new Insets(gapButtons,0,0,0);
+		pFunction.add(btnOpenDesk, 	new GridBagConstraints(0, row++, 1, 1,1,1, GridBagConstraints.WEST, GridBagConstraints.BOTH, insets,0,0));
+		pFunction.add(btnAddDish, 	new GridBagConstraints(0, row++, 1, 1,1,1, GridBagConstraints.WEST, GridBagConstraints.BOTH, insets,0,0));
+		pFunction.add(btnViewIndent, 	new GridBagConstraints(0, row++, 1, 1,1,1, GridBagConstraints.WEST, GridBagConstraints.BOTH, insets,0,0));
+		pFunction.add(btnCheckout, 	new GridBagConstraints(0, row++, 1, 1,1,1, GridBagConstraints.WEST, GridBagConstraints.BOTH, insets,0,0));
+		pFunction.add(btnChangeDesk, 	new GridBagConstraints(0, row++, 1, 1,1,1, GridBagConstraints.WEST, GridBagConstraints.BOTH, insets,0,0));
+		pFunction.add(btnMergeDesk, new GridBagConstraints(0, row++, 1, 1,1,1, GridBagConstraints.WEST, GridBagConstraints.BOTH, insets,0,0));
+		pFunction.add(btnClearDesk, new GridBagConstraints(0, row++, 1, 1,1,1, GridBagConstraints.WEST, GridBagConstraints.BOTH, insets,0,0));
+		pFunction.add(btnPrintTicket, new GridBagConstraints(0, row++, 1, 1,1,1, GridBagConstraints.WEST, GridBagConstraints.BOTH, insets,0,0));
+		pFunction.add(btnRefresh, 	new GridBagConstraints(0, row++, 1, 1,1,1, GridBagConstraints.WEST, GridBagConstraints.BOTH, insets,0,0));
+		pFunction.add(btnShiftWork, new GridBagConstraints(0, row++, 1, 1,1,1, GridBagConstraints.WEST, GridBagConstraints.BOTH, insets,0,0));
+		pFunction.add(btnOpenCashdrawer, new GridBagConstraints(0, row++, 1, 1,1,1, GridBagConstraints.WEST, GridBagConstraints.BOTH, insets,0,0));
 		pFunction.setPreferredSize(new Dimension(180, 0));
 		
 		btnOpenDesk.addActionListener(this);
@@ -165,7 +168,6 @@ public class MainFrame extends JFrame implements ActionListener{
 		btnPrintTicket.addActionListener(this);
 		btnRefresh.addActionListener(this);
 		btnShiftWork.addActionListener(this);
-		
 		
 		JPanel pStatus = new JPanel(new GridLayout(1, 2, 2, 0));
 		pStatus.add(lbStatusLogin);
@@ -288,7 +290,7 @@ public class MainFrame extends JFrame implements ActionListener{
 		deskcellList.clear();
 		
 		for (int i = 0; i < deskList.size(); i++) {
-			DeskCell dc = new DeskCell(deskList.get(i));
+			DeskCell dc = new DeskCell(this, deskList.get(i));
 			pDeskArea.add(dc, new GridBagConstraints(i % DESK_COLUMN_AMOUNT, (int)(i / DESK_COLUMN_AMOUNT), 1, 1,1,1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,0,0),0,0));
 			deskcellList.add(dc);
 		}
@@ -341,7 +343,7 @@ public class MainFrame extends JFrame implements ActionListener{
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("status", "Unpaid");
 		String response = HttpUtil.getJSONObjectByPost(SERVER_URL + url, params, "UTF-8");
-		if (response == null){
+		if (response == null || response.length() == 0){
 			logger.error("get null from server for query indent error. URL = " + url + ", param = "+ params);
 			JOptionPane.showMessageDialog(this, "get null from server for query indent info. URL = " + url);
 			return;
@@ -370,7 +372,7 @@ public class MainFrame extends JFrame implements ActionListener{
 		refreshDeskStatus();
 	}
 	
-	private void refreshDeskStatus() {
+	public void refreshDeskStatus() {
 		// refresh status
 		int openDesk = 0;
 		int customers = 0;
@@ -390,7 +392,7 @@ public class MainFrame extends JFrame implements ActionListener{
 		params.put("userId", String.valueOf(userId));
 		params.put("printLastDutyTicket", String.valueOf(printLastDutyTicket));
 		String response = HttpUtil.getJSONObjectByPost(SERVER_URL + url, params, "UTF-8");
-		if (response == null){
+		if (response == null || response.length() == 0){
 			logger.error("get null from server for starting shiftwork. URL = " + url + ", param = "+ params);
 			JOptionPane.showMessageDialog(this, "get null from server for starting shiftwork. URL = " + url + ", param = "+ params);
 			return;
@@ -419,7 +421,7 @@ public class MainFrame extends JFrame implements ActionListener{
 		params.put("printShiftTicket", Boolean.valueOf(print).toString());
 		params.put("startTime", ConstantValue.DFYMDHMS.format(user.getStartTime()));
 		String response = HttpUtil.getJSONObjectByPost(SERVER_URL + url, params, "UTF-8");
-		if (response == null){
+		if (response == null || response.length() == 0){
 			logger.error("get null from server while off duty. URL = " + url + ", param = "+ params);
 			JOptionPane.showMessageDialog(this, "get null from server while off duty. URL = " + url + ", param = "+ params);
 			return;
@@ -441,15 +443,21 @@ public class MainFrame extends JFrame implements ActionListener{
 		return onDutyUser;
 	}
 
-	public List<DeskCell> getSelectedDesks(){
-		ArrayList<DeskCell> dcs = new ArrayList<DeskCell>();
+	public DeskCell getSelectedDesk(){
+//		ArrayList<DeskCell> dcs = new ArrayList<DeskCell>();
 		for(DeskCell dc : deskcellList){
 			if (dc.isSelected())
-				dcs.add(dc);
+				return dc;
 		}
-		return dcs;
+		return null;
 	}
 	
+	
+	
+	public ArrayList<DeskCell> getDeskcellList() {
+		return deskcellList;
+	}
+
 	public void cleanTable(Desk desk){
 		for(DeskCell dc : deskcellList){
 			if (dc.getDesk().getId() == desk.getId()){
@@ -466,21 +474,24 @@ public class MainFrame extends JFrame implements ActionListener{
 			JOptionPane.showMessageDialog(this, Messages.getString("MainFrame.NobodyOndutyMsg")); //$NON-NLS-1$
 			return;
 		}
-		List<DeskCell> selectDC = getSelectedDesks();
-		if (selectDC.size() > 1){
-			JOptionPane.showMessageDialog(this, Messages.getString("MainFrame.SelectOverONETable"), Messages.getString("MainFrame.Error"), JOptionPane.YES_OPTION); //$NON-NLS-1$ //$NON-NLS-2$
+//		List<DeskCell> selectDC = getSelectedDesks();
+//		if (selectDC.size() > 1){
+//			JOptionPane.showMessageDialog(this, Messages.getString("MainFrame.SelectOverONETable"), Messages.getString("MainFrame.Error"), JOptionPane.YES_OPTION); //$NON-NLS-1$ //$NON-NLS-2$
+//			return;
+//		}
+		DeskCell selectDC = getSelectedDesk();
+		if (selectDC == null)
 			return;
-		}
 		if (JOptionPane.NO_OPTION == JOptionPane.showConfirmDialog(this, Messages.getString("MainFrame.ConfirmForClearDesk"), Messages.getString("MainFrame.confirm"), JOptionPane.YES_NO_OPTION))
 			return;
-		int deskid = selectDC.get(0).getDesk().getId();
+		int deskid = selectDC.getDesk().getId();
 		
 		String url = "indent/cleardesk";
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("userId", String.valueOf(onDutyUser.getId()));
 		params.put("deskId", String.valueOf(deskid));
 		String response = HttpUtil.getJSONObjectByPost(SERVER_URL + url, params, "UTF-8");
-		if (response == null){
+		if (response == null || response.length() == 0){
 			logger.error("get null from server while clear desks failed. URL = " + url + ", param = "+ params);
 			JOptionPane.showMessageDialog(this, "get null from server while clear desks failed. URL = " + url + ", param = "+ params);
 			return;
@@ -501,9 +512,16 @@ public class MainFrame extends JFrame implements ActionListener{
 			JOptionPane.showMessageDialog(this, Messages.getString("MainFrame.NobodyOndutyMsg")); //$NON-NLS-1$
 			return;
 		}
-		List<DeskCell> selectDC = getSelectedDesks();
-		if (selectDC.isEmpty() || selectDC.size() < 2)
+		
+		MergeDeskDialog dlg = new MergeDeskDialog(this, Messages.getString("MainFrame.MergeTableTitle"), deskList);
+		dlg.setVisible(true);
+		
+		if (!dlg.isConfirm){
 			return;
+		}
+		
+		List<MergeDeskDialog.DeskCell> selectDC = dlg.getSelectDesks();
+		
 		int mainDeskid = selectDC.get(0).getDesk().getId();
 		
 		String msg = Messages.getString("MainFrame.MergeTableMsg1"); //$NON-NLS-1$
@@ -531,7 +549,7 @@ public class MainFrame extends JFrame implements ActionListener{
 		params.put("mainDeskId", String.valueOf(mainDeskid));
 		params.put("subDeskId", subDeskIds);
 		String response = HttpUtil.getJSONObjectByPost(SERVER_URL + url, params, "UTF-8");
-		if (response == null){
+		if (response == null || response.length() == 0){
 			logger.error("get null from server while do merge desks failed. URL = " + url + ", param = "+ params);
 			JOptionPane.showMessageDialog(this, "get null from server while do merge desks failed. URL = " + url + ", param = "+ params);
 			return;
@@ -622,100 +640,70 @@ public class MainFrame extends JFrame implements ActionListener{
 	}
 	
 	private void doChangeDesk(){
-		List<DeskCell> selectDC = getSelectedDesks();
-		if (selectDC.size() != 2){
-			JOptionPane.showMessageDialog(this, Messages.getString("MainFrame.NeedSelectTwoTable"), Messages.getString("MainFrame.Error"), JOptionPane.YES_OPTION); //$NON-NLS-1$ //$NON-NLS-2$
+		DeskCell selectDC = getSelectedDesk();
+		if (selectDC == null)
+			return;
+		if (selectDC.getIndent() == null){
+			JOptionPane.showMessageDialog(this, Messages.getString("MainFrame.NeedSelectOneOccupied"), Messages.getString("MainFrame.Error"), JOptionPane.YES_OPTION); //$NON-NLS-1$ //$NON-NLS-2$
 			return;
 		}
-		if (!(
-				(selectDC.get(0).getIndent() == null && selectDC.get(1).getIndent() != null)
-				|| (selectDC.get(0).getIndent() != null && selectDC.get(1).getIndent() == null))){
-			JOptionPane.showMessageDialog(this, Messages.getString("MainFrame.NeedSelectOneEmptyOneOccupied"), Messages.getString("MainFrame.Error"), JOptionPane.YES_OPTION); //$NON-NLS-1$ //$NON-NLS-2$
-			return;
+		ArrayList<Desk> availableDesks = new ArrayList<>();
+		for(int i = 0; i < deskcellList.size(); i++){
+			if (deskcellList.get(i).getIndent() == null && deskcellList.get(i).getDesk().getMergeTo() == null)
+				availableDesks.add(deskcellList.get(i).getDesk());
 		}
-		String url = "indent/changedesks";
-		Map<String, String> params = new HashMap<String, String>();
-		params.put("userId", onDutyUser.getId() + "");
-		params.put("deskId1", selectDC.get(0).getDesk().getId() + "");
-		params.put("deskId2", selectDC.get(1).getDesk().getId() + "");
-		String response = HttpUtil.getJSONObjectByPost(MainFrame.SERVER_URL + url, params, "UTF-8");
-		if (response == null){
-			logger.error("get null from server while changing tables. URL = " + url + ", param = "+ params);
-			JOptionPane.showMessageDialog(this, "get null from server while changing tables. URL = " + url + ", param = "+ params);
-			return;
-		}
-		HttpResult<Integer> result = new Gson().fromJson(response, new TypeToken<HttpResult<Integer>>(){}.getType());
-		if (!result.success){
-			logger.error("return false while changing tables. URL = " + url);
-			JOptionPane.showMessageDialog(this, "return false while changing tables. URL = " + url);
-			return;
-		}
-		loadCurrentIndentInfo();
+		ChangeDeskDialog dlg = new ChangeDeskDialog(this, Messages.getString("MainFrame.ChangeDesk"), selectDC.getDesk(), availableDesks);
+		dlg.setVisible(true);
 	}
 	
 	private void doCheckout(){
-		List<DeskCell> selectDC = getSelectedDesks();
-		if (selectDC.isEmpty())
+		DeskCell selectDC = getSelectedDesk();
+		if (selectDC == null)
 			return;
-		if (selectDC.size() > 1){
-			JOptionPane.showMessageDialog(this, Messages.getString("MainFrame.SelectOverONETable"), Messages.getString("MainFrame.Error"), JOptionPane.YES_OPTION); //$NON-NLS-1$ //$NON-NLS-2$
+
+		if (selectDC.getIndent() == null)
 			return;
-		}
-		if (selectDC.get(0).getIndent() == null)
-			return;
-		CheckoutDialog dlg = new CheckoutDialog(this, Messages.getString("MainFrame.CheckoutTitle"), true, selectDC.get(0).getDesk(), selectDC.get(0).getIndent()); //$NON-NLS-1$
+		CheckoutDialog dlg = new CheckoutDialog(this, Messages.getString("MainFrame.CheckoutTitle"), true, selectDC.getDesk(), selectDC.getIndent()); //$NON-NLS-1$
 		dlg.setVisible(true);
 	}
 	
 	private void doOpenDesk(){
-		List<DeskCell> selectDC = getSelectedDesks();
-		if (selectDC.isEmpty())
+		DeskCell selectDC = getSelectedDesk();
+		if (selectDC == null)
 			return;
-		if (selectDC.size() > 1){
-			JOptionPane.showMessageDialog(this, Messages.getString("MainFrame.SelectOverONETable"), Messages.getString("MainFrame.Error"), JOptionPane.YES_OPTION); //$NON-NLS-1$ //$NON-NLS-2$
-			return;
-		}
-		if (selectDC.get(0).getIndent() != null){
+		if (selectDC.getIndent() != null){
 			JOptionPane.showMessageDialog(this, Messages.getString("MainFrame.TableIsUsed"), Messages.getString("MainFrame.Error"), JOptionPane.YES_OPTION); //$NON-NLS-1$ //$NON-NLS-2$
 			return;
 		}
-		if (selectDC.get(0).getDesk().getMergeTo() != null){
+		if (selectDC.getDesk().getMergeTo() != null){
 			JOptionPane.showMessageDialog(this, Messages.getString("MainFrame.TableIsUsed"), Messages.getString("MainFrame.Error"), JOptionPane.YES_OPTION); //$NON-NLS-1$ //$NON-NLS-2$
 			return;
 		}
-		OpenTableDialog dlg = new OpenTableDialog(this, Messages.getString("MainFrame.OpenDesk"), true, selectDC.get(0).getDesk(), OpenTableDialog.MAKENEWORDER); //$NON-NLS-1$
+		OpenTableDialog dlg = new OpenTableDialog(this, Messages.getString("MainFrame.OpenDesk"), true, selectDC.getDesk(), OpenTableDialog.MAKENEWORDER); //$NON-NLS-1$
 		dlg.setVisible(true);
 	}
 	
 	private void doAddDish(){
-		List<DeskCell> selectDC = getSelectedDesks();
-		if (selectDC.isEmpty())
+		DeskCell selectDC = getSelectedDesk();
+		if (selectDC == null)
 			return;
-		if (selectDC.size() > 1){
-			JOptionPane.showMessageDialog(this, Messages.getString("MainFrame.SelectOverONETable"), Messages.getString("MainFrame.Error"), JOptionPane.YES_OPTION); //$NON-NLS-1$ //$NON-NLS-2$
-			return;
-		}
-		if (selectDC.get(0).getIndent() == null){
+		if (selectDC.getIndent() == null){
 			JOptionPane.showMessageDialog(this, Messages.getString("MainFrame.NoIndentOnTable"), Messages.getString("MainFrame.Error"), JOptionPane.YES_OPTION); //$NON-NLS-1$ //$NON-NLS-2$
 			return;
 		}
-		OpenTableDialog dlg = new OpenTableDialog(this, Messages.getString("MainFrame.AddDish"), true, selectDC.get(0).getDesk(), OpenTableDialog.ADDDISH); //$NON-NLS-1$
+		OpenTableDialog dlg = new OpenTableDialog(this, Messages.getString("MainFrame.AddDish"), true, selectDC.getDesk(), OpenTableDialog.ADDDISH); //$NON-NLS-1$
 		dlg.setVisible(true);
 	}
 	
 	private void doViewIndent(){
-		List<DeskCell> selectDC = getSelectedDesks();
-		if (selectDC.isEmpty())
+		DeskCell selectDC = getSelectedDesk();
+		if (selectDC == null)
 			return;
-		if (selectDC.size() > 1){
-			JOptionPane.showMessageDialog(this, Messages.getString("MainFrame.SelectOverONETable"), Messages.getString("MainFrame.Error"), JOptionPane.YES_OPTION); //$NON-NLS-1$ //$NON-NLS-2$
-			return;
-		}
-		if (selectDC.get(0).getIndent() == null){
+		if (selectDC.getIndent() == null){
 			JOptionPane.showMessageDialog(this, Messages.getString("MainFrame.NoIndentOnTable"), Messages.getString("MainFrame.Error"), JOptionPane.YES_OPTION); //$NON-NLS-1$ //$NON-NLS-2$
 			return;
 		}
-		ViewIndentDialog dlg = new ViewIndentDialog(this, Messages.getString("MainFrame.ViewIndent"), true, selectDC.get(0).getDesk(), selectDC.get(0).getIndent()); //$NON-NLS-1$
+		ViewIndentDialog dlg = new ViewIndentDialog(this, Messages.getString("MainFrame.ViewIndent"), true, selectDC.getDesk(), selectDC.getIndent()); //$NON-NLS-1$
 		dlg.setVisible(true);
 	}
 

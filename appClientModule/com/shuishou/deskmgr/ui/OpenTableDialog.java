@@ -44,6 +44,9 @@ import com.shuishou.deskmgr.beans.Desk;
 import com.shuishou.deskmgr.beans.Dish;
 import com.shuishou.deskmgr.beans.HttpResult;
 import com.shuishou.deskmgr.http.HttpUtil;
+import com.shuishou.deskmgr.ui.components.JBlockedButton;
+import com.shuishou.deskmgr.ui.components.NumberInputDialog;
+import com.shuishou.deskmgr.ui.components.NumberTextField;
 
 public class OpenTableDialog extends JDialog {
 	private final Logger logger = Logger.getLogger(OpenTableDialog.class.getName());
@@ -51,10 +54,10 @@ public class OpenTableDialog extends JDialog {
 	private Desk desk;
 	
 	private JTextField tfSearchCode = new JTextField();
-	private JTextField tfCustomerAmount = new JTextField();
+	private NumberTextField tfCustomerAmount = new NumberTextField(this, false);
 	private JButton btnRemove = new JButton(Messages.getString("OpenTableDialog.RemoveDish"));
 	private JButton btnClose = new JButton(Messages.getString("CloseDialog"));
-	private JBlockedButton btnConfirm = new JBlockedButton(Messages.getString("OpenTableDialog.ConfirmOrder"));
+	private JBlockedButton btnConfirm = new JBlockedButton(Messages.getString("OpenTableDialog.ConfirmOrder"), null);
 	private JPanel pDishes = new JPanel(new FlowLayout(FlowLayout.LEFT));
 	private JList<ChoosedDish> listChoosedDish = new JList<>();
 	private DefaultListModel<ChoosedDish> listModelChoosedDish = new DefaultListModel<>();
@@ -157,15 +160,15 @@ public class OpenTableDialog extends JDialog {
 				doSearchDish();
 			}
 		});
-		tfCustomerAmount.addKeyListener(new KeyAdapter() {
-			public void keyTyped(KeyEvent e) {
-				char c = e.getKeyChar();
-				if (!((c >= '0') && (c <= '9'))) {
-					getToolkit().beep();
-					e.consume();
-				} 
-			}
-		});
+//		tfCustomerAmount.addKeyListener(new KeyAdapter() {
+//			public void keyTyped(KeyEvent e) {
+//				char c = e.getKeyChar();
+//				if (!((c >= '0') && (c <= '9'))) {
+//					getToolkit().beep();
+//					e.consume();
+//				} 
+//			}
+//		});
 		this.setSize(new Dimension(MainFrame.WINDOW_WIDTH, MainFrame.WINDOW_HEIGHT));
 		this.setLocation((int)(mainFrame.getWidth() / 2 - this.getWidth() /2 + mainFrame.getLocation().getX()), 
 				(int)(mainFrame.getHeight() / 2 - this.getHeight() / 2 + mainFrame.getLocation().getY()));
@@ -217,6 +220,9 @@ public class OpenTableDialog extends JDialog {
 			jo.put("amount", listModelChoosedDish.getElementAt(i).amount);
 			if (listModelChoosedDish.getElementAt(i).requirements != null)
 				jo.put("addtionalRequirements", listModelChoosedDish.getElementAt(i).requirements);
+			if (listModelChoosedDish.getElementAt(i).weight > 0){
+				jo.put("weight", listModelChoosedDish.getElementAt(i).weight+"");
+			}
 			ja.put(jo);
 		}
 		String url = "indent/makeindent";
@@ -226,7 +232,7 @@ public class OpenTableDialog extends JDialog {
 		params.put("deskid", desk.getId()+"");
 		params.put("customerAmount", tfCustomerAmount.getText());
 		String response = HttpUtil.getJSONObjectByPost(MainFrame.SERVER_URL + url, params, "UTF-8");
-		if (response == null){
+		if (response == null || response.length() == 0){
 			logger.error("get null from server while making order. URL = " + url + ", param = "+ params);
 			JOptionPane.showMessageDialog(this, "get null from server while making order. URL = " + url + ", param = "+ params);
 			return false;
@@ -252,6 +258,9 @@ public class OpenTableDialog extends JDialog {
 			jo.put("amount", listModelChoosedDish.getElementAt(i).amount);
 			if (listModelChoosedDish.getElementAt(i).requirements != null)
 				jo.put("addtionalRequirements", listModelChoosedDish.getElementAt(i).requirements);
+			if (listModelChoosedDish.getElementAt(i).weight > 0){
+				jo.put("weight", listModelChoosedDish.getElementAt(i).weight+"");
+			}
 			ja.put(jo);
 		}
 		String url = "indent/adddishtoindent";
@@ -259,7 +268,7 @@ public class OpenTableDialog extends JDialog {
 		params.put("indents", ja.toString());
 		params.put("deskid", desk.getId()+"");
 		String response = HttpUtil.getJSONObjectByPost(MainFrame.SERVER_URL + url, params, "UTF-8");
-		if (response == null){
+		if (response == null || response.length() == 0){
 			logger.error("get null from server while add dish to order. URL = " + url + ", param = "+ params);
 			JOptionPane.showMessageDialog(this, "get null from server while add dish to order. URL = " + url + ", param = "+ params);
 			return false;
@@ -282,12 +291,35 @@ public class OpenTableDialog extends JDialog {
 		pDishes.updateUI();
 	}
 	
+	/**
+	 * 点菜时优先判断chooseMode, 
+	 * 1. 需要弹出提示消息. 
+	 * 		这类不用特殊处理, 因为这个提示消息是给安卓端看的
+	 * 
+	 * 2. 需要选择subitem
+	 * 		弹出一个对话框, 强制选择subitem, 并将选中的subitem作为requirement记录到indentdetail里面, 然后将dish加入choose列表
+	 * 
+	 * 3. 普通类型
+	 * 		直接将dish加入choose列表即可
+	 * 
+	 * 把dish加入choose列表时, 判断是否要合并同类项
+	 * 1. 不需要合并
+	 * 		直接增加一个新的ChoosedDish即可
+	 * 		这里要判断购买类型
+	 * 
+	 * 2. 需要合并
+	 * 		查找列表中的同类项, 
+	 * 		如果找到, 根据购买类型, 如果是按份购买, 直接份数加一, 如果按重量购买, 需要弹出框, 输入重量, 并将该重量累加到之前购买的里面
+	 * 		如果未找到, 新加一条记录, 同时根据购买类型处理.
+	 * @param dish
+	 */
 	private void doDishButtonClick(Dish dish){
-		if (dish.getChoosePopInfo() != null){
+		if (dish.getChooseMode() == ConstantValue.DISH_CHOOSEMODE_POPINFOCHOOSE
+				|| dish.getChooseMode() == ConstantValue.DISH_CHOOSEMODE_POPINFOQUIT){
 			//do this type as normal
 		}
 		String requirements = null;
-		if (dish.getChooseSubItems() != null && !dish.getChooseSubItems().isEmpty()){
+		if (dish.getChooseMode() == ConstantValue.DISH_CHOOSEMODE_SUBITEM){
 			DishSubitemDialog dlg = new DishSubitemDialog(this, Messages.getString("OpenTableDialog.ChooseSubitem"), dish);
 			dlg.setVisible(true);
 			if (dlg.choosed == null || dlg.choosed.isEmpty()){
@@ -298,28 +330,37 @@ public class OpenTableDialog extends JDialog {
 				requirements += dlg.choosed.get(i).getChineseName();
 			}
 		}
+		//build a new ChoosedDish
+		ChoosedDish cd = new ChoosedDish();
+		cd.dish = dish;
+		cd.amount = 1;
+		cd.requirements = requirements;
+		if (dish.getPurchaseType() == ConstantValue.DISH_PURCHASETYPE_WEIGHT){
+			NumberInputDialog numdlg = new NumberInputDialog(this, "Input", Messages.getString("OpenTableDialog.InputWeight"), false);
+			numdlg.setVisible(true);
+			if (!numdlg.isConfirm)
+				return;
+			cd.weight = numdlg.inputDouble;
+		}
+		//判断是否要合同同类型, 如果需要合并, 再查找是否列表中已经存在, 存在的话, 再判断购买类型
 		if (dish.isAutoMergeWhileChoose()) {
 			boolean foundexist = false;
 			for (int i = 0; i < this.listModelChoosedDish.size(); i++) {
 				if (listModelChoosedDish.getElementAt(i).dish.getId() == dish.getId()) {
-					listModelChoosedDish.getElementAt(i).amount = listModelChoosedDish.getElementAt(i).amount + 1;
+					if (dish.getPurchaseType() == ConstantValue.DISH_PURCHASETYPE_UNIT){
+						listModelChoosedDish.getElementAt(i).amount = listModelChoosedDish.getElementAt(i).amount + 1;
+					} else if (dish.getPurchaseType() == ConstantValue.DISH_PURCHASETYPE_WEIGHT){
+						listModelChoosedDish.getElementAt(i).weight += cd.weight;
+					}
 					listChoosedDish.updateUI();
 					foundexist = true;
 					break;
 				}
 			}
 			if (!foundexist) {
-				ChoosedDish cd = new ChoosedDish();
-				cd.dish = dish;
-				cd.amount = 1;
-				cd.requirements = requirements;
 				listModelChoosedDish.addElement(cd);
 			}
 		} else {
-			ChoosedDish cd = new ChoosedDish();
-			cd.dish = dish;
-			cd.amount = 1;
-			cd.requirements = requirements;
 			listModelChoosedDish.addElement(cd);
 		}
 	}
@@ -386,6 +427,7 @@ public class OpenTableDialog extends JDialog {
 		public int amount;
 		public Dish dish;
 		public String requirements;
+		public double weight;
 	}
 	
 	class Category2Button extends JButton{

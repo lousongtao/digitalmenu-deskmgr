@@ -49,6 +49,7 @@ import com.shuishou.deskmgr.beans.HttpResult;
 import com.shuishou.deskmgr.beans.Indent;
 import com.shuishou.deskmgr.beans.IndentDetail;
 import com.shuishou.deskmgr.http.HttpUtil;
+import com.shuishou.deskmgr.ui.components.NumberInputDialog;
 
 public class ViewIndentDialog extends JDialog {
 	private final Logger logger = Logger.getLogger(CheckoutDialog.class.getName());
@@ -166,7 +167,7 @@ public class ViewIndentDialog extends JDialog {
 		params.put("operatetype", ConstantValue.INDENTDETAIL_OPERATIONTYPE_DELETE+"");
 		params.put("indentDetailId", tableModel.getObjectAt(row).getId()+"");
 		String response = HttpUtil.getJSONObjectByPost(MainFrame.SERVER_URL + url, params, "UTF-8");
-		if (response == null){
+		if (response == null || response.length() == 0){
 			logger.error("get null from server while delete indent detail. URL = " + url + ", param = "+ params);
 			JOptionPane.showMessageDialog(this, "get null from server while delete indent detail. URL = " + url + ", param = "+ params);
 			return;
@@ -187,16 +188,11 @@ public class ViewIndentDialog extends JDialog {
 		int row = tabIndentDetail.getSelectedRow();
 		if (row < 0)
 			return;
-		String inputvalue = JOptionPane.showInputDialog(this, Messages.getString("ViewIndentDialog.ChangeAmountMessage"));
-		if (inputvalue == null || inputvalue.length() == 0)
+		NumberInputDialog dlg = new NumberInputDialog(this, "input", Messages.getString("ViewIndentDialog.ChangeAmountMessage"), false);
+		dlg.setVisible(true);
+		if (!dlg.isConfirm)
 			return;
-		int newAmount = 0;
-		try{
-			newAmount = Integer.parseInt(inputvalue);
-		} catch(NumberFormatException e){
-			JOptionPane.showMessageDialog(this, Messages.getString("ViewIndentDialog.ErrorNumberInput"));
-			return;
-		}
+		int newAmount = dlg.inputInteger;
 		String url = "indent/operateindentdetail";
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("userId", mainFrame.getOnDutyUser().getId()+"");
@@ -204,7 +200,7 @@ public class ViewIndentDialog extends JDialog {
 		params.put("indentDetailId", tableModel.getObjectAt(row).getId()+"");
 		params.put("amount", newAmount+"");
 		String response = HttpUtil.getJSONObjectByPost(MainFrame.SERVER_URL + url, params, "UTF-8");
-		if (response == null){
+		if (response == null || response.length() == 0){
 			logger.error("get null from server while delete indent detail. URL = " + url + ", param = "+ params);
 			JOptionPane.showMessageDialog(this, "get null from server while delete indent detail. URL = " + url + ", param = "+ params);
 			return;
@@ -249,7 +245,12 @@ public class ViewIndentDialog extends JDialog {
 			case 3:
 				return d.getDishPrice();
 			case 4:
-				return d.getAdditionalRequirements();
+				String req = "";
+				if (d.getAdditionalRequirements() != null)
+					req += d.getAdditionalRequirements();
+				if (d.getWeight() > 0)
+					req += d.getWeight();
+				return req;
 			}
 			return "";
 		}

@@ -10,13 +10,24 @@ public class IndentDetail {
 	
 	private int amount;
 	
-	private double dishPrice;//µ¥¸ödish¼Û¸ñ, ²»¿¼ÂÇamount
+	private double dishPrice;//ï¿½ï¿½ï¿½ï¿½dishï¿½Û¸ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½amount
 	
 	private String dishChineseName;
 	
 	private String dishEnglishName;
 	
 	private String additionalRequirements;
+
+	private double weight;
+	
+	
+	public double getWeight() {
+		return weight;
+	}
+
+	public void setWeight(double weight) {
+		this.weight = weight;
+	}
 
 	public Indent getIndent() {
 		return indent;

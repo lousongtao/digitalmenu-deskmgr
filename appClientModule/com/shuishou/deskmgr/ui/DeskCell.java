@@ -19,7 +19,9 @@ import com.shuishou.deskmgr.beans.Indent;
 
 public class DeskCell extends JPanel {
 	
-	
+//	private Color colorUnselect = new Color(132,227,247);
+	private Color colorUnselect = new Color(201,255,255);
+	private Color colorSelect = new Color(209,210,255);
 	
 	private JLabel lbDeskNo = new JLabel();
 	
@@ -39,8 +41,10 @@ public class DeskCell extends JPanel {
 	
 	private int lastIndentId;//record the last indent on this table, to provide print ticket for customer
 
-	public DeskCell(Desk desk){
+	private MainFrame mainFrame;
+	public DeskCell(MainFrame mainFrame, Desk desk){
 		this.desk = desk;
+		this.mainFrame = mainFrame;
 		initUI();
 	}
 	
@@ -48,11 +52,8 @@ public class DeskCell extends JPanel {
 		this.setLayout(new GridLayout(0, 1));
 		lbDeskNo.setFont(ConstantValue.FONT_30BOLD);
 		lbDeskNo.setText(desk.getName());
-//		lbCustomerAmount.setFont(indentInfoFont);
-//		lbPrice.setFont(indentInfoFont);
-//		lbStartTime.setFont(indentInfoFont);
 		this.setBorder(BorderFactory.createLineBorder(Color.gray));
-//		this.setBorder(new EmptyBorder(10, 10, 10, 10));
+		setBackground(colorUnselect);
 		this.add(lbDeskNo);
 		
 		this.add(lbCustomerAmount);
@@ -60,16 +61,16 @@ public class DeskCell extends JPanel {
 		this.add(lbStartTime);
 		this.add(lbMergeTo);
 		
-		this.setBackground(Color.white);
 		this.addMouseListener(new MouseAdapter(){
 			public void mouseClicked(MouseEvent e){
-				if (isSelected){
-					isSelected = false;
-					DeskCell.this.setBackground(Color.white);
-				} else {
-					isSelected = true;
-					DeskCell.this.setBackground(new Color(132,227,247));
+				//unselect all first, then select this
+				for(DeskCell dc : mainFrame.getDeskcellList()){
+					dc.setSelected(false);
+//					dc.setBackground(Color.white);
+					dc.setBackground(colorUnselect);
 				}
+				isSelected = true;
+				DeskCell.this.setBackground(colorSelect);
 			}
 		});
 //		this.setSize(new Dimension(50, 50));

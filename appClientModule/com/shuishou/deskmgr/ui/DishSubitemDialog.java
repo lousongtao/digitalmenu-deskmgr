@@ -32,6 +32,7 @@ import com.shuishou.deskmgr.ConstantValue;
 import com.shuishou.deskmgr.Messages;
 import com.shuishou.deskmgr.beans.Dish;
 import com.shuishou.deskmgr.beans.DishChooseSubitem;
+import com.shuishou.deskmgr.ui.components.JBlockedButton;
 
 public class DishSubitemDialog extends JDialog {
 	private final Logger logger = Logger.getLogger(DishSubitemDialog.class.getName());
@@ -39,7 +40,7 @@ public class DishSubitemDialog extends JDialog {
 	private Dialog parent;
 	private JButton btnRemove = new JButton(Messages.getString("DishSubitemDialog.Remove"));
 	private JButton btnClose = new JButton(Messages.getString("CloseDialog"));
-	private JBlockedButton btnConfirm = new JBlockedButton(Messages.getString("DishSubitemDialog.Confirm"));
+	private JBlockedButton btnConfirm = new JBlockedButton(Messages.getString("DishSubitemDialog.Confirm"), null);
 	private JPanel pSubitems = new JPanel(new GridLayout(0, 3, 5, 5));
 	private JList<DishChooseSubitem> listChoosed = new JList<>();
 	private DefaultListModel<DishChooseSubitem> listModelChoosed = new DefaultListModel<>();
@@ -105,7 +106,7 @@ public class DishSubitemDialog extends JDialog {
 					return;
 				listModelChoosed.removeElementAt(listChoosed.getSelectedIndex());
 			}});
-		this.setSize(new Dimension(MainFrame.WINDOW_WIDTH, MainFrame.WINDOW_HEIGHT));
+		this.setSize(900, 400);
 		this.setLocation((int)(parent.getWidth() / 2 - this.getWidth() /2 + parent.getLocation().getX()), 
 				(int)(parent.getHeight() / 2 - this.getHeight() / 2 + parent.getLocation().getY()));
 	}

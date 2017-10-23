@@ -21,12 +21,13 @@ import com.shuishou.deskmgr.ConstantValue;
 import com.shuishou.deskmgr.Messages;
 import com.shuishou.deskmgr.beans.UserData;
 import com.shuishou.deskmgr.http.HttpUtil;
+import com.shuishou.deskmgr.ui.components.JBlockedButton;
 
 public class LoginDialog extends JDialog {
 
 	private JTextField tfName = new JTextField();
 	private JTextField tfPassword = new JTextField();
-	private JBlockedButton btnLogin = new JBlockedButton(Messages.getString("LoginDialog.LoginButton")); //$NON-NLS-1$
+	private JBlockedButton btnLogin = new JBlockedButton(Messages.getString("LoginDialog.LoginButton"),"/resource/login.png"); //$NON-NLS-1$
 	private String loginURL = "login";
 	private MainFrame mainFrame;
 	public LoginDialog(MainFrame mainFrame){
@@ -65,7 +66,7 @@ public class LoginDialog extends JDialog {
 		params.put("username", tfName.getText());
 		params.put("password", tfPassword.getText());
 		String response = HttpUtil.getJSONObjectByPost(MainFrame.SERVER_URL + "login", params, "UTF-8");
-		if (response == null){
+		if (response == null || response.length() == 0){
 			JOptionPane.showMessageDialog(mainFrame, "cannot connect with server");
 			return;
 		}

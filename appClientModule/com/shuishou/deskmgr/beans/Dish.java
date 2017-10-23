@@ -56,7 +56,17 @@ public class Dish implements Serializable{
 	//set whether merge to one record while customer choose this dish more than one time
 	private boolean autoMergeWhileChoose = true;
 
-    public Dish(){
+	private int purchaseType = ConstantValue.DISH_PURCHASETYPE_UNIT;
+	
+    public int getPurchaseType() {
+		return purchaseType;
+	}
+
+	public void setPurchaseType(int purchaseType) {
+		this.purchaseType = purchaseType;
+	}
+
+	public Dish(){
 
     }
 
