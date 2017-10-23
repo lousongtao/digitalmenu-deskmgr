@@ -102,6 +102,7 @@ public class ViewIndentDialog extends JDialog {
 //		};
 		tableModel = new IndentDetailModel(indent.getItems());
 		tabIndentDetail.setModel(tableModel);
+		tabIndentDetail.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		tabIndentDetail.setRowHeight(50);
 		tabIndentDetail.getColumnModel().getColumn(0).setPreferredWidth(120);
 		tabIndentDetail.getColumnModel().getColumn(1).setPreferredWidth(120);
