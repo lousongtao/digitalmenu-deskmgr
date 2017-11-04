@@ -123,8 +123,8 @@ public class ChangeDeskDialog extends JDialog {
 		}
 		HttpResult<Integer> result = new Gson().fromJson(response, new TypeToken<HttpResult<Integer>>(){}.getType());
 		if (!result.success){
-			logger.error("return false while changing tables. URL = " + url);
-			JOptionPane.showMessageDialog(this, "return false while changing tables. URL = " + url);
+			logger.error("return false while changing tables. URL = " + url + ", response = "+response);
+			JOptionPane.showMessageDialog(this, "return false while changing tables. URL = " + url + ", response = "+response);
 			return;
 		}
 		mainFrame.loadCurrentIndentInfo();

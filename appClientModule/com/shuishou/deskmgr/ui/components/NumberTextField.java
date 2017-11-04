@@ -44,28 +44,11 @@ public class NumberTextField extends JFormattedTextField{
 				}
 			}
 		});
-//		addFocusListener(new FocusListener(){
+//		addFocusListener(new FocusAdapter(){
 //
 //			@Override
 //			public void focusGained(FocusEvent e) {
-//				System.out.println("start focus gained");
 //				keyboard.setVisible(true);
-//				System.out.println("end focus gained");
-//			}
-//
-//			@Override
-//			public void focusLost(FocusEvent e) {
-//				System.out.println("start focus lost");
-//				//if the component gaining focus is keyboard, do nothing
-//				//if not, hide the keyboard
-////				keyboard.setVisible(false);
-////				if (keyboard.focus)
-////				
-////				System.out.println(this);
-//				System.out.println("keyboard.hasFocus " + keyboard.hasFocus() + ", keyboard.isVisible "+ keyboard.isVisible());
-//				System.out.println(keyboard.getFocusOwner());
-//				System.out.println(KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner());
-//				System.out.println(keyboard.isGainFocused());
 //			}});
 	}
 }

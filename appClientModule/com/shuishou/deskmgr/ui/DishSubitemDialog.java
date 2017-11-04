@@ -127,7 +127,7 @@ public class DishSubitemDialog extends JDialog {
 		private final DishChooseSubitem item;
 		public SubitemButton(DishChooseSubitem _item){
 			this.item = _item;
-			if ("cn".equals(MainFrame.language)){
+			if (ConstantValue.LANGUAGE_CHINESE.equals(MainFrame.language)){
 				this.setText(item.getChineseName());
 			} else {
 				this.setText(item.getEnglishName());
@@ -162,7 +162,7 @@ public class DishSubitemDialog extends JDialog {
 	        }
 			DishChooseSubitem item = (DishChooseSubitem)value;
 			String txt = item.getChineseName();
-			if ("en".equals(MainFrame.language)){
+			if (ConstantValue.LANGUAGE_ENGLISH.equals(MainFrame.language)){
 				item.getEnglishName();
 			}
 			if (txt.length() > 20)

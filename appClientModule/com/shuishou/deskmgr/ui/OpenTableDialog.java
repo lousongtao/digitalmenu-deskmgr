@@ -1,3 +1,4 @@
+
 package com.shuishou.deskmgr.ui;
 
 import java.awt.BorderLayout;
@@ -219,7 +220,7 @@ public class OpenTableDialog extends JDialog {
 			jo.put("id", listModelChoosedDish.getElementAt(i).dish.getId());
 			jo.put("amount", listModelChoosedDish.getElementAt(i).amount);
 			if (listModelChoosedDish.getElementAt(i).requirements != null)
-				jo.put("addtionalRequirements", listModelChoosedDish.getElementAt(i).requirements);
+				jo.put("additionalRequirements", listModelChoosedDish.getElementAt(i).requirements);
 			if (listModelChoosedDish.getElementAt(i).weight > 0){
 				jo.put("weight", listModelChoosedDish.getElementAt(i).weight+"");
 			}
@@ -227,7 +228,7 @@ public class OpenTableDialog extends JDialog {
 		}
 		String url = "indent/makeindent";
 		Map<String, String> params = new HashMap<String, String>();
-		params.put("confirmCode", mainFrame.getConfirmCode());
+		params.put("confirmCode", mainFrame.getConfigsMap().get(ConstantValue.CONFIGS_CONFIRMCODE));
 		params.put("indents", ja.toString());
 		params.put("deskid", desk.getId()+"");
 		params.put("customerAmount", tfCustomerAmount.getText());
@@ -239,8 +240,8 @@ public class OpenTableDialog extends JDialog {
 		}
 		HttpResult<Integer> result = new Gson().fromJson(response, new TypeToken<HttpResult<Integer>>(){}.getType());
 		if (!result.success){
-			logger.error("return false while making order. URL = " + url);
-			JOptionPane.showMessageDialog(this, "return false while making order. URL = " + url);
+			logger.error("return false while making order. URL = " + url + ", response = "+response);
+			JOptionPane.showMessageDialog(this, "return false while making order. URL = " + url + ", response = "+response);
 			return false;
 		}
 		return true;
@@ -257,7 +258,7 @@ public class OpenTableDialog extends JDialog {
 			jo.put("id", listModelChoosedDish.getElementAt(i).dish.getId());
 			jo.put("amount", listModelChoosedDish.getElementAt(i).amount);
 			if (listModelChoosedDish.getElementAt(i).requirements != null)
-				jo.put("addtionalRequirements", listModelChoosedDish.getElementAt(i).requirements);
+				jo.put("additionalRequirements", listModelChoosedDish.getElementAt(i).requirements);
 			if (listModelChoosedDish.getElementAt(i).weight > 0){
 				jo.put("weight", listModelChoosedDish.getElementAt(i).weight+"");
 			}
@@ -275,8 +276,8 @@ public class OpenTableDialog extends JDialog {
 		}
 		HttpResult<Integer> result = new Gson().fromJson(response, new TypeToken<HttpResult<Integer>>(){}.getType());
 		if (!result.success){
-			logger.error("return false while add dish to order. URL = " + url);
-			JOptionPane.showMessageDialog(this, "return false while add dish to order. URL = " + url);
+			logger.error("return false while add dish to order. URL = " + url + ", response = "+response);
+			JOptionPane.showMessageDialog(this, "return false while add dish to order. URL = " + url + ", response = "+response);
 			return false;
 		}
 		return true;
@@ -366,33 +367,6 @@ public class OpenTableDialog extends JDialog {
 	}
 	
 	
-	
-	class SearchResultRenderer extends JPanel implements ListCellRenderer{
-		private JLabel lb= new JLabel();
-		public SearchResultRenderer(){
-			setLayout(new BorderLayout());
-			add(lb, BorderLayout.CENTER);
-		}
-
-		@Override
-		public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
-				boolean cellHasFocus) {
-			if (isSelected) {
-	            setBackground(list.getSelectionBackground());
-	            setForeground(list.getSelectionForeground());
-	        } else {
-	            setBackground(list.getBackground());
-	            setForeground(list.getForeground());
-	        }
-			Dish dish = (Dish)value;
-			String txt = dish.getChineseName() + "/" + dish.getEnglishName();
-			lb.setText(txt);
-			return this;
-		}
-		
-	}
-	
-	
 	class ChoosedDishRenderer extends JPanel implements ListCellRenderer{
 		private JLabel lbDish = new JLabel();
 		private JLabel lbAmount = new JLabel();
@@ -413,9 +387,11 @@ public class OpenTableDialog extends JDialog {
 	        }
 			ChoosedDish cd = (ChoosedDish)value;
 			Dish dish = cd.dish;
-			String txt = dish.getChineseName() + "/" + dish.getEnglishName();
-			if (txt.length() > 20)
-				txt = txt.substring(0, 20) + "...";
+			String txt = dish.getChineseName();
+			if (mainFrame.language.equals(ConstantValue.LANGUAGE_ENGLISH))
+				dish.getEnglishName();
+			if (txt.length() > 17)
+				txt = txt.substring(0, 17) + "...";
 			lbDish.setText(txt);
 			lbAmount.setText(cd.amount+"");
 			return this;
@@ -434,7 +410,7 @@ public class OpenTableDialog extends JDialog {
 		private final Category2 c2;
 		public Category2Button(Category2 category2){
 			this.c2 = category2;
-			if ("cn".equals(MainFrame.language)){
+			if (ConstantValue.LANGUAGE_CHINESE.equals(MainFrame.language)){
 				this.setText(c2.getChineseName());
 			} else {
 				this.setText(c2.getEnglishName());
@@ -448,15 +424,16 @@ public class OpenTableDialog extends JDialog {
 				}
 				
 			});
-			this.setPreferredSize(new Dimension(200, 50));
+			this.setPreferredSize(buttonsize);
 		}
 	}
 	
 	class DishButton extends JButton{
 		private final Dish dish;
+		
 		public DishButton(Dish d){
 			dish = d;
-			if ("cn".equals(MainFrame.language)){
+			if (ConstantValue.LANGUAGE_CHINESE.equals(MainFrame.language)){
 				this.setText(d.getChineseName());
 			} else {
 				this.setText(d.getEnglishName());
@@ -470,7 +447,8 @@ public class OpenTableDialog extends JDialog {
 				}
 				
 			});
-			this.setPreferredSize(new Dimension(200, 50));
+			this.setPreferredSize(buttonsize);
 		}
 	}
+	private final static Dimension buttonsize = new Dimension(180, 50);
 }

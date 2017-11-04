@@ -5,6 +5,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
 public class ConstantValue {
+	public static final DateFormat DFYMDHM = new SimpleDateFormat("yyyy/MM/dd HH:mm");
 	public static final DateFormat DFYMDHMS = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 	public static final DateFormat DFHMS = new SimpleDateFormat("HH:mm:ss");
 	public static final DateFormat DFYMD = new SimpleDateFormat("yyyy/MM/dd");
@@ -13,6 +14,9 @@ public class ConstantValue {
 	public static final Font FONT_30PLAIN = new Font(null, Font.PLAIN, 30);	
 	public static final Font FONT_20BOLD = new Font(null, Font.BOLD, 20);
 	public static final Font FONT_20PLAIN = new Font(null, Font.PLAIN, 20);
+	
+	public static final String LANGUAGE_CHINESE = "cn";
+	public static final String LANGUAGE_ENGLISH = "en";
 	
 	public static final String PERMISSION_QUERY_USER = "QUERY_USER";
 	public static final String PERMISSION_CREATE_USER = "CREATE_USER";
@@ -53,9 +57,9 @@ public class ConstantValue {
 	public static final byte INDENT_OPERATIONTYPE_PAY = 4;
 	
 	//付款方式
-	public static final byte INDENT_PAYWAY_CASH = 1;//现金
-	public static final byte INDENT_PAYWAY_CARD = 2;//刷卡
-	public static final byte INDENT_PAYWAY_MEMBER = 3;//会员
+	public static final String INDENT_PAYWAY_CASH = "cash";//现金
+	public static final String INDENT_PAYWAY_BANKCARD = "bankcard";//刷卡
+	public static final String INDENT_PAYWAY_MEMBER = "member";//会员
 	
 	public static final byte INDENTDETAIL_OPERATIONTYPE_ADD = 1;
 	public static final byte INDENTDETAIL_OPERATIONTYPE_DELETE = 2;
@@ -76,4 +80,13 @@ public class ConstantValue {
 	
 	public static final byte DISH_PURCHASETYPE_UNIT = 1;
 	public static final byte DISH_PURCHASETYPE_WEIGHT = 2;
+	
+
+	public static final String CONFIGS_CONFIRMCODE = "CONFIRMCODE";
+	public static final String CONFIGS_OPENCASHDRAWERCODE = "OPENCASHDRAWERCODE";
+	public static final String CONFIGS_LANGUAGEAMOUNT = "LANGUAGEAMOUNT";
+	public static final String CONFIGS_FIRSTLANGUAGENAME= "FIRSTLANGUAGENAME";
+	public static final String CONFIGS_FIRSTLANGUAGEABBR = "FIRSTLANGUAGEABBR";
+	public static final String CONFIGS_SECONDLANGUAGENAME= "SECONDLANGUAGENAME";
+	public static final String CONFIGS_SECONDLANGUAGEABBR = "SECONDLANGUAGEABBR";
 }

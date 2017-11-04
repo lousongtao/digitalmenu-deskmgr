@@ -1,29 +1,17 @@
 package com.shuishou.deskmgr.beans;
 
 
-public class Desk {
+public class PayWay {
+
 	private int id;
 	
 	private String name;
 	
-	private String mergeTo;
+	public PayWay(){}
 	
-	private int sequence;
-	
-	public Desk(){}
-	
-	public Desk(int id, String name){
+	public PayWay(int id, String name){
 		this.id = id;
 		this.name = name;
-	}
-	
-
-	public String getMergeTo() {
-		return mergeTo;
-	}
-
-	public void setMergeTo(String mergeTo) {
-		this.mergeTo = mergeTo;
 	}
 
 	public int getId() {
@@ -34,6 +22,7 @@ public class Desk {
 		this.id = id;
 	}
 
+
 	public String getName() {
 		return name;
 	}
@@ -42,17 +31,9 @@ public class Desk {
 		this.name = name;
 	}
 
-	public int getSequence() {
-		return sequence;
-	}
-
-	public void setSequence(int sequence) {
-		this.sequence = sequence;
-	}
-
 	@Override
 	public String toString() {
-		return "Desk [name=" + name + "]";
+		return "PayWay [name=" + name + "]";
 	}
 
 	@Override
@@ -71,7 +52,7 @@ public class Desk {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Desk other = (Desk) obj;
+		PayWay other = (PayWay) obj;
 		if (name == null) {
 			if (other.name != null)
 				return false;
@@ -79,4 +60,6 @@ public class Desk {
 			return false;
 		return true;
 	}
+	
+	
 }

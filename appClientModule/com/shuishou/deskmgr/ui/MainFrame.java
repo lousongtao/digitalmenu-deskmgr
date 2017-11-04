@@ -3,6 +3,7 @@ package com.shuishou.deskmgr.ui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -60,6 +61,7 @@ import com.shuishou.deskmgr.beans.DiscountTemplate;
 import com.shuishou.deskmgr.beans.Dish;
 import com.shuishou.deskmgr.beans.HttpResult;
 import com.shuishou.deskmgr.beans.Indent;
+import com.shuishou.deskmgr.beans.PayWay;
 import com.shuishou.deskmgr.beans.UserData;
 import com.shuishou.deskmgr.http.HttpUtil;
 import com.shuishou.deskmgr.ui.components.IconButton;
@@ -87,8 +89,9 @@ public class MainFrame extends JFrame implements ActionListener{
 	private JPanel pDeskArea = null;
 	private JLabel lbStatusLogin = new JLabel();
 	private JLabel lbStatusDesks = new JLabel();
+	private JLabel lbCurrentTime = new JLabel();
 	private IconButton btnOpenDesk = new IconButton(Messages.getString("MainFrame.OpenDesk"), "/resource/opentable.png"); //$NON-NLS-1$
-	private IconButton btnAddDish = new IconButton(Messages.getString("MainFrame.AddDish"), "/resource/adddish.png"); //$NON-NLS-1$
+//	private IconButton btnAddDish = new IconButton(Messages.getString("MainFrame.AddDish"), "/resource/adddish.png"); //$NON-NLS-1$
 	private IconButton btnViewIndent = new IconButton(Messages.getString("MainFrame.ViewIndent"), "/resource/viewindent.png"); //$NON-NLS-1$
 	private IconButton btnCheckout = new IconButton(Messages.getString("MainFrame.Checkout"), "/resource/pay.png"); //$NON-NLS-1$
 	private IconButton btnChangeDesk = new IconButton(Messages.getString("MainFrame.ChangeDesk"), "/resource/changedesk.png"); //$NON-NLS-1$
@@ -98,21 +101,25 @@ public class MainFrame extends JFrame implements ActionListener{
 	private IconButton btnPrintTicket = new IconButton(Messages.getString("MainFrame.PrintTicket"), "/resource/printer.png"); //$NON-NLS-1$
 	private IconButton btnShiftWork = new IconButton(Messages.getString("MainFrame.ShiftWork"), "/resource/swiftwork.png"); //$NON-NLS-1$
 	private JBlockedButton btnRefresh = new JBlockedButton(Messages.getString("MainFrame.Refresh"), "/resource/refresh.png"); //$NON-NLS-1$
+	private IconButton btnMaintainMenu = new IconButton(Messages.getString("MainFrame.MaintainMenu"), "/resource/viewindent.png"); //$NON-NLS-1$
 	
 	private ArrayList<Desk> deskList = new ArrayList<>();
 	private ArrayList<DiscountTemplate> discountTemplateList = new ArrayList<>(); 
+	private ArrayList<PayWay> paywayList = new ArrayList<>(); 
 	private ArrayList<DeskCell> deskcellList = new ArrayList<>();
 	private ArrayList<Category1> category1List = new ArrayList<>();
 //	private UserData loginUser = null;
 	private UserData onDutyUser = null;//在值班状态用户名称
-	private String confirmCode = null;
-	
+//	private String confirmCode = null;
+//	private String openCashdrawerCode = null;
+	private HashMap<String, String> configsMap;
 	private Gson gson = new Gson();
 	private int gapButtons = 5; // the gap between buttons for top
 	
 	
 	public MainFrame(){
 		initUI();
+		initData();
 		setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
 		setLocation(WINDOW_LOCATIONX, WINDOW_LOCATIONY);
 		setTitle(Messages.getString("MainFrame.FrameTitle")); //$NON-NLS-1$
@@ -126,6 +133,14 @@ public class MainFrame extends JFrame implements ActionListener{
 
 	public void setDiscountTemplateList(ArrayList<DiscountTemplate> discountTemplateList) {
 		this.discountTemplateList = discountTemplateList;
+	}
+
+	public ArrayList<PayWay> getPaywayList() {
+		return paywayList;
+	}
+
+	public void setPaywayList(ArrayList<PayWay> paywayList) {
+		this.paywayList = paywayList;
 	}
 
 	public void startLogin(){
@@ -145,7 +160,7 @@ public class MainFrame extends JFrame implements ActionListener{
 		int row = 0;
 		Insets insets = new Insets(gapButtons,0,0,0);
 		pFunction.add(btnOpenDesk, 	new GridBagConstraints(0, row++, 1, 1,1,1, GridBagConstraints.WEST, GridBagConstraints.BOTH, insets,0,0));
-		pFunction.add(btnAddDish, 	new GridBagConstraints(0, row++, 1, 1,1,1, GridBagConstraints.WEST, GridBagConstraints.BOTH, insets,0,0));
+//		pFunction.add(btnAddDish, 	new GridBagConstraints(0, row++, 1, 1,1,1, GridBagConstraints.WEST, GridBagConstraints.BOTH, insets,0,0));
 		pFunction.add(btnViewIndent, 	new GridBagConstraints(0, row++, 1, 1,1,1, GridBagConstraints.WEST, GridBagConstraints.BOTH, insets,0,0));
 		pFunction.add(btnCheckout, 	new GridBagConstraints(0, row++, 1, 1,1,1, GridBagConstraints.WEST, GridBagConstraints.BOTH, insets,0,0));
 		pFunction.add(btnChangeDesk, 	new GridBagConstraints(0, row++, 1, 1,1,1, GridBagConstraints.WEST, GridBagConstraints.BOTH, insets,0,0));
@@ -155,10 +170,11 @@ public class MainFrame extends JFrame implements ActionListener{
 		pFunction.add(btnRefresh, 	new GridBagConstraints(0, row++, 1, 1,1,1, GridBagConstraints.WEST, GridBagConstraints.BOTH, insets,0,0));
 		pFunction.add(btnShiftWork, new GridBagConstraints(0, row++, 1, 1,1,1, GridBagConstraints.WEST, GridBagConstraints.BOTH, insets,0,0));
 		pFunction.add(btnOpenCashdrawer, new GridBagConstraints(0, row++, 1, 1,1,1, GridBagConstraints.WEST, GridBagConstraints.BOTH, insets,0,0));
+		pFunction.add(btnMaintainMenu, new GridBagConstraints(0, row++, 1, 1,1,1, GridBagConstraints.WEST, GridBagConstraints.BOTH, insets,0,0));
 		pFunction.setPreferredSize(new Dimension(180, 0));
 		
 		btnOpenDesk.addActionListener(this);
-		btnAddDish.addActionListener(this);
+		btnMaintainMenu.addActionListener(this);
 		btnViewIndent.addActionListener(this);
 		btnCheckout.addActionListener(this);
 		btnOpenCashdrawer.addActionListener(this);
@@ -169,26 +185,29 @@ public class MainFrame extends JFrame implements ActionListener{
 		btnRefresh.addActionListener(this);
 		btnShiftWork.addActionListener(this);
 		
-		JPanel pStatus = new JPanel(new GridLayout(1, 2, 2, 0));
-		pStatus.add(lbStatusLogin);
 		lbStatusLogin.setBorder(BorderFactory.createLineBorder(Color.gray));
-		pStatus.add(lbStatusDesks);
 		lbStatusDesks.setBorder(BorderFactory.createLineBorder(Color.gray));
+		lbCurrentTime.setBorder(BorderFactory.createLineBorder(Color.gray));
+		JPanel pStatus = new JPanel(new GridBagLayout());
+		pStatus.add(lbStatusLogin, new GridBagConstraints(0, 0, 1, 1,3,1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0,0,0,0),0,0));
+		pStatus.add(lbStatusDesks, new GridBagConstraints(1, 0, 1, 1,1,1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0,3,0,0),0,0));
+		pStatus.add(lbCurrentTime, new GridBagConstraints(2, 0, 1, 1,1,1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0,3,0,0),0,0));
 		
 		this.getContentPane().setLayout(new BorderLayout(5, 5));
 		this.getContentPane().add(jspDeskArea, BorderLayout.CENTER);
 		this.getContentPane().add(pFunction, BorderLayout.EAST);
 		this.getContentPane().add(pStatus, BorderLayout.SOUTH);
-		
+	}
+	
+	private void initData(){
 		loadDesks();
 		loadShiftDutyInfo();
 		loadDiscountTemplates();
 		loadMenu();
-		loadConfirmCode();
+		loadConfigsMap();
+		loadPayWay();
 		initRefreshTimer();
 		buildDeskCells();
-//		loadCurrentIndentInfo();
-		
 	}
 	
 	private void initRefreshTimer(){
@@ -198,6 +217,8 @@ public class MainFrame extends JFrame implements ActionListener{
 			@Override
 			public void run() {
 				loadCurrentIndentInfo();
+				//refresh time
+				lbCurrentTime.setText(ConstantValue.DFYMDHM.format(new Date()));
 			}}, 0, 60*1000);
 	}
 	
@@ -214,28 +235,28 @@ public class MainFrame extends JFrame implements ActionListener{
 		}
 		HttpResult<ArrayList<Category1>> result = gson.fromJson(response, new TypeToken<HttpResult<ArrayList<Category1>>>(){}.getType());
 		if (!result.success){
-			logger.error("return false while loading menu. URL = " + url);
-			JOptionPane.showMessageDialog(this, "return false while loading menu. URL = " + url);
+			logger.error("return false while loading menu. URL = " + url + ", response = "+response);
+			JOptionPane.showMessageDialog(this, "return false while loading menu. URL = " + url + ", response = "+response);
 			return;
 		}
 		category1List = result.data;
 	}
 	
-	private void loadConfirmCode(){
-		String url = "common/getconfirmcode";
+	private void loadConfigsMap(){
+		String url = "common/queryconfigmap";
 		String response = HttpUtil.getJSONObjectByGet(SERVER_URL + url);
 		if (response == null){
-			logger.error("get null from server for getting confirm code. URL = " + url);
-			JOptionPane.showMessageDialog(this, "get null from server for getting confirm code. URL = " + url);
+			logger.error("get null from server for loading configs. URL = " + url);
+			JOptionPane.showMessageDialog(this, "get null from server for loading configs. URL = " + url);
 			return;
 		}
-		HttpResult<String> result = gson.fromJson(response, new TypeToken<HttpResult<String>>(){}.getType());
+		HttpResult<HashMap<String, String>> result = new Gson().fromJson(response, new TypeToken<HttpResult<HashMap<String, String>>>(){}.getType());
 		if (!result.success){
-			logger.error("return false while getting confirm code. URL = " + url);
-			JOptionPane.showMessageDialog(this, "return false while getting confirm code. URL = " + url);
+			logger.error("return false while loading configs. URL = " + url + ", response = "+response);
+			JOptionPane.showMessageDialog(this, "return false while loading configs. URL = " + url + ", response = "+response);
 			return;
 		}
-		confirmCode = result.data;
+		configsMap = result.data;	
 	}
 	
 	private void loadShiftDutyInfo(){
@@ -248,8 +269,8 @@ public class MainFrame extends JFrame implements ActionListener{
 		}
 		HttpResult<CurrentDutyInfo> result = gson.fromJson(response, new TypeToken<HttpResult<CurrentDutyInfo>>(){}.getType());
 		if (!result.success){
-			logger.error("return false while get duty employee info. URL = " + url);
-			JOptionPane.showMessageDialog(this, "return false while get duty employee info. URL = " + url);
+			logger.error("return false while get duty employee info. URL = " + url + ", response = "+response);
+			JOptionPane.showMessageDialog(this, "return false while get duty employee info. URL = " + url + ", response = "+response);
 			return;
 		}
 		if (result.data != null && result.data.currentDutyId > 0){
@@ -276,12 +297,30 @@ public class MainFrame extends JFrame implements ActionListener{
 		}
 		HttpResult<ArrayList<DiscountTemplate>> result = gson.fromJson(response, new TypeToken<HttpResult<ArrayList<DiscountTemplate>>>(){}.getType());
 		if (!result.success){
-			logger.error("return false while get discount templates. URL = " + url);
-			JOptionPane.showMessageDialog(this, "return false while get discount templates. URL = " + url);
+			logger.error("return false while get discount templates. URL = " + url + ", response = "+response);
+			JOptionPane.showMessageDialog(this, "return false while get discount templates. URL = " + url + ", response = "+response);
 			return;
 		}
 		discountTemplateList.clear();
 		discountTemplateList.addAll(result.data);
+	}
+	
+	private void loadPayWay(){
+		String url = "common/getpayways";
+		String response = HttpUtil.getJSONObjectByGet(SERVER_URL + url);
+		if (response == null){
+			logger.error("get null from server for pay way. URL = " + url);
+			JOptionPane.showMessageDialog(this, "get null from server for pay way. URL = " + url);
+			return;
+		}
+		HttpResult<ArrayList<PayWay>> result = gson.fromJson(response, new TypeToken<HttpResult<ArrayList<PayWay>>>(){}.getType());
+		if (!result.success){
+			logger.error("return false while get pay way. URL = " + url + ", response = "+response);
+			JOptionPane.showMessageDialog(this, "return false while get pay way. URL = " + url + ", response = "+response);
+			return;
+		}
+		paywayList.clear();
+		paywayList.addAll(result.data);
 	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -310,18 +349,12 @@ public class MainFrame extends JFrame implements ActionListener{
 		}
 		HttpResult<ArrayList<Desk>> result = gson.fromJson(response, new TypeToken<HttpResult<ArrayList<Desk>>>(){}.getType());
 		if (!result.success){
-			logger.error("return false while get desks. URL = " + url);
-			JOptionPane.showMessageDialog(this, "return false while get desks. URL = " + url);
+			logger.error("return false while get desks. URL = " + url + ", response = "+response);
+			JOptionPane.showMessageDialog(this, "return false while get desks. URL = " + url + ", response = "+response);
 			return;
 		}
 		deskList.clear();
 		deskList.addAll(result.data);
-		Collections.sort(deskList, new Comparator(){
-
-			@Override
-			public int compare(Object o1, Object o2) {
-				return ((Desk)o1).getId() - ((Desk)o2).getId();
-			}});
 		//rebind desk objects to deskcell objects
 		for(DeskCell dc : deskcellList){
 			for(Desk desk: deskList){
@@ -351,8 +384,8 @@ public class MainFrame extends JFrame implements ActionListener{
 		Gson gson = new GsonBuilder().setDateFormat("yyyy/MM/dd HH:mm:ss").create();
 		HttpResult<ArrayList<Indent>> result = gson.fromJson(response, new TypeToken<HttpResult<ArrayList<Indent>>>(){}.getType());
 		if (!result.success){
-			logger.error("return false while get desks with indents. URL = " + url);
-			JOptionPane.showMessageDialog(this, "return false while get desks with indents. URL = " + url);
+			logger.error("return false while get desks with indents. URL = " + url + ", response = "+response);
+			JOptionPane.showMessageDialog(this, "return false while get desks with indents. URL = " + url + ", response = "+response);
 			return;
 		}
 		for (int i = 0; i < deskcellList.size(); i++) {
@@ -399,8 +432,8 @@ public class MainFrame extends JFrame implements ActionListener{
 		}
 		HttpResult<CurrentDutyInfo> result = gson.fromJson(response, new TypeToken<HttpResult<CurrentDutyInfo>>(){}.getType());
 		if (!result.success){
-			logger.error("return false while starting shiftwork. URL = " + url);
-			JOptionPane.showMessageDialog(this, "return false while starting shiftwork. URL = " + url);
+			logger.error("return false while starting shiftwork. URL = " + url + ", response = "+response);
+			JOptionPane.showMessageDialog(this, "return false while starting shiftwork. URL = " + url + ", response = "+response);
 			return;
 		}
 		Date startTime = null;
@@ -428,8 +461,8 @@ public class MainFrame extends JFrame implements ActionListener{
 		}
 		HttpResult<CurrentDutyInfo> result = gson.fromJson(response, new TypeToken<HttpResult<CurrentDutyInfo>>(){}.getType());
 		if (!result.success){
-			logger.error("return false while end shiftwork. URL = " + url);
-			JOptionPane.showMessageDialog(this, "return false while end shiftwork. URL = " + url);
+			logger.error("return false while end shiftwork. URL = " + url + ", response = "+response);
+			JOptionPane.showMessageDialog(this, "return false while end shiftwork. URL = " + url + ", response = "+response);
 			return;
 		}
 		
@@ -498,8 +531,8 @@ public class MainFrame extends JFrame implements ActionListener{
 		}
 		HttpResult<String> result = gson.fromJson(response, new TypeToken<HttpResult<String>>(){}.getType());
 		if (!result.success){
-			logger.error("return false while clean table. URL = " + url);
-			JOptionPane.showMessageDialog(this, "return false while clean table. URL = " + url);
+			logger.error("return false while clean table. URL = " + url + ", response = "+response);
+			JOptionPane.showMessageDialog(this, "return false while clean table. URL = " + url + ", response = "+response);
 			return;
 		}
 		loadCurrentIndentInfo();
@@ -592,8 +625,8 @@ public class MainFrame extends JFrame implements ActionListener{
 			doCheckout();
 		} else if (e.getSource() == btnOpenDesk){
 			doOpenDesk();
-		} else if (e.getSource() == btnAddDish){
-			doAddDish();
+		} else if (e.getSource() == btnMaintainMenu){
+			doMaintainMenu();
 		} else if (e.getSource() == btnViewIndent){
 			doViewIndent();
 		} else if (e.getSource() == btnPrintTicket){
@@ -609,11 +642,21 @@ public class MainFrame extends JFrame implements ActionListener{
 		} else if (e.getSource() == btnChangeDesk){
 			doChangeDesk();
 		} else if (e.getSource() == btnOpenCashdrawer){
-			doOpenCashdrawer();
+			doOpenCashdrawer(true);
 		}
 	}
 	
-	public void doOpenCashdrawer(){
+	public void doOpenCashdrawer(boolean needpassword){
+		if (needpassword){
+			String code = JOptionPane.showInputDialog(this, Messages.getString("MainFrame.InputCodeOfOpenCashdrawer"));
+			if (code == null)
+				return;
+			if (!configsMap.get(ConstantValue.CONFIGS_OPENCASHDRAWERCODE).equals(code)){
+				JOptionPane.showMessageDialog(this, Messages.getString("MainFrame.ErrorCashdrawerCode"));
+				return;
+			}
+		}
+		
 		if (outputStreamCashdrawer == null){
 			Enumeration portList = CommPortIdentifier.getPortIdentifiers();
 			while (portList.hasMoreElements()) {
@@ -671,28 +714,17 @@ public class MainFrame extends JFrame implements ActionListener{
 		DeskCell selectDC = getSelectedDesk();
 		if (selectDC == null)
 			return;
-		if (selectDC.getIndent() != null){
-			JOptionPane.showMessageDialog(this, Messages.getString("MainFrame.TableIsUsed"), Messages.getString("MainFrame.Error"), JOptionPane.YES_OPTION); //$NON-NLS-1$ //$NON-NLS-2$
-			return;
-		}
 		if (selectDC.getDesk().getMergeTo() != null){
 			JOptionPane.showMessageDialog(this, Messages.getString("MainFrame.TableIsUsed"), Messages.getString("MainFrame.Error"), JOptionPane.YES_OPTION); //$NON-NLS-1$ //$NON-NLS-2$
 			return;
 		}
-		OpenTableDialog dlg = new OpenTableDialog(this, Messages.getString("MainFrame.OpenDesk"), true, selectDC.getDesk(), OpenTableDialog.MAKENEWORDER); //$NON-NLS-1$
-		dlg.setVisible(true);
-	}
-	
-	private void doAddDish(){
-		DeskCell selectDC = getSelectedDesk();
-		if (selectDC == null)
-			return;
-		if (selectDC.getIndent() == null){
-			JOptionPane.showMessageDialog(this, Messages.getString("MainFrame.NoIndentOnTable"), Messages.getString("MainFrame.Error"), JOptionPane.YES_OPTION); //$NON-NLS-1$ //$NON-NLS-2$
-			return;
+		if (selectDC.getIndent() == null ){
+			OpenTableDialog dlg = new OpenTableDialog(this, Messages.getString("MainFrame.OpenDesk"), true, selectDC.getDesk(), OpenTableDialog.MAKENEWORDER); //$NON-NLS-1$
+			dlg.setVisible(true);
+		} else {
+			OpenTableDialog dlg = new OpenTableDialog(this, Messages.getString("MainFrame.AddDish"), true, selectDC.getDesk(), OpenTableDialog.ADDDISH); //$NON-NLS-1$
+			dlg.setVisible(true);
 		}
-		OpenTableDialog dlg = new OpenTableDialog(this, Messages.getString("MainFrame.AddDish"), true, selectDC.getDesk(), OpenTableDialog.ADDDISH); //$NON-NLS-1$
-		dlg.setVisible(true);
 	}
 	
 	private void doViewIndent(){
@@ -706,10 +738,15 @@ public class MainFrame extends JFrame implements ActionListener{
 		ViewIndentDialog dlg = new ViewIndentDialog(this, Messages.getString("MainFrame.ViewIndent"), true, selectDC.getDesk(), selectDC.getIndent()); //$NON-NLS-1$
 		dlg.setVisible(true);
 	}
+	
+	private void doMaintainMenu(){
+		MenuMgmtDialog dlg = new MenuMgmtDialog(this, Messages.getString("MainFrame.MaintainMenu"), true);
+		dlg.setVisible(true);
+	}
 
 	/**
 	 * if there is no duty user currently, do nother
-	 * if there is a duty user, as whether print the swift ticket.
+	 * if there is a duty user, as whether print the shift ticket.
 	 */
 	public void doSwiftWork() {
 		if (onDutyUser == null) {
@@ -750,16 +787,22 @@ public class MainFrame extends JFrame implements ActionListener{
 		return c2s;
 	}
 	
-	public String getConfirmCode(){
-		return confirmCode;
-	}
 	
+	public HashMap<String, String> getConfigsMap() {
+		return configsMap;
+	}
+
+	public void setConfigsMap(HashMap<String, String> configsMap) {
+		this.configsMap = configsMap;
+	}
+
 	public static void main(String[] args){
 		Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
 			
 			@Override
 			public void uncaughtException(Thread t, Throwable e) {
 				MainFrame.logger.error("", e);
+				e.printStackTrace();
 			}
 		});
 		//load properties

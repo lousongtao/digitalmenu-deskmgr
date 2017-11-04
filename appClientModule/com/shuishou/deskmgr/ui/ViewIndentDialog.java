@@ -84,22 +84,6 @@ public class ViewIndentDialog extends JDialog {
 		btnChangeAmount.setPreferredSize(new Dimension(100,50));
 		btnClose.setPreferredSize(new Dimension(100, 50));
 		
-		Vector vData = new Vector();
-//		for (int i = 0; i < indent.getItems().size(); i++) {
-//			Vector vRow = new Vector();
-//			vRow.add(indent.getItems().get(i).getDishChineseName());
-//			vRow.add(indent.getItems().get(i).getDishEnglishName());
-//			vRow.add(indent.getItems().get(i).getAmount());
-//			vRow.add(indent.getItems().get(i).getDishPrice());
-//			vRow.add(indent.getItems().get(i).getAdditionalRequirements());
-//			vRow.add(indent.getItems().get(i));
-//			vData.add(vRow);
-//		}
-//		tableModel = new DefaultTableModel(vData, tableHeader){
-//			public boolean isCellEditable(int row, int column){
-//				return false;
-//			}
-//		};
 		tableModel = new IndentDetailModel(indent.getItems());
 		tabIndentDetail.setModel(tableModel);
 		tabIndentDetail.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -177,8 +161,8 @@ public class ViewIndentDialog extends JDialog {
 		Gson gson = new GsonBuilder().setDateFormat("HH:mm:ss").create();
 		HttpResult<Indent> result = gson.fromJson(response, new TypeToken<HttpResult<Indent>>(){}.getType());
 		if (!result.success){
-			logger.error("return false while delete indent detail. URL = " + url);
-			JOptionPane.showMessageDialog(this, "return false while delete indent detail. URL = " + url);
+			logger.error("return false while delete indent detail. URL = " + url + ", response = "+response);
+			JOptionPane.showMessageDialog(this, "return false while delete indent detail. URL = " + url + ", response = "+response);
 			return;
 		}
 		this.indent = result.data;
@@ -210,8 +194,8 @@ public class ViewIndentDialog extends JDialog {
 		Gson gson = new GsonBuilder().setDateFormat("HH:mm:ss").create();
 		HttpResult<Indent> result = gson.fromJson(response, new TypeToken<HttpResult<Indent>>(){}.getType());
 		if (!result.success){
-			logger.error("return false while delete indent detail. URL = " + url);
-			JOptionPane.showMessageDialog(this, "return false while delete indent detail. URL = " + url);
+			logger.error("return false while delete indent detail. URL = " + url + ", response = "+response);
+			JOptionPane.showMessageDialog(this, "return false while delete indent detail. URL = " + url + ", response = "+response);
 			return;
 		}
 		this.indent = result.data;
