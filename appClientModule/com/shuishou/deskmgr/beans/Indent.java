@@ -25,7 +25,7 @@ public class Indent {
 	
 	private double paidPrice;//ʵ�ʸ�����
 	
-	private byte payWay;//���ʽ
+	private String payWay;//���ʽ
 	
 	private byte status = ConstantValue.INDENT_STATUS_OPEN;
 
@@ -48,11 +48,11 @@ public class Indent {
 		this.customerAmount = customerAmount;
 	}
 
-	public byte getPayWay() {
+	public String getPayWay() {
 		return payWay;
 	}
 
-	public void setPayWay(byte payWay) {
+	public void setPayWay(String payWay) {
 		this.payWay = payWay;
 	}
 
@@ -138,6 +138,28 @@ public class Indent {
 
 	public void setDailySequence(int dailySequence) {
 		this.dailySequence = dailySequence;
+	}
+	
+	public Indent copy(){
+		Indent newi = new Indent();
+		newi.customerAmount = this.customerAmount;
+		newi.dailySequence = this.dailySequence;
+		newi.deskName = this.deskName;
+		newi.endTime = this.endTime;
+		newi.id = this.id;
+		newi.paidPrice = this.paidPrice;
+		newi.payWay = this.payWay;
+		newi.startTime = this.startTime;
+		newi.status = this.status;
+		newi.totalPrice = this.totalPrice;
+		ArrayList<IndentDetail> items = new ArrayList<>();
+		for(IndentDetail d : this.items){
+			IndentDetail dc = d.copy();
+			dc.setIndent(newi);
+			items.add(dc);
+		}
+		newi.items = items;
+		return newi;
 	}
 
 	@Override

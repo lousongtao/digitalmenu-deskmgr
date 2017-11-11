@@ -47,31 +47,33 @@ import com.shuishou.deskmgr.beans.DiscountTemplate;
 import com.shuishou.deskmgr.beans.Indent;
 import com.shuishou.deskmgr.beans.PayWay;
 import com.shuishou.deskmgr.http.HttpUtil;
+import com.shuishou.deskmgr.ui.components.IconButton;
 import com.shuishou.deskmgr.ui.components.JBlockedButton;
 import com.shuishou.deskmgr.ui.components.NumberTextField;
 
 public class CheckoutDialog extends JDialog{
 	private final Logger logger = Logger.getLogger(CheckoutDialog.class.getName());
-	private MainFrame mainFrame;
-	private Desk desk;
-	private Indent indent;
+	protected MainFrame mainFrame;
+	protected Desk desk;
+	protected Indent indent;
 	
-	private JLabel lbDiscountPrice = new JLabel();
-	private JRadioButton rbPayCash = new JRadioButton(Messages.getString("CheckoutDialog.Cash"), true); //$NON-NLS-1$
-	private JRadioButton rbPayBankCard = new JRadioButton(Messages.getString("CheckoutDialog.BandCard"), false); //$NON-NLS-1$
-	private JRadioButton rbPayMember = new JRadioButton(Messages.getString("CheckoutDialog.MemberCard"), false); //$NON-NLS-1$
-	private JRadioButton rbDiscountNon = new JRadioButton(Messages.getString("CheckoutDialog.NoDiscount"), true); //$NON-NLS-1$
-	private JRadioButton rbDiscountTemp = new JRadioButton(Messages.getString("CheckoutDialog.TempDiscount"), false); //$NON-NLS-1$
-	private JRadioButton rbDiscountDirect = new JRadioButton(Messages.getString("CheckoutDialog.DirectDiscount"), false); //$NON-NLS-1$
-	private ArrayList<JRadioButton> listRBOtherPayway = new ArrayList<>();
-	private NumberTextField tfDiscountPrice = null;
-	private JTextField tfMember = new JTextField();
-	private JBlockedButton btnPay = new JBlockedButton(Messages.getString("CheckoutDialog.PayButton"), null); //$NON-NLS-1$
-	private JButton btnClose = new JButton(Messages.getString("CheckoutDialog.CloseButton")); //$NON-NLS-1$
-	private JButton btnCancelOrder = new JButton(Messages.getString("CheckoutDialog.CancelOrderButton")); //$NON-NLS-1$
-	private NumberTextField numGetCash;
-	private JLabel lbCharge;
-	private double discountPrice = 0;
+	protected JLabel lbDiscountPrice = new JLabel();
+	protected JRadioButton rbPayCash = new JRadioButton(Messages.getString("CheckoutDialog.Cash"), true); //$NON-NLS-1$
+	protected JRadioButton rbPayBankCard = new JRadioButton(Messages.getString("CheckoutDialog.BandCard"), false); //$NON-NLS-1$
+	protected JRadioButton rbPayMember = new JRadioButton(Messages.getString("CheckoutDialog.MemberCard"), false); //$NON-NLS-1$
+	protected JRadioButton rbDiscountNon = new JRadioButton(Messages.getString("CheckoutDialog.NoDiscount"), true); //$NON-NLS-1$
+	protected JRadioButton rbDiscountTemp = new JRadioButton(Messages.getString("CheckoutDialog.TempDiscount"), false); //$NON-NLS-1$
+	protected JRadioButton rbDiscountDirect = new JRadioButton(Messages.getString("CheckoutDialog.DirectDiscount"), false); //$NON-NLS-1$
+	protected ArrayList<JRadioButton> listRBOtherPayway = new ArrayList<>();
+	protected NumberTextField tfDiscountPrice = null;
+	protected JTextField tfMember = new JTextField();
+	protected JBlockedButton btnPay = new JBlockedButton(Messages.getString("CheckoutDialog.PayButton"), "/resource/checkout.png"); //$NON-NLS-1$
+	protected JButton btnClose = new JButton(Messages.getString("CloseDialog")); //$NON-NLS-1$
+	protected IconButton btnSplitIndent = new IconButton(Messages.getString("CheckoutDialog.SplitIndentButton"), "/resource/splitorder.png"); //$NON-NLS-1$
+	protected JButton btnCancelOrder = new JButton(Messages.getString("CheckoutDialog.CancelOrderButton")); //$NON-NLS-1$
+	protected NumberTextField numGetCash;
+	protected JLabel lbCharge;
+	protected double discountPrice = 0;
 	
 	private List<DiscountTemplateRadioButton> discountTempRadioButtonList = new ArrayList<DiscountTemplateRadioButton>();
 	public CheckoutDialog(MainFrame mainFrame,String title, boolean modal, Desk desk, Indent indent){
@@ -107,8 +109,8 @@ public class CheckoutDialog extends JDialog{
 		pPayway.add(numGetCash, 	new GridBagConstraints(2, 0, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 20, 0, 0), 0, 0));
 		pPayway.add(lbCharge, 		new GridBagConstraints(3, 0, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 20, 0, 0), 0, 0));
 		pPayway.add(rbPayBankCard, 	new GridBagConstraints(0, 1, 1, 1, 0, 1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
-		pPayway.add(rbPayMember,	new GridBagConstraints(0, 2, 1, 1, 0, 1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(10, 0, 0, 0), 0, 0));
-		pPayway.add(tfMember, 		new GridBagConstraints(1, 2, 3, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 50, 0, 0), 0, 0));
+		pPayway.add(rbPayMember,	new GridBagConstraints(1, 1, 1, 1, 0, 1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(10, 50, 0, 0), 0, 0));
+		pPayway.add(tfMember, 		new GridBagConstraints(2, 1, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 20, 0, 0), 0, 0));
 		if (!mainFrame.getPaywayList().isEmpty()){
 			JPanel pOtherPayway = new JPanel();
 //			pOtherPayway.setBackground(bgPayColor);
@@ -147,6 +149,10 @@ public class CheckoutDialog extends JDialog{
 			}
 		}
 		
+		Dimension dDiscountPrice = tfDiscountPrice.getPreferredSize();
+		dDiscountPrice.width = 150;
+		tfDiscountPrice.setPreferredSize(dDiscountPrice);
+		
 		JPanel pDiscount = new JPanel(new GridBagLayout());
 //		pDiscount.setBackground(bgDiscountColor);
 		pDiscount.setBorder(BorderFactory.createTitledBorder(Messages.getString("CheckoutDialog.BorderDiscount"))); //$NON-NLS-1$
@@ -155,35 +161,41 @@ public class CheckoutDialog extends JDialog{
 		bgDiscount.add(rbDiscountTemp);
 		bgDiscount.add(rbDiscountDirect);
 		pDiscount.add(rbDiscountNon, 	new GridBagConstraints(0, 0, 1, 1, 0, 1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+		pDiscount.add(rbDiscountDirect, new GridBagConstraints(1, 0, 1, 1, 0, 1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(10, 50, 0, 0), 0, 0));
+		pDiscount.add(tfDiscountPrice, 	new GridBagConstraints(2, 0, 1, 1, 0, 1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(10, 20, 0, 0), 0, 0));
 		pDiscount.add(rbDiscountTemp, 	new GridBagConstraints(0, 1, 1, 1, 0, 1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(10, 0, 0, 0), 0, 0));
-		pDiscount.add(pDiscountTemplate,new GridBagConstraints(0, 2, 2, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 0, 0, 0), 0, 0));
-		pDiscount.add(rbDiscountDirect, new GridBagConstraints(0, 3, 1, 1, 0, 1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(10, 0, 0, 0), 0, 0));
-		pDiscount.add(tfDiscountPrice, 	new GridBagConstraints(1, 3, 1, 1, 0, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 50, 0, 0), 0, 0));
-		JPanel pButton = new JPanel(new FlowLayout(FlowLayout.LEFT, 30, 5));
+		pDiscount.add(pDiscountTemplate,new GridBagConstraints(0, 2, 3, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 0, 0, 0), 0, 0));
+		
+		JPanel pButton = new JPanel(new GridBagLayout());
 		btnPay.setPreferredSize(new Dimension(150, 50));
 		btnClose.setPreferredSize(new Dimension(150, 50));
 		btnCancelOrder.setPreferredSize(new Dimension(150, 50));
-		pButton.add(btnPay);
-		pButton.add(btnClose);
-		pButton.add(btnCancelOrder);
+		btnSplitIndent.setPreferredSize(new Dimension(150, 50));
+		pButton.add(btnPay,			new GridBagConstraints(0, 0, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 20, 0, 0), 0, 0));
+		pButton.add(btnSplitIndent,	new GridBagConstraints(1, 0, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 20, 0, 0), 0, 0));
+		pButton.add(btnClose,		new GridBagConstraints(2, 0, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 20, 0, 0), 0, 0));
+		pButton.add(btnCancelOrder,	new GridBagConstraints(3, 0, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 20, 0, 0), 0, 0));
+		Dimension dPButton = pButton.getPreferredSize();
+		dPButton.height = 60;
+		pButton.setPreferredSize(dPButton);
 		
-		lbDeskNo.setFont(ConstantValue.FONT_30BOLD);
-		lbPrice.setFont(ConstantValue.FONT_30BOLD);
-		lbDiscountPrice.setFont(ConstantValue.FONT_30BOLD);
+		lbDeskNo.setFont(ConstantValue.FONT_25BOLD);
+		lbPrice.setFont(ConstantValue.FONT_25BOLD);
+		lbDiscountPrice.setFont(ConstantValue.FONT_25BOLD);
 		lbDeskNo.setText(Messages.getString("CheckoutDialog.TableNo") + desk.getName()); //$NON-NLS-1$
 		lbPrice.setText(Messages.getString("CheckoutDialog.Price") + indent.getFormatTotalPrice()); //$NON-NLS-1$
 		lbDiscountPrice.setText(Messages.getString("CheckoutDialog.DiscountPrice") + String.format("%.2f", discountPrice)); //$NON-NLS-1$
 		
 		Container c = this.getContentPane();
 		c.setLayout(new GridBagLayout());
-		c.add(lbDeskNo, 		new GridBagConstraints(1, 0, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
-		c.add(lbPrice, 			new GridBagConstraints(0, 0, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
+		c.add(lbDeskNo, 		new GridBagConstraints(1, 0, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
+		c.add(lbPrice, 			new GridBagConstraints(0, 0, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
 		c.add(pPayway, 			new GridBagConstraints(0, 2, 2, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
-		c.add(pDiscount, 		new GridBagConstraints(0, 3, 2, 1, 1, 3, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
-		c.add(lbDiscountPrice, 	new GridBagConstraints(0, 4, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
-		c.add(pButton, 			new GridBagConstraints(0, 5, 2, 1, 1, 2, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
+		c.add(pDiscount, 		new GridBagConstraints(0, 3, 2, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
+		c.add(lbDiscountPrice, 	new GridBagConstraints(0, 4, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
+		c.add(pButton, 			new GridBagConstraints(0, 5, 2, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
 		
-		this.setSize(new Dimension(600, 700));
+		this.setSize(new Dimension(750, 700));
 		this.setLocation((int)(mainFrame.getWidth() / 2 - this.getWidth() /2 + mainFrame.getLocation().getX()), 
 				(int)(mainFrame.getHeight() / 2 - this.getHeight() / 2 + mainFrame.getLocation().getY()));
 		
@@ -192,6 +204,14 @@ public class CheckoutDialog extends JDialog{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				CheckoutDialog.this.setVisible(false);
+			}});
+		
+		btnSplitIndent.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				CheckoutDialog.this.setVisible(false);
+				doSplitIndent();
 			}});
 		
 		btnPay.addActionListener(new ActionListener(){
@@ -339,7 +359,7 @@ public class CheckoutDialog extends JDialog{
 		showChargeText();
 	}
 	
-	private void doPay(){
+	public void doPay(){
 		if (rbPayMember.isSelected()){
 			if (tfMember.getText() == null || tfMember.getText().length() == 0){
 				JOptionPane.showMessageDialog(mainFrame, Messages.getString("CheckoutDialog.InputNumber")); //$NON-NLS-1$
@@ -382,6 +402,11 @@ public class CheckoutDialog extends JDialog{
 		}
 	}
 	
+	private void doSplitIndent(){
+		SplitIndentDialog dlg  = new SplitIndentDialog(mainFrame, Messages.getString("SplitIndentDialog.title"), desk, indent);
+		dlg.setVisible(true);
+	}
+	
 	private void doCancelOrder(){
 		if (JOptionPane.showConfirmDialog(this, Messages.getString("CheckoutDialog.ConfirmCancelOrder"), "Confirm", JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION)
 			return;
@@ -402,6 +427,18 @@ public class CheckoutDialog extends JDialog{
 		mainFrame.loadCurrentIndentInfo();
 	}
 	
+	
+	
+	public IconButton getBtnSplitIndent() {
+		return btnSplitIndent;
+	}
+
+	public JButton getBtnCancelOrder() {
+		return btnCancelOrder;
+	}
+
+
+
 	class DiscountTemplateRadioButton extends JRadioButton{
 		private DiscountTemplate temp;
 		public DiscountTemplateRadioButton (boolean selected, DiscountTemplate temp) {

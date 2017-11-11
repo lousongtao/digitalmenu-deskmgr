@@ -34,10 +34,12 @@ import javax.swing.ListSelectionModel;
 import org.apache.log4j.Logger;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.shuishou.deskmgr.ConstantValue;
 import com.shuishou.deskmgr.Messages;
 import com.shuishou.deskmgr.beans.Desk;
+import com.shuishou.deskmgr.beans.DeskWithIndent;
 import com.shuishou.deskmgr.beans.Dish;
 import com.shuishou.deskmgr.beans.DishChooseSubitem;
 import com.shuishou.deskmgr.beans.HttpResult;
@@ -52,6 +54,7 @@ public class ChangeDeskDialog extends JDialog {
 	private JButton btnClose = new JButton(Messages.getString("CloseDialog"));
 	private JBlockedButton btnConfirm = new JBlockedButton(Messages.getString("DishSubitemDialog.Confirm"), null);
 	private ArrayList<DeskCell> listDeskCell = new ArrayList<>();
+	private String mergeResponse;
 	public ChangeDeskDialog(MainFrame mainFrame, String title, Desk desk, ArrayList<Desk> availableDesks){
 		super(mainFrame, title, true);
 		this.mainFrame = mainFrame;
@@ -121,16 +124,26 @@ public class ChangeDeskDialog extends JDialog {
 			JOptionPane.showMessageDialog(this, "get null from server while changing tables. URL = " + url + ", param = "+ params);
 			return;
 		}
-		HttpResult<Integer> result = new Gson().fromJson(response, new TypeToken<HttpResult<Integer>>(){}.getType());
+		Gson gson = new GsonBuilder().setDateFormat("yyyy/MM/dd HH:mm:ss").create();
+		HttpResult<ArrayList<DeskWithIndent>> result = gson.fromJson(response, new TypeToken<HttpResult<ArrayList<DeskWithIndent>>>(){}.getType());
 		if (!result.success){
 			logger.error("return false while changing tables. URL = " + url + ", response = "+response);
 			JOptionPane.showMessageDialog(this, "return false while changing tables. URL = " + url + ", response = "+response);
 			return;
 		}
-		mainFrame.loadCurrentIndentInfo();
+//		mainFrame.loadCurrentIndentInfo();
+		mergeResponse = response;
 		ChangeDeskDialog.this.setVisible(false);
 	}
 	
+	
+	
+	public String getMergeResponse() {
+		return mergeResponse;
+	}
+
+
+
 	class DeskCell extends JPanel {
 		private Desk desk;
 		private boolean isSelected = false;

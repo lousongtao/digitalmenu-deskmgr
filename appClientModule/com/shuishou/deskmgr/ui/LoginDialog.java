@@ -13,6 +13,7 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
 import org.json.JSONObject;
@@ -26,7 +27,7 @@ import com.shuishou.deskmgr.ui.components.JBlockedButton;
 public class LoginDialog extends JDialog {
 
 	private JTextField tfName = new JTextField();
-	private JTextField tfPassword = new JTextField();
+	private JPasswordField tfPassword = new JPasswordField();
 	private JBlockedButton btnLogin = new JBlockedButton(Messages.getString("LoginDialog.LoginButton"),"/resource/login.png"); //$NON-NLS-1$
 	private String loginURL = "login";
 	private MainFrame mainFrame;
@@ -50,16 +51,21 @@ public class LoginDialog extends JDialog {
 		c.add(tfName);
 		c.add(new JLabel(Messages.getString("LoginDialog.Password"))); //$NON-NLS-1$
 		c.add(tfPassword);
+		c.add(new JLabel());
 		c.add(btnLogin);
 		btnLogin.setPreferredSize(new Dimension(150, 40));
+		setUndecorated(true);
 		this.setSize(new Dimension(300, 200));
 		this.setLocation((int)(mainFrame.getWidth() / 2 - this.getWidth() /2 + mainFrame.getLocation().getX()), 
 				(int)(mainFrame.getHeight() / 2 - this.getHeight() / 2 + mainFrame.getLocation().getY()));
-//		this.setUndecorated(true);
-		tfName.setText("admin");
-		tfPassword.setText("admin");
 	}
 	
+	public void setValue(String userName, String password){
+		if (userName != null)
+			tfName.setText(userName);
+		if (password != null)
+			tfPassword.setText(password);
+	}
 	
 	private void doLogin(){
 		Map<String, String> params = new HashMap<String, String>();

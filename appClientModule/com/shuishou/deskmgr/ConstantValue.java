@@ -10,10 +10,12 @@ public class ConstantValue {
 	public static final DateFormat DFHMS = new SimpleDateFormat("HH:mm:ss");
 	public static final DateFormat DFYMD = new SimpleDateFormat("yyyy/MM/dd");
 	
-	public static final Font FONT_30BOLD = new Font(null, Font.BOLD, 30);
-	public static final Font FONT_30PLAIN = new Font(null, Font.PLAIN, 30);	
+	public static final Font FONT_25BOLD = new Font(null, Font.BOLD, 25);
+	public static final Font FONT_25PLAIN = new Font(null, Font.PLAIN, 25);	
 	public static final Font FONT_20BOLD = new Font(null, Font.BOLD, 20);
 	public static final Font FONT_20PLAIN = new Font(null, Font.PLAIN, 20);
+	public static final Font FONT_15BOLD = new Font(null, Font.BOLD, 15);
+	public static final Font FONT_15PLAIN = new Font(null, Font.PLAIN, 15);
 	
 	public static final String LANGUAGE_CHINESE = "cn";
 	public static final String LANGUAGE_ENGLISH = "en";

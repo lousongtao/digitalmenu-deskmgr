@@ -59,6 +59,7 @@ import com.shuishou.deskmgr.beans.Desk;
 import com.shuishou.deskmgr.beans.DeskWithIndent;
 import com.shuishou.deskmgr.beans.DiscountTemplate;
 import com.shuishou.deskmgr.beans.Dish;
+import com.shuishou.deskmgr.beans.Flavor;
 import com.shuishou.deskmgr.beans.HttpResult;
 import com.shuishou.deskmgr.beans.Indent;
 import com.shuishou.deskmgr.beans.PayWay;
@@ -93,7 +94,7 @@ public class MainFrame extends JFrame implements ActionListener{
 	private IconButton btnOpenDesk = new IconButton(Messages.getString("MainFrame.OpenDesk"), "/resource/opentable.png"); //$NON-NLS-1$
 //	private IconButton btnAddDish = new IconButton(Messages.getString("MainFrame.AddDish"), "/resource/adddish.png"); //$NON-NLS-1$
 	private IconButton btnViewIndent = new IconButton(Messages.getString("MainFrame.ViewIndent"), "/resource/viewindent.png"); //$NON-NLS-1$
-	private IconButton btnCheckout = new IconButton(Messages.getString("MainFrame.Checkout"), "/resource/pay.png"); //$NON-NLS-1$
+	private IconButton btnCheckout = new IconButton(Messages.getString("MainFrame.Checkout"), "/resource/checkout.png"); //$NON-NLS-1$
 	private IconButton btnChangeDesk = new IconButton(Messages.getString("MainFrame.ChangeDesk"), "/resource/changedesk.png"); //$NON-NLS-1$
 	private JBlockedButton btnOpenCashdrawer = new JBlockedButton(Messages.getString("MainFrame.OpenCashdrawer"), "/resource/cashdrawer.png"); //$NON-NLS-1$
 	private IconButton btnMergeDesk = new IconButton(Messages.getString("MainFrame.MergeDesk"), "/resource/mergedesk.png"); //$NON-NLS-1$
@@ -108,12 +109,14 @@ public class MainFrame extends JFrame implements ActionListener{
 	private ArrayList<PayWay> paywayList = new ArrayList<>(); 
 	private ArrayList<DeskCell> deskcellList = new ArrayList<>();
 	private ArrayList<Category1> category1List = new ArrayList<>();
+	private ArrayList<Flavor> flavorList = new ArrayList<>();
 //	private UserData loginUser = null;
 	private UserData onDutyUser = null;//在值班状态用户名称
 //	private String confirmCode = null;
 //	private String openCashdrawerCode = null;
 	private HashMap<String, String> configsMap;
 	private Gson gson = new Gson();
+	private Gson gsonTime = new GsonBuilder().setDateFormat("yyyy/MM/dd HH:mm:ss").create();
 	private int gapButtons = 5; // the gap between buttons for top
 	
 	
@@ -143,8 +146,18 @@ public class MainFrame extends JFrame implements ActionListener{
 		this.paywayList = paywayList;
 	}
 
-	public void startLogin(){
+	
+	public ArrayList<Flavor> getFlavorList() {
+		return flavorList;
+	}
+
+	public void setFlavorList(ArrayList<Flavor> flavorList) {
+		this.flavorList = flavorList;
+	}
+
+	public void startLogin(String userName, String password){
 		LoginDialog dlg = new LoginDialog(this);
+		dlg.setValue(userName, password);
 		dlg.setVisible(true);
 	}
 	
@@ -206,6 +219,7 @@ public class MainFrame extends JFrame implements ActionListener{
 		loadMenu();
 		loadConfigsMap();
 		loadPayWay();
+		loadFlavor();
 		initRefreshTimer();
 		buildDeskCells();
 	}
@@ -323,6 +337,24 @@ public class MainFrame extends JFrame implements ActionListener{
 		paywayList.addAll(result.data);
 	}
 	
+	private void loadFlavor(){
+		String url = "menu/queryflavor";
+		String response = HttpUtil.getJSONObjectByGet(SERVER_URL + url);
+		if (response == null){
+			logger.error("get null from server for flavor. URL = " + url);
+			JOptionPane.showMessageDialog(this, "get null from server for flavor. URL = " + url);
+			return;
+		}
+		HttpResult<ArrayList<Flavor>> result = gson.fromJson(response, new TypeToken<HttpResult<ArrayList<Flavor>>>(){}.getType());
+		if (!result.success){
+			logger.error("return false while get flavor. URL = " + url + ", response = "+response);
+			JOptionPane.showMessageDialog(this, "return false while get flavor. URL = " + url + ", response = "+response);
+			return;
+		}
+		flavorList.clear();
+		flavorList.addAll(result.data);
+	}
+	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private void buildDeskCells(){
 		pDeskArea.removeAll();
@@ -367,7 +399,7 @@ public class MainFrame extends JFrame implements ActionListener{
 	}
 	
 	/**
-	 * load the unpaid indent info, attaching the intenddetail info.
+	 * load the unpaid indent info, attached the intenddetail info.
 	 */
 	public void loadCurrentIndentInfo(){
 		if (onDutyUser == null)
@@ -381,11 +413,11 @@ public class MainFrame extends JFrame implements ActionListener{
 			JOptionPane.showMessageDialog(this, "get null from server for query indent info. URL = " + url);
 			return;
 		}
-		Gson gson = new GsonBuilder().setDateFormat("yyyy/MM/dd HH:mm:ss").create();
-		HttpResult<ArrayList<Indent>> result = gson.fromJson(response, new TypeToken<HttpResult<ArrayList<Indent>>>(){}.getType());
+		
+		HttpResult<ArrayList<Indent>> result = gsonTime.fromJson(response, new TypeToken<HttpResult<ArrayList<Indent>>>(){}.getType());
 		if (!result.success){
-			logger.error("return false while get desks with indents. URL = " + url + ", response = "+response);
-			JOptionPane.showMessageDialog(this, "return false while get desks with indents. URL = " + url + ", response = "+response);
+			logger.error("return false while get indents. URL = " + url + ", response = "+response);
+			JOptionPane.showMessageDialog(this, "return false while get indents. URL = " + url + ", response = "+response);
 			return;
 		}
 		for (int i = 0; i < deskcellList.size(); i++) {
@@ -403,6 +435,34 @@ public class MainFrame extends JFrame implements ActionListener{
 			
 		}
 		refreshDeskStatus();
+	}
+	
+	/**
+	 * load the unpaid indent info, attached the intenddetail info.
+	 */
+	public Indent loadIndentByDesk(String deskName){
+		if (onDutyUser == null)
+			return null;
+		String url = "indent/queryindent";
+		Map<String, String> params = new HashMap<String, String>();
+		params.put("status", "Unpaid");
+		params.put("deskname", deskName);
+		String response = HttpUtil.getJSONObjectByPost(SERVER_URL + url, params, "UTF-8");
+		if (response == null || response.length() == 0){
+			logger.error("get null from server for query indent by desk error. URL = " + url + ", param = "+ params);
+			JOptionPane.showMessageDialog(this, "get null from server for query indent info by desk . URL = " + url);
+			return null;
+		}
+		
+		HttpResult<ArrayList<Indent>> result = gsonTime.fromJson(response, new TypeToken<HttpResult<ArrayList<Indent>>>(){}.getType());
+		if (!result.success){
+			logger.error("return false while get indents by desk . URL = " + url + ", response = "+response);
+			JOptionPane.showMessageDialog(this, "return false while get indents by desk . URL = " + url + ", response = "+response);
+			return null;
+		}
+		if (result.data == null || result.data.isEmpty())
+			return null;
+		return result.data.get(0);
 	}
 	
 	public void refreshDeskStatus() {
@@ -469,7 +529,7 @@ public class MainFrame extends JFrame implements ActionListener{
 		onDutyUser = null;
 		lbStatusLogin.setText("");
 
-		startLogin();
+		startLogin(null, null);
 	}
 	
 	public UserData getOnDutyUser() {
@@ -587,35 +647,25 @@ public class MainFrame extends JFrame implements ActionListener{
 			JOptionPane.showMessageDialog(this, "get null from server while do merge desks failed. URL = " + url + ", param = "+ params);
 			return;
 		}
-		HttpResult<ArrayList<DeskWithIndent>> result = gson.fromJson(response, new TypeToken<HttpResult<ArrayList<DeskWithIndent>>>(){}.getType());
+		
+		HttpResult<ArrayList<DeskWithIndent>> result = gsonTime.fromJson(response, new TypeToken<HttpResult<ArrayList<DeskWithIndent>>>(){}.getType());
 		for (int i = 0; i < deskcellList.size(); i++) {
 			DeskCell dc = deskcellList.get(i);
 			for (int j = 0; j < result.data.size(); j++) {
 				DeskWithIndent di = result.data.get(j);
 				if (di.id == dc.getDesk().getId()){
-					if (di.indentId == 0){
+					if (di.indent == null){
 						dc.setIndentInfo(null);
 					} else {
-						Indent indent = dc.getIndent();
-						if (indent == null){
-							indent = new Indent();
-						}
-						indent.setId(di.indentId);
-						indent.setCustomerAmount(di.customerAmount);
-						try {
-							indent.setStartTime(ConstantValue.DFYMDHMS.parse(di.startTime));
-						} catch (JSONException | ParseException e) {
-							logger.error("Date format error for indent ID = " + di.id);
-						}
-						indent.setTotalPrice(di.price);
-						dc.setIndentInfo(indent);
+						dc.setIndentInfo(di.indent);
 					}
+					dc.getDesk().setMergeTo(di.mergeTo);
 					dc.setMergeTo(di.mergeTo);
 					break;
 				}
 			}
 		}
-		loadDesks();
+//		loadDesks();
 		refreshDeskStatus();
 	}
 	
@@ -630,7 +680,7 @@ public class MainFrame extends JFrame implements ActionListener{
 		} else if (e.getSource() == btnViewIndent){
 			doViewIndent();
 		} else if (e.getSource() == btnPrintTicket){
-			
+			doPrintTicket();
 		} else if (e.getSource() == btnMergeDesk){
 			doMergeTables();
 		} else if (e.getSource() == btnClearDesk){
@@ -644,6 +694,36 @@ public class MainFrame extends JFrame implements ActionListener{
 		} else if (e.getSource() == btnOpenCashdrawer){
 			doOpenCashdrawer(true);
 		}
+	}
+	
+	private void doPrintTicket(){
+		DeskCell selectDC = getSelectedDesk();
+		if (selectDC == null)
+			return;
+		String url = "indent/queryindent";
+		Map<String, String> params = new HashMap<String, String>();
+		params.put("userId", onDutyUser.getId()+"");
+		params.put("starttime", ConstantValue.DFYMDHMS.format(System.currentTimeMillis() - 24*60*60*1000));
+		params.put("deskname", selectDC.getDesk().getName()); 
+		params.put("orderbydesc", "id"); 
+		String response = HttpUtil.getJSONObjectByPost(MainFrame.SERVER_URL + url, params, "UTF-8");
+		if (response == null || response.length() == 0){
+			logger.error("get null from server while print indent. URL = " + url + ", param = "+ params);
+			JOptionPane.showMessageDialog(this, "get null from server while print indent. URL = " + url + ", param = "+ params);
+			return;
+		}
+		HttpResult<ArrayList<Indent>> result = gsonTime.fromJson(response, new TypeToken<HttpResult<ArrayList<Indent>>>(){}.getType());
+		if (!result.success){
+			logger.error("return false while print indent. URL = " + url + ", response = "+response);
+			JOptionPane.showMessageDialog(this, "return false while print indent. URL = " + url + ", response = "+response);
+			return;
+		}
+		if (result.data == null || result.data.isEmpty()){
+			JOptionPane.showMessageDialog(this, Messages.getString("MainFrame.NoIndentToPrint"));
+			return;
+		}
+		ViewHistoryIndentByDeskDialog dlg = new ViewHistoryIndentByDeskDialog(this, "", true, result.data);
+		dlg.setVisible(true);
 	}
 	
 	public void doOpenCashdrawer(boolean needpassword){
@@ -676,6 +756,10 @@ public class MainFrame extends JFrame implements ActionListener{
 			}
 		}
 		try {
+			if (outputStreamCashdrawer == null){
+				JOptionPane.showMessageDialog(this, Messages.getString("MainFrame.WrongCashdrawerPort"));
+				return;
+			}
 			outputStreamCashdrawer.write("A".getBytes());// any string is ok
 		} catch (IOException e) {
 			logger.error(e);
@@ -697,16 +781,34 @@ public class MainFrame extends JFrame implements ActionListener{
 		}
 		ChangeDeskDialog dlg = new ChangeDeskDialog(this, Messages.getString("MainFrame.ChangeDesk"), selectDC.getDesk(), availableDesks);
 		dlg.setVisible(true);
+		if (dlg.getMergeResponse() != null){
+			HttpResult<ArrayList<DeskWithIndent>> result = gsonTime.fromJson(dlg.getMergeResponse(), new TypeToken<HttpResult<ArrayList<DeskWithIndent>>>(){}.getType());
+			for (int i = 0; i < deskcellList.size(); i++) {
+				DeskCell dc = deskcellList.get(i);
+				for (int j = 0; j < result.data.size(); j++) {
+					DeskWithIndent di = result.data.get(j);
+					if (di.id == dc.getDesk().getId()){
+						if (di.indent == null){
+							dc.setIndentInfo(null);
+						} else {
+							dc.setIndentInfo(di.indent);
+						}
+						dc.setMergeTo(di.mergeTo);
+						break;
+					}
+				}
+			}
+		}
 	}
 	
 	private void doCheckout(){
 		DeskCell selectDC = getSelectedDesk();
 		if (selectDC == null)
 			return;
-
-		if (selectDC.getIndent() == null)
+		Indent indent = loadIndentByDesk(selectDC.getDesk().getName());
+		if (indent == null)
 			return;
-		CheckoutDialog dlg = new CheckoutDialog(this, Messages.getString("MainFrame.CheckoutTitle"), true, selectDC.getDesk(), selectDC.getIndent()); //$NON-NLS-1$
+		CheckoutDialog dlg = new CheckoutDialog(this, Messages.getString("MainFrame.CheckoutTitle"), true, selectDC.getDesk(), indent); //$NON-NLS-1$
 		dlg.setVisible(true);
 	}
 	
@@ -850,6 +952,6 @@ public class MainFrame extends JFrame implements ActionListener{
 		MainFrame.portCashdrawer=prop.getProperty("portCashdrawer");
 		MainFrame f = new MainFrame();
 		f.setVisible(true);
-		f.startLogin();
+		f.startLogin(prop.getProperty("defaultuser.name"), prop.getProperty("defaultuser.password"));
 	}
 }

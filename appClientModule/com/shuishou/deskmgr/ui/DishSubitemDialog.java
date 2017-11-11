@@ -55,7 +55,7 @@ public class DishSubitemDialog extends JDialog {
 	
 	private void initUI(){
 		JLabel lbReqAmount = new JLabel(Messages.getString("DishSubitemDialog.ReqAmount") + dish.getSubitemAmount());
-		lbReqAmount.setFont(ConstantValue.FONT_30BOLD);
+		lbReqAmount.setFont(ConstantValue.FONT_25BOLD);
 		
 		listChoosed.setModel(listModelChoosed);
 		listChoosed.setCellRenderer(new DishSubitemRenderer());

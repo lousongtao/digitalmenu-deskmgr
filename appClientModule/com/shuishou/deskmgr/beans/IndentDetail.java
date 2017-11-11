@@ -94,6 +94,20 @@ public class IndentDetail {
 	public void setAdditionalRequirements(String additionalRequirements) {
 		this.additionalRequirements = additionalRequirements;
 	}
+	
+	public IndentDetail copy(){
+		IndentDetail detail = new IndentDetail();
+		detail.additionalRequirements = this.additionalRequirements;
+		detail.amount = this.amount;
+		detail.dishChineseName = this.dishChineseName;
+		detail.dishEnglishName = this.dishEnglishName;
+		detail.dishId = this.dishId;
+		detail.dishPrice = this.dishPrice;
+		detail.id = this.id;
+		detail.indent = this.indent;
+		detail.weight = this.weight;
+		return detail;
+	}
 
 	@Override
 	public int hashCode() {

@@ -50,7 +50,7 @@ public class DeskCell extends JPanel {
 	
 	private void initUI(){
 		this.setLayout(new GridLayout(0, 1));
-		lbDeskNo.setFont(ConstantValue.FONT_30BOLD);
+		lbDeskNo.setFont(ConstantValue.FONT_25BOLD);
 		lbDeskNo.setText(desk.getName());
 		this.setBorder(BorderFactory.createLineBorder(Color.gray));
 		setBackground(colorUnselect);
@@ -133,7 +133,9 @@ public class DeskCell extends JPanel {
 	public void setMergeTo(String mergeTo){
 		if (mergeTo == null)
 			lbMergeTo.setText("");
-		else
+		else{
+			desk.setMergeTo(mergeTo);
 			lbMergeTo.setText(Messages.getString("DeskCell.MergeTo")+ mergeTo); //$NON-NLS-1$
+		}
 	}
 }
