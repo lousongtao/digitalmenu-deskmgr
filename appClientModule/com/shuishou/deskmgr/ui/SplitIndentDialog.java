@@ -169,18 +169,10 @@ public class SplitIndentDialog extends JDialog {
 		if (row < 0)
 			return;
 		IndentDetail downDetail = tableModelIndentDown.getObjectAt(row);
-		IndentDetail upDetail = null;
-		for(IndentDetail d : tableModelIndentUp.items){
-			if (d.getDishId() == downDetail.getDishId()){
-				upDetail = d;
-				break;
-			}
-		}
-		if (upDetail == null){
-			upDetail = downDetail.copy();
-			upDetail.setAmount(0);
-			tableModelIndentUp.items.add(upDetail);
-		}
+		IndentDetail upDetail = downDetail.copy();
+		upDetail.setAmount(0);
+		tableModelIndentUp.items.add(upDetail);
+		
 		upDetail.setAmount(upDetail.getAmount() + 1);
 		downDetail.setAmount(downDetail.getAmount() - 1);
 		if (downDetail.getAmount() <= 0){
@@ -193,26 +185,23 @@ public class SplitIndentDialog extends JDialog {
 		}
 	}
 	
+	/**
+	 * move the choosed item into down table, no matter what type dish, just new one record in the down table
+	 *  
+	 */
 	private void doMoveDown(){
 		int row = tableIndentUp.getSelectedRow();
 		if (row < 0)
 			return;
 		IndentDetail upDetail = tableModelIndentUp.getObjectAt(row);
 		//check if the detail exist in Down list
-		IndentDetail downDetail = null;
-		for(IndentDetail d : tableModelIndentDown.items){
-			if (d.getDishId() == upDetail.getDishId()){
-				downDetail = d;
-				break;
-			}
-		}
-		if (downDetail == null){
-			downDetail = upDetail.copy();
-			//clear non-useful properties
-			downDetail.setIndent(null);
-			downDetail.setAmount(0);
-			tableModelIndentDown.items.add(downDetail);
-		}
+		IndentDetail downDetail = upDetail.copy();
+
+		// clear non-useful properties
+		downDetail.setIndent(null);
+		downDetail.setAmount(0);
+		tableModelIndentDown.items.add(downDetail);
+
 		downDetail.setAmount(downDetail.getAmount()+1);
 		upDetail.setAmount(upDetail.getAmount() - 1);
 		if (upDetail.getAmount() <= 0){
@@ -278,6 +267,16 @@ public class SplitIndentDialog extends JDialog {
 		for(DeskCell dc : mainFrame.getDeskcellList()){
 			if (dc.getDesk().getName().equals(desk.getName())){
 				dc.setIndent(this.indent);
+				if (indent.getStatus() == ConstantValue.INDENT_STATUS_PAID){
+					dc.setIndent(null);
+				}
+			}
+			//if the indent status changed to paid, then clear the merge data
+			if (indent.getStatus() == ConstantValue.INDENT_STATUS_PAID){
+				if (desk.getName().equals(dc.getDesk().getMergeTo())){
+					dc.getDesk().setMergeTo(null);
+					dc.setMergeTo(null);
+				}
 			}
 		}
 	}
@@ -293,8 +292,8 @@ public class SplitIndentDialog extends JDialog {
 	class IndentDetailModel extends AbstractTableModel{
 		private List<IndentDetail> items;
 		private String[] header = new String[]{
-				Messages.getString("ViewIndentDialog.Header.ChineseName"),
-				Messages.getString("ViewIndentDialog.Header.EnglishName"),
+				Messages.getString("ViewIndentDialog.Header.FirstLanguageName"),
+				Messages.getString("ViewIndentDialog.Header.SecondLanguageName"),
 				Messages.getString("ViewIndentDialog.Header.Amount"),
 				Messages.getString("ViewIndentDialog.Header.Price"),
 				Messages.getString("ViewIndentDialog.Header.Weight"),
@@ -318,9 +317,9 @@ public class SplitIndentDialog extends JDialog {
 			IndentDetail d = getObjectAt(rowIndex);
 			switch(columnIndex){
 			case 0:
-				return d.getDishChineseName();
+				return d.getDishFirstLanguageName();
 			case 1:
-				return d.getDishEnglishName();
+				return d.getDishSecondLanguageName();
 			case 2:
 				return d.getAmount();
 			case 3:

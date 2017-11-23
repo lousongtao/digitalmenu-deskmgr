@@ -127,11 +127,7 @@ public class DishSubitemDialog extends JDialog {
 		private final DishChooseSubitem item;
 		public SubitemButton(DishChooseSubitem _item){
 			this.item = _item;
-			if (ConstantValue.LANGUAGE_CHINESE.equals(MainFrame.language)){
-				this.setText(item.getChineseName());
-			} else {
-				this.setText(item.getEnglishName());
-			}
+			this.setText(item.getFirstLanguageName());
 			this.addActionListener(new ActionListener(){
 
 				@Override
@@ -161,10 +157,7 @@ public class DishSubitemDialog extends JDialog {
 	            setForeground(list.getForeground());
 	        }
 			DishChooseSubitem item = (DishChooseSubitem)value;
-			String txt = item.getChineseName();
-			if (ConstantValue.LANGUAGE_ENGLISH.equals(MainFrame.language)){
-				item.getEnglishName();
-			}
+			String txt = item.getFirstLanguageName();
 			if (txt.length() > 20)
 				txt = txt.substring(0, 20) + "...";
 			lbDish.setText(txt);

@@ -197,7 +197,9 @@ public class OpenTableDialog extends JDialog {
 			return;
 		ArrayList<Dish> allDishes = mainFrame.getAllDishes();
 		for(Dish dish : allDishes){
-			if (dish.getEnglishName().toLowerCase().indexOf(tfSearchCode.getText().toLowerCase()) >= 0){
+			if (dish.getFirstLanguageName().toLowerCase().indexOf(tfSearchCode.getText().toLowerCase()) >= 0){
+				pDishes.add(new DishButton(dish));
+			} else if (dish.getSecondLanguageName() != null && dish.getSecondLanguageName().toLowerCase().indexOf(tfSearchCode.getText().toLowerCase()) >= 0){
 				pDishes.add(new DishButton(dish));
 			} else if (dish.getAbbreviation() != null && dish.getAbbreviation().toLowerCase().indexOf(tfSearchCode.getText().toLowerCase()) >= 0){
 				pDishes.add(new DishButton(dish));
@@ -217,6 +219,10 @@ public class OpenTableDialog extends JDialog {
 		if (listChoosedDish.getSelectedIndex() < 0)
 			return;
 		ChoosedDish cd = listChoosedDish.getSelectedValue();
+		if (!cd.dish.isAllowFlavor()){
+			JOptionPane.showMessageDialog(this, Messages.getString("OpenTableDialog.DishNoFlavor"));
+			return;
+		}
 		SetFlavorDialog dlg = new SetFlavorDialog(this, "Flavor", mainFrame.getFlavorList(), cd.flavors);
 		dlg.setVisible(true);
 		cd.flavors = dlg.getChoosedFlavors();
@@ -309,12 +315,12 @@ public class OpenTableDialog extends JDialog {
 		String requires = "";
 		if (cd.subitems != null && !cd.subitems.isEmpty()){
 			for(DishChooseSubitem si : cd.subitems){
-				requires += si.getChineseName() + " ";
+				requires += si.getFirstLanguageName()+ " ";
 			}
 		}
 		if (cd.flavors != null && !cd.flavors.isEmpty()){
 			for(Flavor f : cd.flavors){
-				requires += f.getChineseName() + " ";
+				requires += f.getFirstLanguageName() + " ";
 			}
 		}
 		return requires;
@@ -424,9 +430,7 @@ public class OpenTableDialog extends JDialog {
 	        }
 			ChoosedDish cd = (ChoosedDish)value;
 			Dish dish = cd.dish;
-			String txt = dish.getChineseName();
-			if (mainFrame.language.equals(ConstantValue.LANGUAGE_ENGLISH))
-				dish.getEnglishName();
+			String txt = dish.getFirstLanguageName();
 			if (txt.length() > 17)
 				txt = txt.substring(0, 17) + "...";
 			lbDish.setText(txt);
@@ -449,11 +453,7 @@ public class OpenTableDialog extends JDialog {
 		private final Category2 c2;
 		public Category2Button(Category2 category2){
 			this.c2 = category2;
-			if (ConstantValue.LANGUAGE_CHINESE.equals(MainFrame.language)){
-				this.setText(c2.getChineseName());
-			} else {
-				this.setText(c2.getEnglishName());
-			}
+			this.setText(c2.getFirstLanguageName());
 			this.addActionListener(new ActionListener(){
 
 				@Override
@@ -472,11 +472,7 @@ public class OpenTableDialog extends JDialog {
 		
 		public DishButton(Dish d){
 			dish = d;
-			if (ConstantValue.LANGUAGE_CHINESE.equals(MainFrame.language)){
-				this.setText(d.getChineseName());
-			} else {
-				this.setText(d.getEnglishName());
-			}
+			this.setText(d.getFirstLanguageName());
 			this.addActionListener(new ActionListener(){
 
 				@Override

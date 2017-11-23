@@ -6,12 +6,12 @@ public class DishChooseSubitem implements Serializable{
 
 	private int id;
 	private Dish dish;
-	private String chineseName;
-	private String englishName;
+	private String firstLanguageName;
+	private String secondLanguageName;
 
 	@Override
 	public String toString() {
-		return "DishChooseSubitem [dish=" + dish.getChineseName() + ", chineseName=" + chineseName + "]";
+		return "DishChooseSubitem [dish=" + dish.getFirstLanguageName() + ", firstLanguageName=" + firstLanguageName + "]";
 	}
 
 	@Override
@@ -52,21 +52,22 @@ public class DishChooseSubitem implements Serializable{
 		this.dish = dish;
 	}
 
-	public String getChineseName() {
-		return chineseName;
+	public String getFirstLanguageName() {
+		return firstLanguageName;
 	}
 
-	public void setChineseName(String chineseName) {
-		this.chineseName = chineseName;
+	public void setFirstLanguageName(String firstLanguageName) {
+		this.firstLanguageName = firstLanguageName;
 	}
 
-	public String getEnglishName() {
-		return englishName;
+	public String getSecondLanguageName() {
+		return secondLanguageName;
 	}
 
-	public void setEnglishName(String englishName) {
-		this.englishName = englishName;
+	public void setSecondLanguageName(String secondLanguageName) {
+		this.secondLanguageName = secondLanguageName;
 	}
+
 	
 	
 }

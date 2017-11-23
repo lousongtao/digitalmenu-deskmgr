@@ -173,7 +173,9 @@ public class MenuMgmtDialog extends JDialog {
 			return;
 		ArrayList<Dish> allDishes = mainFrame.getAllDishes();
 		for(Dish dish : allDishes){
-			if (dish.getEnglishName().toLowerCase().indexOf(tfSearchCode.getText().toLowerCase()) >= 0){
+			if (dish.getFirstLanguageName().toLowerCase().indexOf(tfSearchCode.getText().toLowerCase()) >= 0){
+				pDishes.add(new DishButton(dish));
+			} else if (dish.getSecondLanguageName() != null && dish.getSecondLanguageName().toLowerCase().indexOf(tfSearchCode.getText().toLowerCase()) >= 0){
 				pDishes.add(new DishButton(dish));
 			} else if (dish.getAbbreviation() != null && dish.getAbbreviation().toLowerCase().indexOf(tfSearchCode.getText().toLowerCase()) >= 0){
 				pDishes.add(new DishButton(dish));
@@ -249,9 +251,7 @@ public class MenuMgmtDialog extends JDialog {
 	            setForeground(list.getForeground());
 	        }
 			Dish dish = (Dish)value;
-			String txt = dish.getChineseName();
-			if (mainFrame.language.equals(ConstantValue.LANGUAGE_ENGLISH))
-				dish.getEnglishName();
+			String txt = dish.getFirstLanguageName();
 			if (txt.length() > 15)
 				txt = txt.substring(0, 15) + "...";
 			if (dish.isSoldOut())
@@ -265,11 +265,7 @@ public class MenuMgmtDialog extends JDialog {
 		private final Category2 c2;
 		public Category2Button(Category2 category2){
 			this.c2 = category2;
-			if (ConstantValue.LANGUAGE_CHINESE.equals(MainFrame.language)){
-				this.setText(c2.getChineseName());
-			} else {
-				this.setText(c2.getEnglishName());
-			}
+			this.setText(c2.getFirstLanguageName());
 			this.addActionListener(new ActionListener(){
 
 				@Override
@@ -286,11 +282,7 @@ public class MenuMgmtDialog extends JDialog {
 		private final Dish dish;
 		public DishButton(Dish d){
 			dish = d;
-			if (ConstantValue.LANGUAGE_CHINESE.equals(MainFrame.language)){
-				this.setText(d.getChineseName());
-			} else {
-				this.setText(d.getEnglishName());
-			}
+			this.setText(dish.getFirstLanguageName());
 			this.addActionListener(new ActionListener(){
 
 				@Override

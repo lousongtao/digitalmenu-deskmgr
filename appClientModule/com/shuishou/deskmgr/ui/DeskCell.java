@@ -137,5 +137,6 @@ public class DeskCell extends JPanel {
 			desk.setMergeTo(mergeTo);
 			lbMergeTo.setText(Messages.getString("DeskCell.MergeTo")+ mergeTo); //$NON-NLS-1$
 		}
+		
 	}
 }

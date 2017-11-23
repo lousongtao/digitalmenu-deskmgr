@@ -102,8 +102,8 @@ public class SetFlavorDialog extends JDialog{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				final Flavor f = new Flavor();
-				f.setChineseName(tfOther.getText());
-				f.setEnglishName(tfOther.getText());
+				f.setFirstLanguageName(tfOther.getText());
+				f.setSecondLanguageName(tfOther.getText());
 				final FlavorButton choosedBtn = new FlavorButton(f);
 				choosedBtn.addActionListener(new ActionListener(){
 
@@ -150,7 +150,7 @@ public class SetFlavorDialog extends JDialog{
 	class FlavorButton extends JButton{
 		public Flavor flavor;
 		public FlavorButton(Flavor f){
-			super(f.getChineseName());
+			super(f.getFirstLanguageName());
 			this.flavor = f;
 		}
 	}

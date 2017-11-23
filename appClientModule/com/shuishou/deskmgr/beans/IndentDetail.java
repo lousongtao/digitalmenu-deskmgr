@@ -12,9 +12,9 @@ public class IndentDetail {
 	
 	private double dishPrice;//����dish�۸�, ������amount
 	
-	private String dishChineseName;
+	private String dishFirstLanguageName;
 	
-	private String dishEnglishName;
+	private String dishSecondLanguageName;
 	
 	private String additionalRequirements;
 
@@ -70,23 +70,6 @@ public class IndentDetail {
 		this.dishPrice = dishPrice;
 	}
 
-	public String getDishChineseName() {
-		return dishChineseName;
-	}
-
-	public void setDishChineseName(String dishChineseName) {
-		this.dishChineseName = dishChineseName;
-	}
-
-	public String getDishEnglishName() {
-		return dishEnglishName;
-	}
-
-	public void setDishEnglishName(String dishEnglishName) {
-		this.dishEnglishName = dishEnglishName;
-	}
-
-	
 	public String getAdditionalRequirements() {
 		return additionalRequirements;
 	}
@@ -95,12 +78,28 @@ public class IndentDetail {
 		this.additionalRequirements = additionalRequirements;
 	}
 	
+	public String getDishFirstLanguageName() {
+		return dishFirstLanguageName;
+	}
+
+	public void setDishFirstLanguageName(String dishFirstLanguageName) {
+		this.dishFirstLanguageName = dishFirstLanguageName;
+	}
+
+	public String getDishSecondLanguageName() {
+		return dishSecondLanguageName;
+	}
+
+	public void setDishSecondLanguageName(String dishSecondLanguageName) {
+		this.dishSecondLanguageName = dishSecondLanguageName;
+	}
+	
 	public IndentDetail copy(){
 		IndentDetail detail = new IndentDetail();
 		detail.additionalRequirements = this.additionalRequirements;
 		detail.amount = this.amount;
-		detail.dishChineseName = this.dishChineseName;
-		detail.dishEnglishName = this.dishEnglishName;
+		detail.dishFirstLanguageName = this.dishFirstLanguageName;
+		detail.dishSecondLanguageName = this.dishSecondLanguageName;
 		detail.dishId = this.dishId;
 		detail.dishPrice = this.dishPrice;
 		detail.id = this.id;
@@ -133,6 +132,6 @@ public class IndentDetail {
 
 	@Override
 	public String toString() {
-		return "OrderDetail [amount=" + amount + ", dishChineseName=" + dishChineseName + "]";
+		return "IndentDetail [amount=" + amount + ", dishFirstLanguageName=" + dishFirstLanguageName + "]";
 	}
 }

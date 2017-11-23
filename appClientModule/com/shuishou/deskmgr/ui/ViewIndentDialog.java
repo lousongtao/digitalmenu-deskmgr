@@ -214,8 +214,8 @@ public class ViewIndentDialog extends JDialog {
 	class IndentDetailModel extends AbstractTableModel{
 		private List<IndentDetail> items;
 		private String[] header = new String[]{
-				Messages.getString("ViewIndentDialog.Header.ChineseName"),
-				Messages.getString("ViewIndentDialog.Header.EnglishName"),
+				Messages.getString("ViewIndentDialog.Header.FirstLanguageName"),
+				Messages.getString("ViewIndentDialog.Header.SecondLanguageName"),
 				Messages.getString("ViewIndentDialog.Header.Amount"),
 				Messages.getString("ViewIndentDialog.Header.Price"),
 				Messages.getString("ViewIndentDialog.Header.Weight"),
@@ -239,9 +239,9 @@ public class ViewIndentDialog extends JDialog {
 			IndentDetail d = getObjectAt(rowIndex);
 			switch(columnIndex){
 			case 0:
-				return d.getDishChineseName();
+				return d.getDishFirstLanguageName();
 			case 1:
-				return d.getDishEnglishName();
+				return d.getDishSecondLanguageName();
 			case 2:
 				return d.getAmount();
 			case 3:
