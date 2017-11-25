@@ -131,7 +131,7 @@ public class ViewIndentDialog extends JDialog {
 			public void actionPerformed(ActionEvent e) {
 				doChangeAmount();
 			}});
-		this.setSize(new Dimension(1200, 600));
+		this.setSize(new Dimension(MainFrame.WINDOW_WIDTH, 600));
 		this.setLocation((int)(mainFrame.getWidth() / 2 - this.getWidth() /2 + mainFrame.getLocation().getX()), 
 				(int)(mainFrame.getHeight() / 2 - this.getHeight() / 2 + mainFrame.getLocation().getY()));
 		

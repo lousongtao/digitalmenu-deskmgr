@@ -108,17 +108,17 @@ public class OpenTableDialog extends JDialog {
 		JPanel pDishDishplay = new JPanel(new GridBagLayout());
 		
 		JPanel pSearch = new JPanel(new BorderLayout());
-		pSearch.setPreferredSize(new Dimension(200, 50));
+		pSearch.setPreferredSize(new Dimension(150, 50));
 		pSearch.add(lbSearchCode, BorderLayout.WEST);
 		pSearch.add(tfSearchCode, BorderLayout.CENTER);
 		
-		JPanel pCategory2 = new JPanel(new GridLayout(0, 5, 5, 5));
+		JPanel pCategory2 = new JPanel(new FlowLayout(FlowLayout.LEFT));//new JPanel(new GridLayout(0, 5, 5, 5));
 		pCategory2.add(pSearch, 0);
 		generateCategory2Panel(pCategory2);
-		JScrollPane jspCategory2 = new JScrollPane(pCategory2, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+//		JScrollPane jspCategory2 = new JScrollPane(pCategory2, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		
 		
-		pDishDishplay.add(jspCategory2, 	new GridBagConstraints(0, 0, 1, 1, 1, 0.2, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+		pDishDishplay.add(pCategory2, 	new GridBagConstraints(0, 0, 1, 1, 1, 0.2, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
 		pDishDishplay.add(pDishes, 			new GridBagConstraints(0, 1, 1, 1, 1, 0.5, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
 		
 		JPanel pChoosedDish = new JPanel(new GridBagLayout());
@@ -416,7 +416,7 @@ public class OpenTableDialog extends JDialog {
 			add(lbDish, 	new GridBagConstraints(0, 0, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
 			add(lbAmount, 	new GridBagConstraints(1, 0, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 			add(lbRequire, 	new GridBagConstraints(0, 1, 2, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
-			lbRequire.setFont(ConstantValue.FONT_20PLAIN);
+			lbRequire.setFont(ConstantValue.FONT_10PLAIN);
 		}
 		@Override
 		public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
@@ -463,7 +463,13 @@ public class OpenTableDialog extends JDialog {
 				}
 				
 			});
-			this.setPreferredSize(buttonsize);
+			Dimension d = this.getPreferredSize();
+			double width = d.getWidth();
+			if (width < 100)
+				width = 100;
+			d.setSize(width, 50);
+			this.setPreferredSize(d);
+//			this.setPreferredSize(buttonsize);
 		}
 	}
 	

@@ -16,6 +16,8 @@ public class ConstantValue {
 	public static final Font FONT_20PLAIN = new Font(null, Font.PLAIN, 20);
 	public static final Font FONT_15BOLD = new Font(null, Font.BOLD, 15);
 	public static final Font FONT_15PLAIN = new Font(null, Font.PLAIN, 15);
+	public static final Font FONT_10BOLD = new Font(null, Font.BOLD, 10);
+	public static final Font FONT_10PLAIN = new Font(null, Font.PLAIN, 10);
 	
 	public static final String LANGUAGE_CHINESE = "cn";
 	public static final String LANGUAGE_ENGLISH = "en";

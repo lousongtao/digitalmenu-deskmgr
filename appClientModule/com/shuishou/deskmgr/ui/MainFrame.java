@@ -12,6 +12,8 @@ import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -123,7 +125,7 @@ public class MainFrame extends JFrame implements ActionListener{
 	public MainFrame(){
 		initUI();
 		initData();
-		setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
+//		setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
 		setLocation(WINDOW_LOCATIONX, WINDOW_LOCATIONY);
 		setTitle(Messages.getString("MainFrame.FrameTitle")); //$NON-NLS-1$
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -173,7 +175,6 @@ public class MainFrame extends JFrame implements ActionListener{
 		int row = 0;
 		Insets insets = new Insets(gapButtons,0,0,0);
 		pFunction.add(btnOpenDesk, 	new GridBagConstraints(0, row++, 1, 1,1,1, GridBagConstraints.WEST, GridBagConstraints.BOTH, insets,0,0));
-//		pFunction.add(btnAddDish, 	new GridBagConstraints(0, row++, 1, 1,1,1, GridBagConstraints.WEST, GridBagConstraints.BOTH, insets,0,0));
 		pFunction.add(btnViewIndent, 	new GridBagConstraints(0, row++, 1, 1,1,1, GridBagConstraints.WEST, GridBagConstraints.BOTH, insets,0,0));
 		pFunction.add(btnCheckout, 	new GridBagConstraints(0, row++, 1, 1,1,1, GridBagConstraints.WEST, GridBagConstraints.BOTH, insets,0,0));
 		pFunction.add(btnChangeDesk, 	new GridBagConstraints(0, row++, 1, 1,1,1, GridBagConstraints.WEST, GridBagConstraints.BOTH, insets,0,0));
@@ -932,12 +933,15 @@ public class MainFrame extends JFrame implements ActionListener{
 				| UnsupportedLookAndFeelException e) {
 			e.printStackTrace();
 		}
+		
+		int fontsize = Integer.parseInt(prop.getProperty("fontsize"));
+		Font font = new Font(null, Font.PLAIN, fontsize);
 		Enumeration enums = UIManager.getDefaults().keys();
 		while(enums.hasMoreElements()){
 			Object key = enums.nextElement();
 			Object value = UIManager.get(key);
 			if (value instanceof Font){
-				UIManager.put(key, ConstantValue.FONT_20PLAIN);
+				UIManager.put(key, font);
 			}
 		}
 		MainFrame.SERVER_URL = prop.getProperty("SERVER_URL");
@@ -950,7 +954,17 @@ public class MainFrame extends JFrame implements ActionListener{
 		MainFrame.WINDOW_LOCATIONY = Integer.parseInt(prop.getProperty("mainframe.locationy"));
 		MainFrame.language = prop.getProperty("language");
 		MainFrame.portCashdrawer=prop.getProperty("portCashdrawer");
-		MainFrame f = new MainFrame();
+		final MainFrame f = new MainFrame();
+		f.setExtendedState(JFrame.MAXIMIZED_BOTH);
+//		f.setUndecorated(true);
+		f.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		f.addWindowListener(new WindowAdapter(){
+			public void windowClosing(WindowEvent e) {
+				if (JOptionPane.showConfirmDialog(f, "Do you want to quit this system?", "Confirm", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION){
+					System.exit(0);
+				}
+			}
+		});
 		f.setVisible(true);
 		f.startLogin(prop.getProperty("defaultuser.name"), prop.getProperty("defaultuser.password"));
 	}

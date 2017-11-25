@@ -1,5 +1,6 @@
 package com.shuishou.deskmgr.ui.components;
 
+import java.awt.AWTEvent;
 import java.awt.Container;
 import java.awt.Dialog;
 import java.awt.Dimension;
@@ -13,14 +14,14 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JTextField;
 
-public class NumberKeyboard extends JDialog implements ActionListener, FocusListener{
+public class NumberKeyboard extends JDialog implements ActionListener{
 	public static final int SHOWPOSITION_LEFT = 0;
 	public static final int SHOWPOSITION_RIGHT = 1;
 	public static final int SHOWPOSITION_TOP = 2;
 	public static final int SHOWPOSITION_BOTTOM = 3;
 	private int showPosition = SHOWPOSITION_LEFT;
-	private int width = 300;
-	private int height = 300;
+	private int width = 200;
+	private int height = 200;
 	private JButton btn0 = new JButton("0");
 	private JButton btn1 = new JButton("1");
 	private JButton btn2 = new JButton("2");
@@ -77,7 +78,7 @@ public class NumberKeyboard extends JDialog implements ActionListener, FocusList
 	
 	private void initUI(){
 		Container c = this.getContentPane();
-		c.setLayout(new GridLayout(4,3,5,5));
+		c.setLayout(new GridLayout(4,3));
 		c.add(btn1);
 		c.add(btn2);
 		c.add(btn3);
@@ -103,20 +104,6 @@ public class NumberKeyboard extends JDialog implements ActionListener, FocusList
 		btn0.addActionListener(this);
 		btnBack.addActionListener(this);
 		btnDot.addActionListener(this);
-		
-		btn1.addFocusListener(this);
-		btn2.addFocusListener(this);
-		btn3.addFocusListener(this);
-		btn4.addFocusListener(this);
-		btn5.addFocusListener(this);
-		btn6.addFocusListener(this);
-		btn7.addFocusListener(this);
-		btn8.addFocusListener(this);
-		btn9.addFocusListener(this);
-		btn0.addFocusListener(this);
-		btnBack.addFocusListener(this);
-		btnDot.addFocusListener(this);
-		this.addFocusListener(this);
 	}
 
 	@Override
@@ -142,58 +129,43 @@ public class NumberKeyboard extends JDialog implements ActionListener, FocusList
 		} else if (e.getSource() == btn0){
 			comp.setText(comp.getText() + "0");
 		} else if (e.getSource() == btnBack){
-			if (comp.getText() != null && comp.getText().length() > 0){
-				String s = comp.getText();
-				comp.setText(s.substring(0, s.length() - 2));
+			String s = comp.getText();
+			if (s != null && s.length() > 0){
+				comp.setText(s.substring(0, s.length() - 1));
 			}
 		} else if (e.getSource() == btnDot){
-			comp.setText(comp.getText() + ".");
+			if (comp.getText() == null || comp.getText().length() == 0){
+				comp.setText("0.");
+			} else if (comp.getText().indexOf(".") < 0){
+				comp.setText(comp.getText() + ".");
+			}
 		}
-		System.out.println("keyboard isGainFocused " + isGainFocused());
 	}
 	
 	public void hideDot(){
 		btnDot.setVisible(false);
 	}
 	
-	public boolean isGainFocused(){
-		if (this.hasFocus())
+	public JButton getButtonDot(){
+		return btnDot;
+	}
+	
+	public boolean isEventInThis(AWTEvent event){
+		if (event.getSource() == btn1 
+				|| event.getSource() == btn2
+				|| event.getSource() == btn3
+				|| event.getSource() == btn4
+				|| event.getSource() == btn5
+				|| event.getSource() == btn6
+				|| event.getSource() == btn7
+				|| event.getSource() == btn8
+				|| event.getSource() == btn9
+				|| event.getSource() == btn0
+				|| event.getSource() == btnDot
+				|| event.getSource() == btnBack){
 			return true;
-		if (btn1.hasFocus())
-			return true;
-		if (btn2.hasFocus())
-			return true;
-		if (btn3.hasFocus())
-			return true;
-		if (btn4.hasFocus())
-			return true;
-		if (btn5.hasFocus())
-			return true;
-		if (btn6.hasFocus())
-			return true;
-		if (btn7.hasFocus())
-			return true;
-		if (btn8.hasFocus())
-			return true;
-		if (btn9.hasFocus())
-			return true;
-		if (btn0.hasFocus())
-			return true;
-		if (btnBack.hasFocus())
-			return true;
-		if (btnDot.hasFocus())
-			return true;
+		}
 		return false;
 	}
-
-	@Override
-	public void focusGained(FocusEvent e) {
-		
-	}
-
-	@Override
-	public void focusLost(FocusEvent e) {
-		if (!isGainFocused())
-			this.setVisible(false);
-	}
+	
 }
