@@ -88,13 +88,13 @@ public class MenuMgmtDialog extends JDialog {
 		pSearch.add(lbSearchCode, BorderLayout.WEST);
 		pSearch.add(tfSearchCode, BorderLayout.CENTER);
 		
-		JPanel pCategory2 = new JPanel(new GridLayout(0, 5, 5, 5));
+		JPanel pCategory2 = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		pCategory2.add(pSearch, 0);
 		generateCategory2Panel(pCategory2);
-		JScrollPane jspCategory2 = new JScrollPane(pCategory2, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+//		JScrollPane jspCategory2 = new JScrollPane(pCategory2, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		
 		
-		pDishDishplay.add(jspCategory2, 	new GridBagConstraints(0, 0, 1, 1, 1, 0.2, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+		pDishDishplay.add(pCategory2, 		new GridBagConstraints(0, 0, 1, 1, 1, 0.2, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
 		pDishDishplay.add(pDishes, 			new GridBagConstraints(0, 1, 1, 1, 1, 0.5, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
 		
 		JPanel pChoosedDish = new JPanel(new GridBagLayout());
@@ -274,7 +274,13 @@ public class MenuMgmtDialog extends JDialog {
 					doCategory2ButtonClick(c2);
 				}
 			});
-			this.setPreferredSize(buttonsize);
+			Dimension d = this.getPreferredSize();
+			double width = d.getWidth();
+			if (width < 100)
+				width = 100;
+			d.setSize(width, 50);
+			this.setPreferredSize(d);
+//			this.setPreferredSize(buttonsize);
 		}
 	}
 	
