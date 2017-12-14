@@ -6,6 +6,7 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
@@ -62,7 +63,8 @@ public class DeskCell extends JPanel {
 		this.add(lbMergeTo);
 		
 		this.addMouseListener(new MouseAdapter(){
-			public void mouseClicked(MouseEvent e){
+			@Override
+			public void mousePressed(MouseEvent e) {
 				//unselect all first, then select this
 				for(DeskCell dc : mainFrame.getDeskcellList()){
 					dc.setSelected(false);
@@ -73,10 +75,6 @@ public class DeskCell extends JPanel {
 				DeskCell.this.setBackground(colorSelect);
 			}
 		});
-//		this.setSize(new Dimension(50, 50));
-//		
-//		this.setMaximumSize(new Dimension(50, 50));
-//		this.setMinimumSize(new Dimension(50, 50));
 		this.setPreferredSize(new Dimension(MainFrame.TABLECELL_WIDTH, MainFrame.TABLECELL_HEIGHT));
 	}
 	
