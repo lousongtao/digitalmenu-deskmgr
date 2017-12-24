@@ -51,7 +51,7 @@ public class DeskCell extends JPanel {
 	
 	private void initUI(){
 		this.setLayout(new GridLayout(0, 1));
-		lbDeskNo.setFont(ConstantValue.FONT_25BOLD);
+		lbDeskNo.setFont(ConstantValue.FONT_15BOLD);
 		lbDeskNo.setText(desk.getName());
 		this.setBorder(BorderFactory.createLineBorder(Color.gray));
 		setBackground(colorUnselect);

@@ -9,6 +9,7 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -54,8 +55,9 @@ import com.shuishou.deskmgr.ui.components.IconButton;
 import com.shuishou.deskmgr.ui.components.NumberInputDialog;
 import com.shuishou.deskmgr.ui.components.NumberTextField;
 
-public class ViewIndentDialog extends JDialog {
+public class ViewIndentDialog extends JDialog implements ActionListener{
 	private final Logger logger = Logger.getLogger(ViewIndentDialog.class.getName());
+	private static final int ROWAMOUNTPERPAGE = 8;
 	private MainFrame mainFrame;
 	private Desk desk;
 	private Indent indent;
@@ -63,6 +65,9 @@ public class ViewIndentDialog extends JDialog {
 	private JButton btnRemove = new JButton(Messages.getString("ViewIndentDialog.RemoveDish"));
 	private JButton btnChangeAmount = new JButton(Messages.getString("ViewIndentDialog.ChangeAmount"));
 	private JButton btnClose = new JButton(Messages.getString("CloseDialog"));
+	private IconButton btnNextpage = new IconButton(Messages.getString("ViewIndentDialog.NextPage"), "/resource/arrowdown.png"); //$NON-NLS-1$
+	private IconButton btnPrepage = new IconButton(Messages.getString("ViewIndentDialog.PrePage"), "/resource/arrowup.png"); //$NON-NLS-1$
+	
 	private JLabel lbPrice = new JLabel();
 	private JTable tabIndentDetail = new JTable();
 	private IndentDetailModel tableModel = null;
@@ -85,6 +90,8 @@ public class ViewIndentDialog extends JDialog {
 		btnRemove.setPreferredSize(new Dimension(100, 50));
 		btnChangeAmount.setPreferredSize(new Dimension(100,50));
 		btnClose.setPreferredSize(new Dimension(100, 50));
+		btnNextpage.setPreferredSize(new Dimension(100,50));
+		btnPrepage.setPreferredSize(new Dimension(100, 50));
 		
 		tableModel = new IndentDetailModel(indent.getItems());
 		tabIndentDetail.setModel(tableModel);
@@ -104,7 +111,9 @@ public class ViewIndentDialog extends JDialog {
 		JPanel pFunction = new JPanel(new GridBagLayout());
 		pFunction.add(btnRemove, 		new GridBagConstraints(0, 0, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
 		pFunction.add(btnChangeAmount,	 new GridBagConstraints(1, 0, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 50, 0, 0), 0, 0));
-		pFunction.add(btnClose,			new GridBagConstraints(2, 0, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 50, 0, 0), 0, 0));
+		pFunction.add(btnPrepage,	 new GridBagConstraints(2, 0, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 50, 0, 0), 0, 0));
+		pFunction.add(btnNextpage,	 new GridBagConstraints(3, 0, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 50, 0, 0), 0, 0));
+		pFunction.add(btnClose,			new GridBagConstraints(4, 0, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 50, 0, 0), 0, 0));
 
 		Container c = this.getContentPane();
 		c.setLayout(new GridBagLayout());
@@ -112,29 +121,57 @@ public class ViewIndentDialog extends JDialog {
 		c.add(jspTable, 	new GridBagConstraints(0, 1, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
 		c.add(pFunction, 	new GridBagConstraints(0, 2, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
 		
-		btnClose.addActionListener(new ActionListener(){
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				ViewIndentDialog.this.setVisible(false);
-			}});
-		
-		btnRemove.addActionListener(new ActionListener(){
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				doRemoveDish();
-			}});
-		btnChangeAmount.addActionListener(new ActionListener(){
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				doChangeAmount();
-			}});
+		btnClose.addActionListener(this);			
+		btnRemove.addActionListener(this);
+		btnChangeAmount.addActionListener(this);
+		btnPrepage.addActionListener(this);
+		btnNextpage.addActionListener(this);
 		this.setSize(new Dimension(MainFrame.WINDOW_WIDTH, 600));
 		this.setLocation((int)(mainFrame.getWidth() / 2 - this.getWidth() /2 + mainFrame.getLocation().getX()), 
 				(int)(mainFrame.getHeight() / 2 - this.getHeight() / 2 + mainFrame.getLocation().getY()));
 		
+	}
+		
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		if (e.getSource() == btnClose){
+			ViewIndentDialog.this.setVisible(false);
+		} else if (e.getSource() == btnRemove){
+			doRemoveDish();
+		} else if (e.getSource() == btnChangeAmount){
+			doChangeAmount();
+		} else if (e.getSource() == btnPrepage){
+			moveToPrepage();
+		} else if (e.getSource() == btnNextpage){
+			moveToNextpage();
+		}
+	}
+	
+	private void moveToPrepage(){
+		int selectRow = tabIndentDetail.getSelectedRow();
+		if (selectRow < 0 || selectRow - ROWAMOUNTPERPAGE < 0){
+			//unselected row, move to 1st row
+			tabIndentDetail.getSelectionModel().setSelectionInterval(0, 0);
+			tabIndentDetail.scrollRectToVisible(new Rectangle(tabIndentDetail.getCellRect(0, 0,true)));
+		} else if (selectRow - ROWAMOUNTPERPAGE >= 0){
+			tabIndentDetail.getSelectionModel().setSelectionInterval(selectRow - ROWAMOUNTPERPAGE, selectRow - ROWAMOUNTPERPAGE);
+			tabIndentDetail.scrollRectToVisible(new Rectangle(tabIndentDetail.getCellRect(selectRow - ROWAMOUNTPERPAGE, 0,true)));
+		} 
+	}
+	
+	private void moveToNextpage(){
+		int lastrow = tabIndentDetail.getRowCount();
+		if (lastrow <= ROWAMOUNTPERPAGE){
+			return;
+		}
+		int row = tabIndentDetail.getSelectedRow();
+		if (row + ROWAMOUNTPERPAGE < lastrow){
+			tabIndentDetail.getSelectionModel().setSelectionInterval(row + ROWAMOUNTPERPAGE, row + ROWAMOUNTPERPAGE);
+			tabIndentDetail.scrollRectToVisible(new Rectangle(tabIndentDetail.getCellRect(row + ROWAMOUNTPERPAGE, 0,true)));
+		} else {
+			tabIndentDetail.getSelectionModel().setSelectionInterval(lastrow -1 , lastrow - 1);
+			tabIndentDetail.scrollRectToVisible(new Rectangle(tabIndentDetail.getCellRect(lastrow-1, 0,true)));
+		}
 	}
 	
 	private void refreshData(){
