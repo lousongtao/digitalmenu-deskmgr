@@ -408,8 +408,15 @@ public class CheckoutDialog extends JDialog{
 	}
 	
 	private void doCancelOrder(){
-		if (JOptionPane.showConfirmDialog(this, Messages.getString("CheckoutDialog.ConfirmCancelOrder"), "Confirm", JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION)
+		String code = JOptionPane.showInputDialog(this, Messages.getString("MainFrame.InputCodeOfCancelOrder"));
+		if (code == null){
 			return;
+		}
+		if (!code.equals(mainFrame.getConfigsMap().get(ConstantValue.CONFIGS_OPENCASHDRAWERCODE))){
+			JOptionPane.showMessageDialog(this, Messages.getString("MainFrame.ErrorCashdrawerCode"));
+			return;
+		}
+		
 		String url = "indent/operateindent";
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("userId", mainFrame.getOnDutyUser().getId() + "");

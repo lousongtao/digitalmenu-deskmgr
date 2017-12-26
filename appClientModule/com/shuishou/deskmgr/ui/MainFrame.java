@@ -568,11 +568,13 @@ public class MainFrame extends JFrame implements ActionListener{
 			JOptionPane.showMessageDialog(this, Messages.getString("MainFrame.NobodyOndutyMsg")); //$NON-NLS-1$
 			return;
 		}
-//		List<DeskCell> selectDC = getSelectedDesks();
-//		if (selectDC.size() > 1){
-//			JOptionPane.showMessageDialog(this, Messages.getString("MainFrame.SelectOverONETable"), Messages.getString("MainFrame.Error"), JOptionPane.YES_OPTION); //$NON-NLS-1$ //$NON-NLS-2$
-//			return;
-//		}
+		String code = JOptionPane.showInputDialog(this, Messages.getString("MainFrame.InputCodeOfClearDesk"));
+		if (code == null)
+			return;
+		if (!code.equals(configsMap.get(ConstantValue.CONFIGS_CLEARTABLECODE))){
+			JOptionPane.showMessageDialog(this, Messages.getString("MainFrame.ErrorCashdrawerCode"));
+			return;
+		}
 		DeskCell selectDC = getSelectedDesk();
 		if (selectDC == null)
 			return;
@@ -730,9 +732,10 @@ public class MainFrame extends JFrame implements ActionListener{
 	public void doOpenCashdrawer(boolean needpassword){
 		if (needpassword){
 			String code = JOptionPane.showInputDialog(this, Messages.getString("MainFrame.InputCodeOfOpenCashdrawer"));
-			if (code == null)
+			if (code == null){
 				return;
-			if (!configsMap.get(ConstantValue.CONFIGS_OPENCASHDRAWERCODE).equals(code)){
+			}
+			if (!code.equals(configsMap.get(ConstantValue.CONFIGS_OPENCASHDRAWERCODE))){
 				JOptionPane.showMessageDialog(this, Messages.getString("MainFrame.ErrorCashdrawerCode"));
 				return;
 			}

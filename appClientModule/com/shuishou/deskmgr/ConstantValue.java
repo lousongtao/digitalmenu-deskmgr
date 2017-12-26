@@ -86,7 +86,8 @@ public class ConstantValue {
 	public static final byte DISH_PURCHASETYPE_UNIT = 1;
 	public static final byte DISH_PURCHASETYPE_WEIGHT = 2;
 	
-
+	public static final String CONFIGS_CANCELORDERCODE = "CANCELORDERCODE";
+	public static final String CONFIGS_CLEARTABLECODE = "CLEARTABLECODE";
 	public static final String CONFIGS_CONFIRMCODE = "CONFIRMCODE";
 	public static final String CONFIGS_OPENCASHDRAWERCODE = "OPENCASHDRAWERCODE";
 	public static final String CONFIGS_LANGUAGEAMOUNT = "LANGUAGEAMOUNT";
