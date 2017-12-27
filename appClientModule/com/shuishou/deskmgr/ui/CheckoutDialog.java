@@ -422,11 +422,11 @@ public class CheckoutDialog extends JDialog{
 	}
 	
 	private void doCancelOrder(){
-		String code = JOptionPane.showInputDialog(this, Messages.getString("MainFrame.InputCodeOfCancelOrder"));
+		String code = JOptionPane.showInputDialog(this, Messages.getString("CheckoutDialog.InputCodeOfCancelOrder"));
 		if (code == null){
 			return;
 		}
-		if (!code.equals(mainFrame.getConfigsMap().get(ConstantValue.CONFIGS_OPENCASHDRAWERCODE))){
+		if (!code.equals(mainFrame.getConfigsMap().get(ConstantValue.CONFIGS_CANCELORDERCODE))){
 			JOptionPane.showMessageDialog(this, Messages.getString("MainFrame.ErrorCashdrawerCode"));
 			return;
 		}
@@ -436,6 +436,7 @@ public class CheckoutDialog extends JDialog{
 		params.put("userId", mainFrame.getOnDutyUser().getId() + "");
 		params.put("id", indent.getId() + "");
 		params.put("operatetype", ConstantValue.INDENT_OPERATIONTYPE_CANCEL+"");
+		params.put("paidCash", "0");
 		String response = HttpUtil.getJSONObjectByPost(MainFrame.SERVER_URL + url, params, "UTF-8");
 		JSONObject jsonObj = new JSONObject(response);
 		if (!jsonObj.getBoolean("success")){
