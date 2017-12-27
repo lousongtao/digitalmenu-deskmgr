@@ -111,6 +111,11 @@ public class CheckoutSplitIndentDialog extends CheckoutDialog{
 				}
 			}
 		}
+		if (numGetCash.getText() == null || numGetCash.getText().length() ==0){
+			params.put("paidCash", "0");
+		} else {
+			params.put("paidCash", String.format(ConstantValue.FORMAT_DOUBLE, Double.parseDouble(numGetCash.getText())));
+		}
 		String response = HttpUtil.getJSONObjectByPost(MainFrame.SERVER_URL + url, params, "UTF-8");
 		if (response == null || response.length() == 0){
 			logger.error("get null from server while pay splited indent. URL = " + url + ", param = "+ params);
@@ -128,6 +133,15 @@ public class CheckoutSplitIndentDialog extends CheckoutDialog{
 		this.setVisible(false);
 		if (rbPayCash.isSelected()){
 			mainFrame.doOpenCashdrawer(false);
+		}
+		if (rbPayCash.isSelected()){
+			double getcash = 0;
+			if (numGetCash.getText() != null && numGetCash.getText().length() !=0){
+				getcash = Double.parseDouble(numGetCash.getText());
+			}
+			JOptionPane.showMessageDialog(mainFrame, Messages.getString("CheckoutDialog.GetCash") + numGetCash.getText()
+			+ "\n" + Messages.getString("CheckoutDialog.ShouldPayAmount") + String.format(ConstantValue.FORMAT_DOUBLE, discountPrice)
+			+ "\n" + Messages.getString("CheckoutDialog.Charge") + String.format(ConstantValue.FORMAT_DOUBLE, getcash - discountPrice));
 		}
 	}
 

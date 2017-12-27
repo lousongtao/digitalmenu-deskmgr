@@ -907,6 +907,7 @@ public class MainFrame extends JFrame implements ActionListener{
 			
 			@Override
 			public void uncaughtException(Thread t, Throwable e) {
+				MainFrame.logger.error(ConstantValue.DFYMDHMS.format(new Date()));
 				MainFrame.logger.error("", e);
 				e.printStackTrace();
 			}

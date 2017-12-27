@@ -10,6 +10,8 @@ public class ConstantValue {
 	public static final DateFormat DFHMS = new SimpleDateFormat("HH:mm:ss");
 	public static final DateFormat DFYMD = new SimpleDateFormat("yyyy/MM/dd");
 	
+	public static final String FORMAT_DOUBLE = "%.2f";
+	
 	public static final Font FONT_25BOLD = new Font(null, Font.BOLD, 25);
 	public static final Font FONT_25PLAIN = new Font(null, Font.PLAIN, 25);	
 	public static final Font FONT_20BOLD = new Font(null, Font.BOLD, 20);

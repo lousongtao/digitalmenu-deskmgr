@@ -372,6 +372,11 @@ public class CheckoutDialog extends JDialog{
 		params.put("id", indent.getId() + "");
 		params.put("operatetype", ConstantValue.INDENT_OPERATIONTYPE_PAY+"");
 		params.put("paidPrice", discountPrice + "");
+		if (numGetCash.getText() == null || numGetCash.getText().length() ==0){
+			params.put("paidCash", "0");
+		} else {
+			params.put("paidCash", String.format(ConstantValue.FORMAT_DOUBLE, Double.parseDouble(numGetCash.getText())));
+		}
 		if (rbPayCash.isSelected()){
 			params.put("payWay", ConstantValue.INDENT_PAYWAY_CASH);
 		} else if (rbPayBankCard.isSelected()){
@@ -399,6 +404,15 @@ public class CheckoutDialog extends JDialog{
 		mainFrame.loadCurrentIndentInfo();
 		if (rbPayCash.isSelected()){
 			mainFrame.doOpenCashdrawer(false);
+		}
+		if (rbPayCash.isSelected()){
+			double getcash = 0;
+			if (numGetCash.getText() != null && numGetCash.getText().length() !=0){
+				getcash = Double.parseDouble(numGetCash.getText());
+			}
+			JOptionPane.showMessageDialog(mainFrame, Messages.getString("CheckoutDialog.GetCash") + numGetCash.getText()
+			+ "\n" + Messages.getString("CheckoutDialog.ShouldPayAmount") + String.format(ConstantValue.FORMAT_DOUBLE, discountPrice)
+			+ "\n" + Messages.getString("CheckoutDialog.Charge") + String.format(ConstantValue.FORMAT_DOUBLE, getcash - discountPrice));
 		}
 	}
 	
