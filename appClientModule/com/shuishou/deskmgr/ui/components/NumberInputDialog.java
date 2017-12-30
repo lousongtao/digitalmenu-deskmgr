@@ -28,7 +28,7 @@ public class NumberInputDialog extends JDialog{
 		JButton btnClose = new JButton(Messages.getString("CloseDialog"));
 		btnConfirm.setPreferredSize(new Dimension(150, 50));
 		btnClose.setPreferredSize(new Dimension(150, 50));
-		txt = new NumberTextField(this, allowDouble);
+		txt = new NumberTextField(this, allowDouble, NumberKeyboard.SHOWPOSITION_RIGHT);
 		Container c = this.getContentPane();
 		c.setLayout(new GridBagLayout());
 		c.add(new JLabel(message), new GridBagConstraints(0, 0, 2, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 0, 0, 0), 0, 0));

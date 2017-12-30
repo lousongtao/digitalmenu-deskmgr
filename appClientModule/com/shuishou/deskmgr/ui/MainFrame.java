@@ -255,6 +255,7 @@ public class MainFrame extends JFrame implements ActionListener{
 			return;
 		}
 		category1List = result.data;
+		Collections.sort(category1List, category1Comparator);
 	}
 	
 	private void loadConfigsMap(){
@@ -877,9 +878,17 @@ public class MainFrame extends JFrame implements ActionListener{
 	
 	public ArrayList<Dish> getAllDishes(){
 		ArrayList<Dish> dishes = new ArrayList<>();
-		for(Category1 c1 : this.category1List){
-			for(Category2 c2 : c1.getCategory2s()){
-				dishes.addAll(c2.getDishes());
+		for (int i = 0; i < category1List.size(); i++) {
+			Category1 c1 = category1List.get(i);
+			if (c1.getCategory2s() !=null){
+				Collections.sort(c1.getCategory2s(), category2Comparator);
+				for (int j = 0; j < c1.getCategory2s().size(); j++) {
+					Category2 c2 = c1.getCategory2s().get(i);
+					if (c2.getDishes() != null){
+						Collections.sort(c2.getDishes(), dishComparator);
+						dishes.addAll(c2.getDishes());
+					}
+				}
 			}
 		}
 		return dishes;
@@ -887,8 +896,12 @@ public class MainFrame extends JFrame implements ActionListener{
 	
 	public ArrayList<Category2> getAllCategory2s(){
 		ArrayList<Category2> c2s = new ArrayList<>();
-		for(Category1 c1 : this.category1List){
-			c2s.addAll(c1.getCategory2s());
+		for (int i = 0; i < category1List.size(); i++) {
+			Category1 c1 = category1List.get(i);
+			if (c1.getCategory2s() !=null){
+				Collections.sort(c1.getCategory2s(), category2Comparator);
+				c2s.addAll(c1.getCategory2s());
+			}
 		}
 		return c2s;
 	}
@@ -901,6 +914,28 @@ public class MainFrame extends JFrame implements ActionListener{
 	public void setConfigsMap(HashMap<String, String> configsMap) {
 		this.configsMap = configsMap;
 	}
+
+	private Comparator<Category1> category1Comparator = new Comparator<Category1>(){
+
+		@Override
+		public int compare(Category1 o1, Category1 o2) {
+			return o1.getSequence() - o2.getSequence();
+		}};
+		
+	private Comparator<Category2> category2Comparator = new Comparator<Category2>() {
+
+		@Override
+		public int compare(Category2 o1, Category2 o2) {
+			return o1.getSequence() - o2.getSequence();
+		}
+	};
+
+	private Comparator<Dish> dishComparator = new Comparator<Dish>(){
+
+		@Override
+		public int compare(Dish o1, Dish o2) {
+			return o1.getSequence() - o2.getSequence();
+		}};
 
 	public static void main(String[] args){
 		Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {

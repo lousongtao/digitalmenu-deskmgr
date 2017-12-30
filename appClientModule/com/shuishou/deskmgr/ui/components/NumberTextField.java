@@ -58,12 +58,13 @@ public class NumberTextField extends JFormattedTextField{
 			}
 		});
 		
-//		addFocusListener(new FocusAdapter(){
-//
-//			@Override
-//			public void focusGained(FocusEvent e) {
-//				
-//			}});
+		this.addFocusListener(new FocusAdapter(){
+
+			@Override
+			public void focusGained(FocusEvent e) {
+				if (!keyboard.isVisible())
+					keyboard.setVisible(true);
+			}});
 		
 		addHierarchyBoundsListener(new HierarchyBoundsAdapter(){
 			public void ancestorMoved(HierarchyEvent e) {
