@@ -883,7 +883,7 @@ public class MainFrame extends JFrame implements ActionListener{
 			if (c1.getCategory2s() !=null){
 				Collections.sort(c1.getCategory2s(), category2Comparator);
 				for (int j = 0; j < c1.getCategory2s().size(); j++) {
-					Category2 c2 = c1.getCategory2s().get(i);
+					Category2 c2 = c1.getCategory2s().get(j);
 					if (c2.getDishes() != null){
 						Collections.sort(c2.getDishes(), dishComparator);
 						dishes.addAll(c2.getDishes());
