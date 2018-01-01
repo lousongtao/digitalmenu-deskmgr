@@ -244,12 +244,14 @@ public class MainFrame extends JFrame implements ActionListener{
 		String url = "menu/querymenu";
 		String response = HttpUtil.getJSONObjectByGet(SERVER_URL + url);
 		if (response == null){
+			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 			logger.error("get null from server for loading menu. URL = " + url);
 			JOptionPane.showMessageDialog(this, "get null from server for loading menu. URL = " + url);
 			return;
 		}
 		HttpResult<ArrayList<Category1>> result = gson.fromJson(response, new TypeToken<HttpResult<ArrayList<Category1>>>(){}.getType());
 		if (!result.success){
+			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 			logger.error("return false while loading menu. URL = " + url + ", response = "+response);
 			JOptionPane.showMessageDialog(this, "return false while loading menu. URL = " + url + ", response = "+response);
 			return;
@@ -262,12 +264,14 @@ public class MainFrame extends JFrame implements ActionListener{
 		String url = "common/queryconfigmap";
 		String response = HttpUtil.getJSONObjectByGet(SERVER_URL + url);
 		if (response == null){
+			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 			logger.error("get null from server for loading configs. URL = " + url);
 			JOptionPane.showMessageDialog(this, "get null from server for loading configs. URL = " + url);
 			return;
 		}
 		HttpResult<HashMap<String, String>> result = new Gson().fromJson(response, new TypeToken<HttpResult<HashMap<String, String>>>(){}.getType());
 		if (!result.success){
+			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 			logger.error("return false while loading configs. URL = " + url + ", response = "+response);
 			JOptionPane.showMessageDialog(this, "return false while loading configs. URL = " + url + ", response = "+response);
 			return;
@@ -279,12 +283,14 @@ public class MainFrame extends JFrame implements ActionListener{
 		String url = "management/getcurrentduty";
 		String response = HttpUtil.getJSONObjectByGet(SERVER_URL + url);
 		if (response == null){
+			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 			logger.error("get null from server for duty employee info. URL = " + url);
 			JOptionPane.showMessageDialog(this, "get null from server for duty employee info. URL = " + url);
 			return;
 		}
 		HttpResult<CurrentDutyInfo> result = gson.fromJson(response, new TypeToken<HttpResult<CurrentDutyInfo>>(){}.getType());
 		if (!result.success){
+			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 			logger.error("return false while get duty employee info. URL = " + url + ", response = "+response);
 			JOptionPane.showMessageDialog(this, "return false while get duty employee info. URL = " + url + ", response = "+response);
 			return;
@@ -294,6 +300,7 @@ public class MainFrame extends JFrame implements ActionListener{
 			try {
 				startTime = ConstantValue.DFYMDHMS.parse(result.data.startTime);
 			} catch (Exception e) {
+				logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 				logger.error("get wrong format of on duty date, URL = " + url + ", returnjson = " + response);
 			}
 			onDutyUser = new UserData(result.data.currentDutyId, result.data.currentDutyName, startTime);
@@ -307,12 +314,14 @@ public class MainFrame extends JFrame implements ActionListener{
 		String url = "common/getdiscounttemplates";
 		String response = HttpUtil.getJSONObjectByGet(SERVER_URL + url);
 		if (response == null){
+			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 			logger.error("get null from server for discount templates. URL = " + url);
 			JOptionPane.showMessageDialog(this, "get null from server for discount templates. URL = " + url);
 			return;
 		}
 		HttpResult<ArrayList<DiscountTemplate>> result = gson.fromJson(response, new TypeToken<HttpResult<ArrayList<DiscountTemplate>>>(){}.getType());
 		if (!result.success){
+			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 			logger.error("return false while get discount templates. URL = " + url + ", response = "+response);
 			JOptionPane.showMessageDialog(this, "return false while get discount templates. URL = " + url + ", response = "+response);
 			return;
@@ -325,12 +334,14 @@ public class MainFrame extends JFrame implements ActionListener{
 		String url = "common/getpayways";
 		String response = HttpUtil.getJSONObjectByGet(SERVER_URL + url);
 		if (response == null){
+			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 			logger.error("get null from server for pay way. URL = " + url);
 			JOptionPane.showMessageDialog(this, "get null from server for pay way. URL = " + url);
 			return;
 		}
 		HttpResult<ArrayList<PayWay>> result = gson.fromJson(response, new TypeToken<HttpResult<ArrayList<PayWay>>>(){}.getType());
 		if (!result.success){
+			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 			logger.error("return false while get pay way. URL = " + url + ", response = "+response);
 			JOptionPane.showMessageDialog(this, "return false while get pay way. URL = " + url + ", response = "+response);
 			return;
@@ -343,12 +354,14 @@ public class MainFrame extends JFrame implements ActionListener{
 		String url = "menu/queryflavor";
 		String response = HttpUtil.getJSONObjectByGet(SERVER_URL + url);
 		if (response == null){
+			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 			logger.error("get null from server for flavor. URL = " + url);
 			JOptionPane.showMessageDialog(this, "get null from server for flavor. URL = " + url);
 			return;
 		}
 		HttpResult<ArrayList<Flavor>> result = gson.fromJson(response, new TypeToken<HttpResult<ArrayList<Flavor>>>(){}.getType());
 		if (!result.success){
+			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 			logger.error("return false while get flavor. URL = " + url + ", response = "+response);
 			JOptionPane.showMessageDialog(this, "return false while get flavor. URL = " + url + ", response = "+response);
 			return;
@@ -377,12 +390,14 @@ public class MainFrame extends JFrame implements ActionListener{
 		String url = "common/getdesks";
 		String response = HttpUtil.getJSONObjectByGet(SERVER_URL + url);
 		if (response == null){
+			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 			logger.error("get null from server for desks list. URL = " + url);
 			JOptionPane.showMessageDialog(this, "get null from server for desks list. URL = " + url);
 			return;
 		}
 		HttpResult<ArrayList<Desk>> result = gson.fromJson(response, new TypeToken<HttpResult<ArrayList<Desk>>>(){}.getType());
 		if (!result.success){
+			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 			logger.error("return false while get desks. URL = " + url + ", response = "+response);
 			JOptionPane.showMessageDialog(this, "return false while get desks. URL = " + url + ", response = "+response);
 			return;
@@ -411,6 +426,7 @@ public class MainFrame extends JFrame implements ActionListener{
 		params.put("status", "Unpaid");
 		String response = HttpUtil.getJSONObjectByPost(SERVER_URL + url, params, "UTF-8");
 		if (response == null || response.length() == 0){
+			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 			logger.error("get null from server for query indent error. URL = " + url + ", param = "+ params);
 			JOptionPane.showMessageDialog(this, "get null from server for query indent info. URL = " + url);
 			return;
@@ -418,6 +434,7 @@ public class MainFrame extends JFrame implements ActionListener{
 		
 		HttpResult<ArrayList<Indent>> result = gsonTime.fromJson(response, new TypeToken<HttpResult<ArrayList<Indent>>>(){}.getType());
 		if (!result.success){
+			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 			logger.error("return false while get indents. URL = " + url + ", response = "+response);
 			JOptionPane.showMessageDialog(this, "return false while get indents. URL = " + url + ", response = "+response);
 			return;
@@ -451,6 +468,7 @@ public class MainFrame extends JFrame implements ActionListener{
 		params.put("deskname", deskName);
 		String response = HttpUtil.getJSONObjectByPost(SERVER_URL + url, params, "UTF-8");
 		if (response == null || response.length() == 0){
+			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 			logger.error("get null from server for query indent by desk error. URL = " + url + ", param = "+ params);
 			JOptionPane.showMessageDialog(this, "get null from server for query indent info by desk . URL = " + url);
 			return null;
@@ -458,6 +476,7 @@ public class MainFrame extends JFrame implements ActionListener{
 		
 		HttpResult<ArrayList<Indent>> result = gsonTime.fromJson(response, new TypeToken<HttpResult<ArrayList<Indent>>>(){}.getType());
 		if (!result.success){
+			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 			logger.error("return false while get indents by desk . URL = " + url + ", response = "+response);
 			JOptionPane.showMessageDialog(this, "return false while get indents by desk . URL = " + url + ", response = "+response);
 			return null;
@@ -488,12 +507,14 @@ public class MainFrame extends JFrame implements ActionListener{
 		params.put("printLastDutyTicket", String.valueOf(printLastDutyTicket));
 		String response = HttpUtil.getJSONObjectByPost(SERVER_URL + url, params, "UTF-8");
 		if (response == null || response.length() == 0){
+			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 			logger.error("get null from server for starting shiftwork. URL = " + url + ", param = "+ params);
 			JOptionPane.showMessageDialog(this, "get null from server for starting shiftwork. URL = " + url + ", param = "+ params);
 			return;
 		}
 		HttpResult<CurrentDutyInfo> result = gson.fromJson(response, new TypeToken<HttpResult<CurrentDutyInfo>>(){}.getType());
 		if (!result.success){
+			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 			logger.error("return false while starting shiftwork. URL = " + url + ", response = "+response);
 			JOptionPane.showMessageDialog(this, "return false while starting shiftwork. URL = " + url + ", response = "+response);
 			return;
@@ -502,6 +523,7 @@ public class MainFrame extends JFrame implements ActionListener{
 		try {
 			startTime = ConstantValue.DFYMDHMS.parse(result.data.startTime);
 		} catch (ParseException e) {
+			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 			logger.error("get wrong format of on duty date, URL = " + url + ", param = " + params +", returnjson = "+response);
 		}
 		onDutyUser = new UserData(result.data.currentDutyId, result.data.currentDutyName, startTime);
@@ -517,12 +539,14 @@ public class MainFrame extends JFrame implements ActionListener{
 		params.put("startTime", ConstantValue.DFYMDHMS.format(user.getStartTime()));
 		String response = HttpUtil.getJSONObjectByPost(SERVER_URL + url, params, "UTF-8");
 		if (response == null || response.length() == 0){
+			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 			logger.error("get null from server while off duty. URL = " + url + ", param = "+ params);
 			JOptionPane.showMessageDialog(this, "get null from server while off duty. URL = " + url + ", param = "+ params);
 			return;
 		}
 		HttpResult<CurrentDutyInfo> result = gson.fromJson(response, new TypeToken<HttpResult<CurrentDutyInfo>>(){}.getType());
 		if (!result.success){
+			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 			logger.error("return false while end shiftwork. URL = " + url + ", response = "+response);
 			JOptionPane.showMessageDialog(this, "return false while end shiftwork. URL = " + url + ", response = "+response);
 			return;
@@ -589,12 +613,14 @@ public class MainFrame extends JFrame implements ActionListener{
 		params.put("deskId", String.valueOf(deskid));
 		String response = HttpUtil.getJSONObjectByPost(SERVER_URL + url, params, "UTF-8");
 		if (response == null || response.length() == 0){
+			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 			logger.error("get null from server while clear desks failed. URL = " + url + ", param = "+ params);
 			JOptionPane.showMessageDialog(this, "get null from server while clear desks failed. URL = " + url + ", param = "+ params);
 			return;
 		}
 		HttpResult<String> result = gson.fromJson(response, new TypeToken<HttpResult<String>>(){}.getType());
 		if (!result.success){
+			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 			logger.error("return false while clean table. URL = " + url + ", response = "+response);
 			JOptionPane.showMessageDialog(this, "return false while clean table. URL = " + url + ", response = "+response);
 			return;
@@ -647,6 +673,7 @@ public class MainFrame extends JFrame implements ActionListener{
 		params.put("subDeskId", subDeskIds);
 		String response = HttpUtil.getJSONObjectByPost(SERVER_URL + url, params, "UTF-8");
 		if (response == null || response.length() == 0){
+			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 			logger.error("get null from server while do merge desks failed. URL = " + url + ", param = "+ params);
 			JOptionPane.showMessageDialog(this, "get null from server while do merge desks failed. URL = " + url + ", param = "+ params);
 			return;
@@ -712,12 +739,14 @@ public class MainFrame extends JFrame implements ActionListener{
 		params.put("orderbydesc", "id"); 
 		String response = HttpUtil.getJSONObjectByPost(MainFrame.SERVER_URL + url, params, "UTF-8");
 		if (response == null || response.length() == 0){
+			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 			logger.error("get null from server while print indent. URL = " + url + ", param = "+ params);
 			JOptionPane.showMessageDialog(this, "get null from server while print indent. URL = " + url + ", param = "+ params);
 			return;
 		}
 		HttpResult<ArrayList<Indent>> result = gsonTime.fromJson(response, new TypeToken<HttpResult<ArrayList<Indent>>>(){}.getType());
 		if (!result.success){
+			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 			logger.error("return false while print indent. URL = " + url + ", response = "+response);
 			JOptionPane.showMessageDialog(this, "return false while print indent. URL = " + url + ", response = "+response);
 			return;
@@ -767,7 +796,8 @@ public class MainFrame extends JFrame implements ActionListener{
 			}
 			outputStreamCashdrawer.write("A".getBytes());// any string is ok
 		} catch (IOException e) {
-			logger.error(e);
+			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
+			logger.error("",e);
 		}
 	}
 	

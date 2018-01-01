@@ -16,6 +16,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -270,12 +271,14 @@ public class OpenTableDialog extends JDialog implements ActionListener{
 		params.put("comments", tfWholeOrderComment.getText());
 		String response = HttpUtil.getJSONObjectByPost(MainFrame.SERVER_URL + url, params, "UTF-8");
 		if (response == null || response.length() == 0){
+			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 			logger.error("get null from server while making order. URL = " + url + ", param = "+ params);
 			JOptionPane.showMessageDialog(this, "get null from server while making order. URL = " + url + ", param = "+ params);
 			return false;
 		}
 		HttpResult<Integer> result = new Gson().fromJson(response, new TypeToken<HttpResult<Integer>>(){}.getType());
 		if (!result.success){
+			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 			logger.error("return false while making order. URL = " + url + ", response = "+response);
 			JOptionPane.showMessageDialog(this, "return false while making order. URL = " + url + ", response = "+response);
 			return false;
@@ -309,12 +312,14 @@ public class OpenTableDialog extends JDialog implements ActionListener{
 		params.put("deskid", desk.getId()+"");
 		String response = HttpUtil.getJSONObjectByPost(MainFrame.SERVER_URL + url, params, "UTF-8");
 		if (response == null || response.length() == 0){
+			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 			logger.error("get null from server while add dish to order. URL = " + url + ", param = "+ params);
 			JOptionPane.showMessageDialog(this, "get null from server while add dish to order. URL = " + url + ", param = "+ params);
 			return false;
 		}
 		HttpResult<Integer> result = new Gson().fromJson(response, new TypeToken<HttpResult<Integer>>(){}.getType());
 		if (!result.success){
+			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 			logger.error("return false while add dish to order. URL = " + url + ", response = "+response);
 			JOptionPane.showMessageDialog(this, "return false while add dish to order. URL = " + url + ", response = "+response);
 			return false;

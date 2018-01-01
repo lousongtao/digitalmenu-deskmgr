@@ -17,6 +17,7 @@ import java.awt.event.KeyEvent;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -395,6 +396,7 @@ public class CheckoutDialog extends JDialog{
 		String response = HttpUtil.getJSONObjectByPost(MainFrame.SERVER_URL + url, params, "UTF-8");
 		JSONObject jsonObj = new JSONObject(response);
 		if (!jsonObj.getBoolean("success")){
+			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 			logger.error("Do checkout failed. URL = " + url + ", param = "+ params);
 			JOptionPane.showMessageDialog(mainFrame, Messages.getString("CheckoutDialog.FailPayMsg")); //$NON-NLS-1$
 		}
@@ -440,6 +442,7 @@ public class CheckoutDialog extends JDialog{
 		String response = HttpUtil.getJSONObjectByPost(MainFrame.SERVER_URL + url, params, "UTF-8");
 		JSONObject jsonObj = new JSONObject(response);
 		if (!jsonObj.getBoolean("success")){
+			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 			logger.error("Do checkout failed. URL = " + url + ", param = "+ params);
 			JOptionPane.showMessageDialog(mainFrame, Messages.getString("CheckoutDialog.FailPayMsg")); //$NON-NLS-1$
 		}

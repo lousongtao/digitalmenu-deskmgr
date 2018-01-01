@@ -3,6 +3,7 @@ package com.shuishou.deskmgr.http;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -23,6 +24,7 @@ import org.apache.http.params.HttpParams;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
+import com.shuishou.deskmgr.ConstantValue;
 import com.shuishou.deskmgr.ui.MainFrame;
 
 public class HttpUtil {
@@ -55,7 +57,8 @@ public class HttpUtil {
         try {
             httpResponse=httpClient.execute(httpGet); 
         } catch (Exception e) {
-        	logger.error(e);
+			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
+        	logger.error("", e);
         }
         if (httpResponse == null)
         	return null;
@@ -72,13 +75,15 @@ public class HttpUtil {
                 	return entityStringBuilder.toString();
 //                	resultJsonObject=new JSONObject(entityStringBuilder.toString());
                 } else {
+					logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
                 	logger.error("Http Error: URl : "+ uriString 
                 			+ "\nhttpcode : "+ httpResponse.getStatusLine().getStatusCode()
                 			+ "\nresponse message : " + entityStringBuilder.toString());
                 }
                 
             } catch (Exception e) {
-            	logger.error(e);
+				logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
+            	logger.error("", e);
             }
         }
         
@@ -116,18 +121,21 @@ public class HttpUtil {
 //                    	resultJsonObject = new JSONObject(entityStringBuilder.toString());
                     	return entityStringBuilder.toString();
                     } else {
+						logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
                     	logger.error("Http Error: URl : "+ path + "\nparam : "+ paramsHashMap 
                     			+ "\nhttpcode : "+ httpResponse.getStatusLine().getStatusCode()
                     			+ "\nresponse message : " + entityStringBuilder.toString());
                     }
                     
                 } catch (Exception e) {
-                    logger.error(e);
+					logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
+                    logger.error("",e);
                 }
             }
             
         } catch (Exception e) {
-            logger.error(e);
+			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
+            logger.error("",e);
         }
         return null;
     } 

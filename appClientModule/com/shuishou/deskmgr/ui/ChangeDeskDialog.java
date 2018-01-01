@@ -16,6 +16,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -120,6 +121,7 @@ public class ChangeDeskDialog extends JDialog {
 		params.put("deskId2", selected.getDesk().getId() + "");
 		String response = HttpUtil.getJSONObjectByPost(MainFrame.SERVER_URL + url, params, "UTF-8");
 		if (response == null || response.length() == 0){
+			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 			logger.error("get null from server while changing tables. URL = " + url + ", param = "+ params);
 			JOptionPane.showMessageDialog(this, "get null from server while changing tables. URL = " + url + ", param = "+ params);
 			return;
@@ -127,6 +129,7 @@ public class ChangeDeskDialog extends JDialog {
 		Gson gson = new GsonBuilder().setDateFormat("yyyy/MM/dd HH:mm:ss").create();
 		HttpResult<ArrayList<DeskWithIndent>> result = gson.fromJson(response, new TypeToken<HttpResult<ArrayList<DeskWithIndent>>>(){}.getType());
 		if (!result.success){
+			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 			logger.error("return false while changing tables. URL = " + url + ", response = "+response);
 			JOptionPane.showMessageDialog(this, "return false while changing tables. URL = " + url + ", response = "+response);
 			return;
