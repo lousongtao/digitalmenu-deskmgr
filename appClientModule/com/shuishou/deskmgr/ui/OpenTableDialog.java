@@ -450,7 +450,10 @@ public class OpenTableDialog extends JDialog implements ActionListener{
 			if (txt.length() > 17)
 				txt = txt.substring(0, 17) + "...";
 			lbDish.setText(txt);
-			lbAmount.setText(cd.amount+"");
+			if (dish.getPurchaseType() == ConstantValue.DISH_PURCHASETYPE_UNIT)
+				lbAmount.setText(cd.amount+" / $"+dish.getPrice());
+			else if (dish.getPurchaseType() == ConstantValue.DISH_PURCHASETYPE_WEIGHT)
+				lbAmount.setText(cd.amount+" / "+cd.weight);
 			lbRequire.setText(generateRequires(cd));
 			return this;
 		}

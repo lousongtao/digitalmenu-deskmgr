@@ -68,6 +68,7 @@ public class ViewIndentDialog extends JDialog implements ActionListener{
 	private JButton btnClose = new JButton(Messages.getString("CloseDialog"));
 	private IconButton btnNextpage = new IconButton(Messages.getString("ViewIndentDialog.NextPage"), "/resource/arrowdown.png"); //$NON-NLS-1$
 	private IconButton btnPrepage = new IconButton(Messages.getString("ViewIndentDialog.PrePage"), "/resource/arrowup.png"); //$NON-NLS-1$
+	private IconButton btnCheckout = new IconButton(Messages.getString("MainFrame.Checkout"), "/resource/checkout.png"); //$NON-NLS-1$
 	
 	private JLabel lbPrice = new JLabel();
 	private JTable tabIndentDetail = new JTable();
@@ -93,6 +94,7 @@ public class ViewIndentDialog extends JDialog implements ActionListener{
 		btnClose.setPreferredSize(new Dimension(100, 50));
 		btnNextpage.setPreferredSize(new Dimension(100,50));
 		btnPrepage.setPreferredSize(new Dimension(100, 50));
+		btnCheckout.setPreferredSize(new Dimension(100, 50));
 		
 		tableModel = new IndentDetailModel(indent.getItems());
 		tabIndentDetail.setModel(tableModel);
@@ -110,11 +112,12 @@ public class ViewIndentDialog extends JDialog implements ActionListener{
 		pTop.add(lbPrice, 		new GridBagConstraints(1, 0, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 100, 0, 0), 0, 0));
 		
 		JPanel pFunction = new JPanel(new GridBagLayout());
-		pFunction.add(btnRemove, 		new GridBagConstraints(0, 0, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
-		pFunction.add(btnChangeAmount,	 new GridBagConstraints(1, 0, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 50, 0, 0), 0, 0));
+		pFunction.add(btnRemove,	new GridBagConstraints(0, 0, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
+		pFunction.add(btnChangeAmount,new GridBagConstraints(1, 0, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 50, 0, 0), 0, 0));
 		pFunction.add(btnPrepage,	 new GridBagConstraints(2, 0, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 50, 0, 0), 0, 0));
 		pFunction.add(btnNextpage,	 new GridBagConstraints(3, 0, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 50, 0, 0), 0, 0));
-		pFunction.add(btnClose,			new GridBagConstraints(4, 0, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 50, 0, 0), 0, 0));
+		pFunction.add(btnCheckout,	 new GridBagConstraints(4, 0, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 50, 0, 0), 0, 0));
+		pFunction.add(btnClose,		new GridBagConstraints(5, 0, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 50, 0, 0), 0, 0));
 
 		Container c = this.getContentPane();
 		c.setLayout(new GridBagLayout());
@@ -127,6 +130,7 @@ public class ViewIndentDialog extends JDialog implements ActionListener{
 		btnChangeAmount.addActionListener(this);
 		btnPrepage.addActionListener(this);
 		btnNextpage.addActionListener(this);
+		btnCheckout.addActionListener(this);
 		this.setSize(new Dimension(MainFrame.WINDOW_WIDTH, 600));
 		this.setLocation((int)(mainFrame.getWidth() / 2 - this.getWidth() /2 + mainFrame.getLocation().getX()), 
 				(int)(mainFrame.getHeight() / 2 - this.getHeight() / 2 + mainFrame.getLocation().getY()));
@@ -145,6 +149,10 @@ public class ViewIndentDialog extends JDialog implements ActionListener{
 			moveToPrepage();
 		} else if (e.getSource() == btnNextpage){
 			moveToNextpage();
+		} else if (e.getSource() == btnCheckout){
+			CheckoutDialog dlg = new CheckoutDialog(mainFrame, Messages.getString("MainFrame.CheckoutTitle"), true, desk, indent); //$NON-NLS-1$
+			this.setVisible(false);
+			dlg.setVisible(true);
 		}
 	}
 	

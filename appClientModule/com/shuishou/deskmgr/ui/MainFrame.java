@@ -872,7 +872,8 @@ public class MainFrame extends JFrame implements ActionListener{
 			JOptionPane.showMessageDialog(this, Messages.getString("MainFrame.NoIndentOnTable"), Messages.getString("MainFrame.Error"), JOptionPane.YES_OPTION); //$NON-NLS-1$ //$NON-NLS-2$
 			return;
 		}
-		ViewIndentDialog dlg = new ViewIndentDialog(this, Messages.getString("MainFrame.ViewIndent"), true, selectDC.getDesk(), selectDC.getIndent()); //$NON-NLS-1$
+		Indent indent = loadIndentByDesk(selectDC.getDesk().getName());
+		ViewIndentDialog dlg = new ViewIndentDialog(this, Messages.getString("MainFrame.ViewIndent"), true, selectDC.getDesk(), indent); //$NON-NLS-1$
 		dlg.setVisible(true);
 	}
 	
