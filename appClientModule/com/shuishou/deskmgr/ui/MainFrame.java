@@ -118,7 +118,7 @@ public class MainFrame extends JFrame implements ActionListener{
 //	private String openCashdrawerCode = null;
 	private HashMap<String, String> configsMap;
 	private Gson gson = new Gson();
-	private Gson gsonTime = new GsonBuilder().setDateFormat("yyyy/MM/dd HH:mm:ss").create();
+	private Gson gsonTime = new GsonBuilder().setDateFormat(ConstantValue.DATE_PATTERN_YMDHMS).create();
 	private int gapButtons = 5; // the gap between buttons for top
 	
 	

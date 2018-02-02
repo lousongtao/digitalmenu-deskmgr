@@ -124,7 +124,7 @@ public class CheckoutSplitIndentDialog extends CheckoutDialog{
 			JOptionPane.showMessageDialog(this, "get null from server while pay splited indent. URL = " + url + ", param = "+ params);
 			return;
 		}
-		Gson gson = new GsonBuilder().setDateFormat("yyyy/MM/dd HH:mm:ss").create();
+		Gson gson = new GsonBuilder().setDateFormat(ConstantValue.DATE_PATTERN_YMDHMS).create();
 		HttpResult<Indent> result = gson.fromJson(response, new TypeToken<HttpResult<Indent>>(){}.getType());
 		if (!result.success){
 			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");

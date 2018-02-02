@@ -126,7 +126,7 @@ public class ChangeDeskDialog extends JDialog {
 			JOptionPane.showMessageDialog(this, "get null from server while changing tables. URL = " + url + ", param = "+ params);
 			return;
 		}
-		Gson gson = new GsonBuilder().setDateFormat("yyyy/MM/dd HH:mm:ss").create();
+		Gson gson = new GsonBuilder().setDateFormat(ConstantValue.DATE_PATTERN_YMDHMS).create();
 		HttpResult<ArrayList<DeskWithIndent>> result = gson.fromJson(response, new TypeToken<HttpResult<ArrayList<DeskWithIndent>>>(){}.getType());
 		if (!result.success){
 			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
