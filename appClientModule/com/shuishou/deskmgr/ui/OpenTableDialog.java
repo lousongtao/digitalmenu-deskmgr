@@ -9,7 +9,6 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -44,13 +43,14 @@ import com.shuishou.deskmgr.Messages;
 import com.shuishou.deskmgr.beans.Category2;
 import com.shuishou.deskmgr.beans.Desk;
 import com.shuishou.deskmgr.beans.Dish;
-import com.shuishou.deskmgr.beans.DishChooseSubitem;
+import com.shuishou.deskmgr.beans.DishConfig;
 import com.shuishou.deskmgr.beans.Flavor;
 import com.shuishou.deskmgr.beans.HttpResult;
 import com.shuishou.deskmgr.http.HttpUtil;
 import com.shuishou.deskmgr.ui.components.JBlockedButton;
 import com.shuishou.deskmgr.ui.components.NumberInputDialog;
 import com.shuishou.deskmgr.ui.components.NumberTextField;
+import com.shuishou.deskmgr.ui.dishconfig.DishConfigDialog;
 
 public class OpenTableDialog extends JDialog implements ActionListener{
 	private final Logger logger = Logger.getLogger(OpenTableDialog.class.getName());
@@ -254,6 +254,7 @@ public class OpenTableDialog extends JDialog implements ActionListener{
 			ChoosedDish cd = listModelChoosedDish.getElementAt(i);
 			jo.put("id", cd.dish.getId());
 			jo.put("amount", cd.amount);
+			jo.put("dishPrice", cd.getPrice());
 			String requires = generateRequires(cd);
 			if (requires.length() > 0)
 				jo.put("additionalRequirements", requires);
@@ -298,6 +299,7 @@ public class OpenTableDialog extends JDialog implements ActionListener{
 			
 			jo.put("id", cd.dish.getId());
 			jo.put("amount", cd.amount);
+			jo.put("dishPrice", cd.getPrice());
 			String requires = generateRequires(cd);
 			if (requires.length() > 0)
 				jo.put("additionalRequirements", requires);
@@ -329,9 +331,12 @@ public class OpenTableDialog extends JDialog implements ActionListener{
 	
 	private String generateRequires(ChoosedDish cd){
 		String requires = "";
-		if (cd.subitems != null && !cd.subitems.isEmpty()){
-			for(DishChooseSubitem si : cd.subitems){
-				requires += si.getFirstLanguageName()+ " ";
+		if (cd.configs != null && !cd.configs.isEmpty()){
+			for(DishConfig config : cd.configs){
+				requires += config.getFirstLanguageName();
+				if (config.getPrice() !=0 )
+					requires += "$" + config.getPrice();
+				requires += " ";
 			}
 		}
 		if (cd.flavors != null && !cd.flavors.isEmpty()){
@@ -383,14 +388,21 @@ public class OpenTableDialog extends JDialog implements ActionListener{
 		cd.dish = dish;
 		cd.amount = 1;
 		
-		if (dish.getChooseMode() == ConstantValue.DISH_CHOOSEMODE_SUBITEM){
-			DishSubitemDialog dlg = new DishSubitemDialog(this, Messages.getString("OpenTableDialog.ChooseSubitem"), dish);
+		if (dish.getConfigGroups() != null && !dish.getConfigGroups().isEmpty()){
+			DishConfigDialog dlg = new DishConfigDialog(this, "Choose Config", dish);
 			dlg.setVisible(true);
-			if (dlg.choosed == null || dlg.choosed.isEmpty()){
+			if (dlg.choosed == null || dlg.choosed.isEmpty())
 				return;
-			}
-			cd.subitems.addAll(dlg.choosed);
+			cd.configs.addAll(dlg.choosed);
 		}
+//		if (dish.getChooseMode() == ConstantValue.DISH_CHOOSEMODE_SUBITEM){
+//			DishSubitemDialog dlg = new DishSubitemDialog(this, Messages.getString("OpenTableDialog.ChooseSubitem"), dish);
+//			dlg.setVisible(true);
+//			if (dlg.choosed == null || dlg.choosed.isEmpty()){
+//				return;
+//			}
+//			cd.configs.addAll(dlg.choosed);
+//		}
 		
 		if (dish.getPurchaseType() == ConstantValue.DISH_PURCHASETYPE_WEIGHT){
 			NumberInputDialog numdlg = new NumberInputDialog(this, "Input", Messages.getString("OpenTableDialog.InputWeight"), false);
@@ -415,22 +427,22 @@ public class OpenTableDialog extends JDialog implements ActionListener{
 				}
 			}
 			if (!foundexist) {
-				listModelChoosedDish.addElement(cd);
+				listModelChoosedDish.insertElementAt(cd,0);
 			}
 		} else {
-			listModelChoosedDish.addElement(cd);
+			listModelChoosedDish.insertElementAt(cd,0);
 		}
 	}
 	
 	
 	class ChoosedDishRenderer extends JPanel implements ListCellRenderer{
 		private JLabel lbDish = new JLabel();
-		private JLabel lbAmount = new JLabel();
+		private JLabel lbAmountPrice = new JLabel();
 		private JLabel lbRequire = new JLabel();
 		public ChoosedDishRenderer(){
 			setLayout(new GridBagLayout());
 			add(lbDish, 	new GridBagConstraints(0, 0, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
-			add(lbAmount, 	new GridBagConstraints(1, 0, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+			add(lbAmountPrice, 	new GridBagConstraints(1, 0, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 			add(lbRequire, 	new GridBagConstraints(0, 1, 2, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
 			lbRequire.setFont(ConstantValue.FONT_10PLAIN);
 		}
@@ -451,9 +463,9 @@ public class OpenTableDialog extends JDialog implements ActionListener{
 				txt = txt.substring(0, 17) + "...";
 			lbDish.setText(txt);
 			if (dish.getPurchaseType() == ConstantValue.DISH_PURCHASETYPE_UNIT)
-				lbAmount.setText(cd.amount+" / $"+dish.getPrice());
+				lbAmountPrice.setText(cd.amount+" / $"+cd.getPrice());
 			else if (dish.getPurchaseType() == ConstantValue.DISH_PURCHASETYPE_WEIGHT)
-				lbAmount.setText(cd.amount+" / "+cd.weight);
+				lbAmountPrice.setText(cd.amount+" / "+cd.weight);
 			lbRequire.setText(generateRequires(cd));
 			return this;
 		}
@@ -464,8 +476,20 @@ public class OpenTableDialog extends JDialog implements ActionListener{
 		public int amount;
 		public Dish dish;
 		public ArrayList<Flavor> flavors = new ArrayList<>();
-		public ArrayList<DishChooseSubitem> subitems = new ArrayList<>();
+		public ArrayList<DishConfig> configs = new ArrayList<>();
 		public double weight;
+		public double getPrice(){
+			return dish.getPrice() + getAdjustPrice();
+		}
+		public double getAdjustPrice(){
+	        if (configs == null || configs.isEmpty())
+	            return 0;
+	        double ap = 0;
+	        for (int i = 0; i < configs.size(); i++) {
+	            ap += configs.get(i).getPrice();
+	        }
+	        return ap;
+	    }
 	}
 	
 	class Category2Button extends JButton{

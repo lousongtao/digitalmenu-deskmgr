@@ -231,7 +231,7 @@ public class MenuMgmtDialog extends JDialog {
 			}
 		}
 		if (!foundexist) {
-			listModelDish.addElement(dish);
+			listModelDish.insertElementAt(dish, 0);
 		}
 	}
 	

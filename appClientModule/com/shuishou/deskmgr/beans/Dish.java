@@ -44,21 +44,14 @@ public class Dish implements Serializable{
 	
 	private DishChoosePopinfo choosePopInfo;
 	
-	/**
-	 * initial this property as a null list;
-	 * if I need to add/remove or delete all elements from the list, remember not to replace this list as a new list,
-	 * if do so, hibernate will error, 
-	 */
-	private List<DishChooseSubitem> chooseSubItems = new ArrayList<>();
-
-	private int subitemAmount = 0;
-	
 	//set whether merge to one record while customer choose this dish more than one time
 	private boolean autoMergeWhileChoose = true;
 
 	private int purchaseType = ConstantValue.DISH_PURCHASETYPE_UNIT;
 	
 	private boolean allowFlavor = true;
+	
+	private ArrayList<DishConfigGroup> configGroups = new ArrayList<>();
 	
     public int getPurchaseType() {
 		return purchaseType;
@@ -71,23 +64,20 @@ public class Dish implements Serializable{
 	public Dish(){
 
     }
-
-//    public Dish(int id, String firstLanguageName, String secondLanguageName, int sequence, double price, String pictureName, Category2 category2){
-//        this.id = id;
-//        this.firstLanguageName = firstLanguageName;
-//        this.secondLanguageName = secondLanguageName;
-//        this.sequence = sequence;
-//        this.price = price;
-//        this.pictureName = pictureName;
-//        this.category2 = category2;
-//    }
-
     
     public String getAbbreviation() {
         return abbreviation;
     }
 
-    public int getChooseMode() {
+    public ArrayList<DishConfigGroup> getConfigGroups() {
+		return configGroups;
+	}
+
+	public void setConfigGroups(ArrayList<DishConfigGroup> configGroups) {
+		this.configGroups = configGroups;
+	}
+
+	public int getChooseMode() {
 		return chooseMode;
 	}
 
@@ -101,22 +91,6 @@ public class Dish implements Serializable{
 
 	public void setChoosePopInfo(DishChoosePopinfo choosePopInfo) {
 		this.choosePopInfo = choosePopInfo;
-	}
-
-	public List<DishChooseSubitem> getChooseSubItems() {
-		return chooseSubItems;
-	}
-
-	public void setChooseSubItems(List<DishChooseSubitem> chooseSubItems) {
-		this.chooseSubItems = chooseSubItems;
-	}
-
-	public int getSubitemAmount() {
-		return subitemAmount;
-	}
-
-	public void setSubitemAmount(int subitemAmount) {
-		this.subitemAmount = subitemAmount;
 	}
 
 	public boolean isAutoMergeWhileChoose() {

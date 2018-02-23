@@ -83,6 +83,7 @@ public class CheckoutSplitIndentDialog extends CheckoutDialog{
 			IndentDetail d = indent.getItems().get(i);
 			jo.put("dishid", d.getDishId());
 			jo.put("amount", d.getAmount());
+			jo.put("dishPrice", d.getDishPrice());
 			if (d.getWeight() > 0)
 				jo.put("weight", d.getWeight() + "");
 			if (d.getAdditionalRequirements() != null)

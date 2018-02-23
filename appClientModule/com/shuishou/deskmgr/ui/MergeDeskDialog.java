@@ -2,48 +2,26 @@ package com.shuishou.deskmgr.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Container;
-import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.swing.BorderFactory;
-import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.ListCellRenderer;
-import javax.swing.ListSelectionModel;
 
 import org.apache.log4j.Logger;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import com.shuishou.deskmgr.ConstantValue;
 import com.shuishou.deskmgr.Messages;
 import com.shuishou.deskmgr.beans.Desk;
-import com.shuishou.deskmgr.beans.DeskWithIndent;
-import com.shuishou.deskmgr.beans.Dish;
-import com.shuishou.deskmgr.beans.DishChooseSubitem;
-import com.shuishou.deskmgr.beans.HttpResult;
-import com.shuishou.deskmgr.http.HttpUtil;
-import com.shuishou.deskmgr.ui.DishSubitemDialog.SubitemButton;
 import com.shuishou.deskmgr.ui.components.JBlockedButton;
 
 public class MergeDeskDialog extends JDialog {
