@@ -1,6 +1,9 @@
 package com.shuishou.deskmgr.ui.dishconfig;
 
 import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -24,6 +27,7 @@ public class ChooseOneConfigPanel extends JPanel implements DishConfigGroupIFC{
 	private ArrayList<ConfigRadioButton> components = new ArrayList<>();
 	private DishConfigGroup group;
 	private DishConfigDialog parent;
+	private int COMPONENT_ROWAMOUNT = 4;
 	public ChooseOneConfigPanel(DishConfigDialog parent, DishConfigGroup group){
 		this.group = group;
 		this.parent = parent;
@@ -31,14 +35,14 @@ public class ChooseOneConfigPanel extends JPanel implements DishConfigGroupIFC{
 	}
 	
 	private void initUI(){
-		this.setLayout(new FlowLayout(FlowLayout.LEFT));
+		this.setLayout(new GridBagLayout());
 		if (!group.getDishConfigs().isEmpty()){
 			ButtonGroup bg = new ButtonGroup();
 			for (int i = 0; i < group.getDishConfigs().size(); i++) {
 				DishConfig config = group.getDishConfigs().get(i);
 				
 				ConfigRadioButton rb = new ConfigRadioButton(config);
-				this.add(rb);
+				this.add(rb, new GridBagConstraints(i % COMPONENT_ROWAMOUNT, (int)i/COMPONENT_ROWAMOUNT, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
 				bg.add(rb);
 				components.add(rb);
 				if (i == 0){

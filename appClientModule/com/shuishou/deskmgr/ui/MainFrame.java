@@ -978,6 +978,9 @@ public class MainFrame extends JFrame implements ActionListener{
 				e.printStackTrace();
 			}
 		});
+		StartingWaitDialog waitDlg = new StartingWaitDialog();
+		waitDlg.setVisible(true);
+		
 		//load properties
 		Properties prop = new Properties();
 		InputStream input = null;
@@ -1035,6 +1038,7 @@ public class MainFrame extends JFrame implements ActionListener{
 				}
 			}
 		});
+		waitDlg.setVisible(false);
 		f.setVisible(true);
 		f.startLogin(prop.getProperty("defaultuser.name"), prop.getProperty("defaultuser.password"));
 	}

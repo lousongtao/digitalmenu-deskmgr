@@ -14,11 +14,14 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -32,6 +35,7 @@ import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
@@ -41,30 +45,38 @@ import javax.swing.text.NumberFormatter;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import com.shuishou.deskmgr.ConstantValue;
 import com.shuishou.deskmgr.Messages;
 import com.shuishou.deskmgr.beans.Desk;
 import com.shuishou.deskmgr.beans.DiscountTemplate;
+import com.shuishou.deskmgr.beans.HttpResult;
 import com.shuishou.deskmgr.beans.Indent;
+import com.shuishou.deskmgr.beans.Member;
 import com.shuishou.deskmgr.beans.PayWay;
 import com.shuishou.deskmgr.http.HttpUtil;
 import com.shuishou.deskmgr.ui.components.IconButton;
 import com.shuishou.deskmgr.ui.components.JBlockedButton;
 import com.shuishou.deskmgr.ui.components.NumberTextField;
 
-public class CheckoutDialog extends JDialog{
+public class CheckoutDialog extends JDialog implements ActionListener, DocumentListener, ItemListener{
 	private final Logger logger = Logger.getLogger(CheckoutDialog.class.getName());
 	protected MainFrame mainFrame;
 	protected Desk desk;
 	protected Indent indent;
 	
 	protected JLabel lbDiscountPrice = new JLabel();
-	protected JRadioButton rbPayCash = new JRadioButton(Messages.getString("CheckoutDialog.Cash"), true); //$NON-NLS-1$
+	protected JRadioButton rbPayCash = new JRadioButton(Messages.getString("CheckoutDialog.Cash")+"   ", true); //$NON-NLS-1$
 	protected JRadioButton rbPayBankCard = new JRadioButton(Messages.getString("CheckoutDialog.BandCard"), false); //$NON-NLS-1$
 	protected JRadioButton rbPayMember = new JRadioButton(Messages.getString("CheckoutDialog.MemberCard"), false); //$NON-NLS-1$
 	protected JRadioButton rbDiscountNon = new JRadioButton(Messages.getString("CheckoutDialog.NoDiscount"), true); //$NON-NLS-1$
 	protected JRadioButton rbDiscountTemp = new JRadioButton(Messages.getString("CheckoutDialog.TempDiscount"), false); //$NON-NLS-1$
 	protected JRadioButton rbDiscountDirect = new JRadioButton(Messages.getString("CheckoutDialog.DirectDiscount"), false); //$NON-NLS-1$
+	protected JLabel lbMemberInfo = new JLabel();
+	protected JButton btnQueryMember = new JButton("Query");
+	protected JPasswordField tfMemberPwd = new JPasswordField();
 	protected ArrayList<JRadioButton> listRBOtherPayway = new ArrayList<>();
 	protected NumberTextField tfDiscountPrice = null;
 	protected JTextField tfMember = new JTextField();
@@ -76,6 +88,7 @@ public class CheckoutDialog extends JDialog{
 	protected JLabel lbCharge;
 	protected double discountPrice = 0;
 	
+	protected Member member;
 	private List<DiscountTemplateRadioButton> discountTempRadioButtonList = new ArrayList<DiscountTemplateRadioButton>();
 	public CheckoutDialog(MainFrame mainFrame,String title, boolean modal, Desk desk, Indent indent){
 		super(mainFrame, title, modal);
@@ -95,11 +108,20 @@ public class CheckoutDialog extends JDialog{
 		numGetCash = new NumberTextField(this, true);
 		JLabel lbGetCash = new JLabel(Messages.getString("CheckoutDialog.GetCash"));
 		lbCharge = new JLabel();
-		Color bgPayColor = new Color(201,255,255);
-		Color bgDiscountColor = new Color(235, 255, 244);
+		
+		JPanel pMember = new JPanel(new GridBagLayout());
+		pMember.setBorder(BorderFactory.createTitledBorder(Messages.getString("CheckoutDialog.MemberCard")));
+		pMember.add(rbPayMember, 	new GridBagConstraints(0, 0, 1, 1, 0, 1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+		pMember.add(tfMember, 		new GridBagConstraints(1, 0, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
+		pMember.add(btnQueryMember, new GridBagConstraints(2, 0, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+		if (Boolean.valueOf(mainFrame.getConfigsMap().get(ConstantValue.CONFIGS_MEMBERMGR_NEEDPASSWORD))){
+			JLabel lbPassword = new JLabel(Messages.getString("CheckoutDialog.Password"));
+			pMember.add(lbPassword, 	new GridBagConstraints(3, 0, 1, 1, 0, 1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 20, 0, 0), 0, 0));
+			pMember.add(tfMemberPwd, 	new GridBagConstraints(4, 0, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
+		}
+		pMember.add(lbMemberInfo, 	new GridBagConstraints(0, 1, GridBagConstraints.REMAINDER, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
 		
 		JPanel pPayway = new JPanel(new GridBagLayout());
-//		pPayway.setBackground(bgPayColor);
 		pPayway.setBorder(BorderFactory.createTitledBorder(Messages.getString("CheckoutDialog.PayWay"))); //$NON-NLS-1$
 		ButtonGroup bgPayway = new ButtonGroup();
 		bgPayway.add(rbPayCash);
@@ -110,11 +132,9 @@ public class CheckoutDialog extends JDialog{
 		pPayway.add(numGetCash, 	new GridBagConstraints(2, 0, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 20, 0, 0), 0, 0));
 		pPayway.add(lbCharge, 		new GridBagConstraints(3, 0, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 20, 0, 0), 0, 0));
 		pPayway.add(rbPayBankCard, 	new GridBagConstraints(0, 1, 1, 1, 0, 1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
-		pPayway.add(rbPayMember,	new GridBagConstraints(1, 1, 1, 1, 0, 1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(10, 50, 0, 0), 0, 0));
-		pPayway.add(tfMember, 		new GridBagConstraints(2, 1, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 20, 0, 0), 0, 0));
+		pPayway.add(pMember,		new GridBagConstraints(0, 2, GridBagConstraints.REMAINDER, 1, 0, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
 		if (!mainFrame.getPaywayList().isEmpty()){
-			JPanel pOtherPayway = new JPanel();
-//			pOtherPayway.setBackground(bgPayColor);
+			JPanel pOtherPayway = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 5));
 			pOtherPayway.setBorder(BorderFactory.createTitledBorder(Messages.getString("CheckoutDialog.OtherPayWay")));
 			for (int i = 0; i < mainFrame.getPaywayList().size(); i++) {
 				PayWay pw = mainFrame.getPaywayList().get(i);
@@ -126,7 +146,6 @@ public class CheckoutDialog extends JDialog{
 			pPayway.add(pOtherPayway, new GridBagConstraints(0, 3, 4, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 0, 0, 0), 0, 0));
 		}
 		JPanel pDiscountTemplate = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 5));
-//		pDiscountTemplate.setBackground(bgDiscountColor);
 		pDiscountTemplate.setBorder(BorderFactory.createTitledBorder(Messages.getString("CheckoutDialog.DiscountTemplateBorderTitle")));
 		if (mainFrame.getDiscountTemplateList().isEmpty()){
 			rbDiscountTemp.setEnabled(false);
@@ -155,7 +174,6 @@ public class CheckoutDialog extends JDialog{
 		tfDiscountPrice.setPreferredSize(dDiscountPrice);
 		
 		JPanel pDiscount = new JPanel(new GridBagLayout());
-//		pDiscount.setBackground(bgDiscountColor);
 		pDiscount.setBorder(BorderFactory.createTitledBorder(Messages.getString("CheckoutDialog.BorderDiscount"))); //$NON-NLS-1$
 		ButtonGroup bgDiscount = new ButtonGroup();
 		bgDiscount.add(rbDiscountNon);
@@ -199,122 +217,155 @@ public class CheckoutDialog extends JDialog{
 		this.setSize(new Dimension(750, 700));
 		this.setLocation((int)(mainFrame.getWidth() / 2 - this.getWidth() /2 + mainFrame.getLocation().getX()), 
 				(int)(mainFrame.getHeight() / 2 - this.getHeight() / 2 + mainFrame.getLocation().getY()));
+		btnClose.addActionListener(this);
+		btnSplitIndent.addActionListener(this);
+		btnPay.addActionListener(this);
+		btnCancelOrder.addActionListener(this);
+		btnQueryMember.addActionListener(this);
 		
-		btnClose.addActionListener(new ActionListener(){
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				CheckoutDialog.this.setVisible(false);
-			}});
+		numGetCash.getDocument().addDocumentListener(this);
+		tfDiscountPrice.getDocument().addDocumentListener(this);
+		tfMember.getDocument().addDocumentListener(this);
 		
-		btnSplitIndent.addActionListener(new ActionListener(){
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				CheckoutDialog.this.setVisible(false);
-				doSplitIndent();
-			}});
-		
-		btnPay.addActionListener(new ActionListener(){
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				doPay();
-			}});
-		
-		btnCancelOrder.addActionListener(new ActionListener(){
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				doCancelOrder();
-			}});
-		
-		numGetCash.getDocument().addDocumentListener(new DocumentListener(){
-
-			
-			@Override
-			public void insertUpdate(DocumentEvent e) {
-				rbPayCash.setSelected(true);
-				showChargeText();
-			}
-
-			@Override
-			public void removeUpdate(DocumentEvent e) {
-				rbPayCash.setSelected(true);
-				showChargeText();
-			}
-
-			@Override
-			public void changedUpdate(DocumentEvent e) {
-				rbPayCash.setSelected(true);
-				showChargeText();
-			}});
-		tfDiscountPrice.getDocument().addDocumentListener(new DocumentListener(){
-
-			@Override
-			public void insertUpdate(DocumentEvent e) {
-				rbDiscountDirect.setSelected(true);
+		rbDiscountNon.addItemListener(this);
+		rbDiscountTemp.addItemListener(this);
+		rbDiscountDirect.addItemListener(this);
+		rbPayMember.addItemListener(this);
+	}
+	
+	@Override
+	public void itemStateChanged(ItemEvent e) {
+		if (e.getSource() == rbDiscountNon){
+			if (e.getStateChange() == ItemEvent.SELECTED) {
 				calculatePaidPrice();
-			}
-
-			@Override
-			public void removeUpdate(DocumentEvent e) {
-				rbDiscountDirect.setSelected(true);
+		    } 
+		} else if (e.getSource() == rbDiscountTemp){
+			if (e.getStateChange() == ItemEvent.SELECTED) {
 				calculatePaidPrice();
-			}
-
-			@Override
-			public void changedUpdate(DocumentEvent e) {
-				rbDiscountDirect.setSelected(true);
+		    } 
+		} else if (e.getSource() == rbDiscountDirect){
+			if (e.getStateChange() == ItemEvent.SELECTED) {
 				calculatePaidPrice();
-			}});
+		    } 
+		} else if (e.getSource() == rbPayMember){
+			if (e.getStateChange() == ItemEvent.DESELECTED) {
+				member = null;
+				lbMemberInfo.setText("");
+				tfMember.setText("");
+			}
+		} 
 		
-		tfMember.getDocument().addDocumentListener(new DocumentListener(){
-
-			@Override
-			public void insertUpdate(DocumentEvent e) {
+	}
+	
+	@Override
+	public void insertUpdate(DocumentEvent e) {
+		if (e.getDocument() == numGetCash.getDocument()){
+			rbPayCash.setSelected(true);
+			showChargeText();
+		} else if (e.getDocument() == tfDiscountPrice.getDocument()){
+			rbDiscountDirect.setSelected(true);
+			calculatePaidPrice();
+		} else if (e.getDocument() == tfMember.getDocument()){
+			if (!rbPayMember.isSelected())
 				rbPayMember.setSelected(true);
-			}
+		}
+	}
 
-			@Override
-			public void removeUpdate(DocumentEvent e) {
+	@Override
+	public void removeUpdate(DocumentEvent e) {
+		if (e.getDocument() == numGetCash.getDocument()){
+			rbPayCash.setSelected(true);
+			showChargeText();
+		} else if (e.getDocument() == tfDiscountPrice.getDocument()){
+			rbDiscountDirect.setSelected(true);
+			calculatePaidPrice();
+		} else if (e.getDocument() == tfMember.getDocument()){
+			if (!rbPayMember.isSelected())
 				rbPayMember.setSelected(true);
-			}
+		}
+	}
 
-			@Override
-			public void changedUpdate(DocumentEvent e) {
+	@Override
+	public void changedUpdate(DocumentEvent e) {
+		if (e.getDocument() == numGetCash.getDocument()){
+			rbPayCash.setSelected(true);
+			showChargeText();
+		} else if (e.getDocument() == tfDiscountPrice.getDocument()){
+			rbDiscountDirect.setSelected(true);
+			calculatePaidPrice();
+		} else if (e.getDocument() == tfMember.getDocument()){
+			if (!rbPayMember.isSelected())
 				rbPayMember.setSelected(true);
-			}});
-		
-		rbDiscountNon.addItemListener(new ItemListener(){
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				if (e.getStateChange() == ItemEvent.SELECTED) {
-					calculatePaidPrice();
-			    } 
+		}
+	}
+	
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		if (e.getSource() == btnClose){
+			setVisible(false);
+		} else if (e.getSource() == btnCancelOrder){
+			doCancelOrder();
+		} else if (e.getSource() == btnPay){
+			doPay();
+		} else if (e.getSource() == btnQueryMember){
+			doLookforMember();
+		} else if (e.getSource() == btnSplitIndent){
+			setVisible(false);
+			doSplitIndent();
+		}
+	}
+	
+	private void doLookforMember(){
+		lbMemberInfo.setText("");
+		member = null;
+		if (tfMember.getText() == null || tfMember.getText().length() == 0)
+			return;
+		String url = "member/querymemberhazily";
+		Map<String, String> params = new HashMap<String, String>();
+		params.put("key", tfMember.getText());
+		String response = HttpUtil.getJSONObjectByPost(MainFrame.SERVER_URL + url, params, "UTF-8");
+		if (response == null || response.length() == 0){
+			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
+			logger.error("get null from server while query member with key. URL = " + url + ", param = "+ params);
+			JOptionPane.showMessageDialog(this, "get null from server while query member with key. URL = " + url + ", param = "+ params);
+			return;
+		}
+		Gson gsonTime = new GsonBuilder().setDateFormat(ConstantValue.DATE_PATTERN_YMDHMS).create();
+		HttpResult<ArrayList<Member>> result = gsonTime.fromJson(response, new TypeToken<HttpResult<ArrayList<Member>>>(){}.getType());
+		if (!result.success){
+			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
+			logger.error("return false while query member with key. URL = " + url + ", response = "+response);
+			JOptionPane.showMessageDialog(this, "return false while query member with key. URL = " + url + ", response = "+response);
+			return;
+		}
+		ArrayList<Member> ms = result.data;
+		if (ms == null || ms.isEmpty()){
+			JOptionPane.showMessageDialog(this, Messages.getString("CheckoutDialog.NofindMember") + tfMember.getText());
+			return;
+		} else if (ms.size() == 1){
+			member = ms.get(0);
+		} else {
+			MemberListDialog dlg = new MemberListDialog(mainFrame, ms, 1000, 600);
+			dlg.setVisible(true);
+			member = dlg.getChoosedMember();
+		}
+		showMemberInfo(member);
+	}
+	
+	private void showMemberInfo(Member m){
+		if (m == null){
+			tfMember.setText("");
+			lbMemberInfo.setText("");
+		} else {
+			tfMember.setText(m.getName());
+			String memberInfo = Messages.getString("CheckoutDialog.MemberInfo.Name")+ m.getName() + ", " 
+				+ Messages.getString("CheckoutDialog.MemberInfo.DiscountRate") + m.getDiscountRate() + ", "
+				+ Messages.getString("CheckoutDialog.MemberInfo.Balance") + String.format(ConstantValue.FORMAT_DOUBLE, m.getBalanceMoney());
+			if (Boolean.getBoolean(mainFrame.getConfigsMap().get(ConstantValue.CONFIGS_MEMBERMGR_BYSCORE))){
+				memberInfo += ", " + Messages.getString("CheckoutDialog.MemberInfo.Score") + String.format(ConstantValue.FORMAT_DOUBLE, m.getScore()); 
 			}
-		});
-		
-		rbDiscountTemp.addItemListener(new ItemListener(){
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				if (e.getStateChange() == ItemEvent.SELECTED) {
-					calculatePaidPrice();
-			    } 
-			}
-		});
-		
-		rbDiscountDirect.addItemListener(new ItemListener(){
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				if (e.getStateChange() == ItemEvent.SELECTED) {
-					calculatePaidPrice();
-			    } 
-			}
-		});
-		
-		
-		
+			lbMemberInfo.setText(memberInfo);
+		}
 	}
 	
 	private void showChargeText(){
@@ -362,12 +413,17 @@ public class CheckoutDialog extends JDialog{
 	
 	public void doPay(){
 		if (rbPayMember.isSelected()){
-			if (tfMember.getText() == null || tfMember.getText().length() == 0){
-				JOptionPane.showMessageDialog(mainFrame, Messages.getString("CheckoutDialog.InputNumber")); //$NON-NLS-1$
+			if (member == null){
+				JOptionPane.showMessageDialog(mainFrame, Messages.getString("CheckoutDialog.InputMember")); //$NON-NLS-1$
+				return;
+			}
+			if (Boolean.valueOf(mainFrame.getConfigsMap().get(ConstantValue.CONFIGS_MEMBERMGR_NEEDPASSWORD))
+					&& (tfMemberPwd.getText() == null ||tfMemberPwd.getText().length() == 0)){
+				JOptionPane.showMessageDialog(mainFrame, Messages.getString("CheckoutDialog.InputMemberPassword")); //$NON-NLS-1$
 				return;
 			}
 		}
-		String url = "indent/operateindent";
+		String url = "indent/dopayindent";
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("userId", mainFrame.getOnDutyUser().getId() + "");
 		params.put("id", indent.getId() + "");
@@ -384,7 +440,13 @@ public class CheckoutDialog extends JDialog{
 			params.put("payWay", ConstantValue.INDENT_PAYWAY_BANKCARD);
 		} else if (rbPayMember.isSelected()){
 			params.put("payWay", ConstantValue.INDENT_PAYWAY_MEMBER);
-			params.put("memberCard", tfMember.getText());
+			params.put("memberCard", member.getMemberCard());
+			try {
+				params.put("memberPassword", toSHA1(tfMemberPwd.getText().getBytes()));
+			} catch (NoSuchAlgorithmException e) {
+				JOptionPane.showMessageDialog(mainFrame, e.getMessage()); //$NON-NLS-1$
+				return;
+			}
 		} else {
 			for(JRadioButton rb : listRBOtherPayway){
 				if (rb.isSelected()){
@@ -394,11 +456,13 @@ public class CheckoutDialog extends JDialog{
 			}
 		}
 		String response = HttpUtil.getJSONObjectByPost(MainFrame.SERVER_URL + url, params, "UTF-8");
-		JSONObject jsonObj = new JSONObject(response);
-		if (!jsonObj.getBoolean("success")){
+		HttpResult<Object> result = new Gson().fromJson(response, new TypeToken<HttpResult<Object>>(){}.getType());
+//		JSONObject jsonObj = new JSONObject(response);
+//		if (!jsonObj.getBoolean("success")){
+		if (!result.success){
 			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 			logger.error("Do checkout failed. URL = " + url + ", param = "+ params);
-			JOptionPane.showMessageDialog(mainFrame, Messages.getString("CheckoutDialog.FailPayMsg")); //$NON-NLS-1$
+			JOptionPane.showMessageDialog(mainFrame, result.result); //$NON-NLS-1$
 		}
 		//clean table
 		CheckoutDialog.this.setVisible(false);
@@ -433,7 +497,7 @@ public class CheckoutDialog extends JDialog{
 			return;
 		}
 		
-		String url = "indent/operateindent";
+		String url = "indent/docancelindent";
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("userId", mainFrame.getOnDutyUser().getId() + "");
 		params.put("id", indent.getId() + "");
@@ -462,7 +526,25 @@ public class CheckoutDialog extends JDialog{
 		return btnCancelOrder;
 	}
 
+	public String toSHA1(byte[] data) throws NoSuchAlgorithmException {
+		MessageDigest md = null;
+		try {
+			md = MessageDigest.getInstance("SHA-1");
+		} catch (NoSuchAlgorithmException ex) {
+			logger.error("Can't get SHA-1 algorithm message digest.");
+			throw ex;
+		}
+		return toHex(md.digest(data));
+	}
 
+	private String toHex(byte[] digest) {
+		StringBuilder sb = new StringBuilder();
+		for (byte b : digest) {
+			sb.append(String.format("%1$02X", b));
+		}
+
+		return sb.toString();
+	}
 
 	class DiscountTemplateRadioButton extends JRadioButton{
 		private DiscountTemplate temp;

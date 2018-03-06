@@ -14,6 +14,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.security.NoSuchAlgorithmException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -72,8 +73,13 @@ public class CheckoutSplitIndentDialog extends CheckoutDialog{
 	
 	public void doPay(){
 		if (rbPayMember.isSelected()){
-			if (tfMember.getText() == null || tfMember.getText().length() == 0){
-				JOptionPane.showMessageDialog(mainFrame, Messages.getString("CheckoutDialog.InputNumber")); //$NON-NLS-1$
+			if (member == null){
+				JOptionPane.showMessageDialog(mainFrame, Messages.getString("CheckoutDialog.InputMember")); //$NON-NLS-1$
+				return;
+			}
+			if (Boolean.valueOf(mainFrame.getConfigsMap().get(ConstantValue.CONFIGS_MEMBERMGR_NEEDPASSWORD))
+					&& (tfMemberPwd.getText() == null ||tfMemberPwd.getText().length() == 0)){
+				JOptionPane.showMessageDialog(mainFrame, Messages.getString("CheckoutDialog.InputMemberPassword")); //$NON-NLS-1$
 				return;
 			}
 		}
@@ -104,7 +110,13 @@ public class CheckoutSplitIndentDialog extends CheckoutDialog{
 			params.put("payWay", ConstantValue.INDENT_PAYWAY_BANKCARD);
 		} else if (rbPayMember.isSelected()){
 			params.put("payWay", ConstantValue.INDENT_PAYWAY_MEMBER);
-			params.put("memberCard", tfMember.getText());
+			params.put("memberCard", member.getMemberCard());
+			try {
+				params.put("memberPassword", toSHA1(tfMemberPwd.getText().getBytes()));
+			} catch (NoSuchAlgorithmException e) {
+				JOptionPane.showMessageDialog(mainFrame, e.getMessage()); //$NON-NLS-1$
+				return;
+			}
 		} else {
 			for(JRadioButton rb : listRBOtherPayway){
 				if (rb.isSelected()){
@@ -130,7 +142,7 @@ public class CheckoutSplitIndentDialog extends CheckoutDialog{
 		if (!result.success){
 			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 			logger.error("return false while pay splited indent. URL = " + url + ", response = "+response);
-			JOptionPane.showMessageDialog(this, "return false while pay splited indent. URL = " + url + ", response = "+response);
+			JOptionPane.showMessageDialog(mainFrame, result.result); //$NON-NLS-1$
 			return;
 		}
 		indentAfterSplit = result.data;
