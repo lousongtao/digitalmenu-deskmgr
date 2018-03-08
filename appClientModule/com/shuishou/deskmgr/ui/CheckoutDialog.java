@@ -441,8 +441,12 @@ public class CheckoutDialog extends JDialog implements ActionListener, DocumentL
 		} else if (rbPayMember.isSelected()){
 			params.put("payWay", ConstantValue.INDENT_PAYWAY_MEMBER);
 			params.put("memberCard", member.getMemberCard());
+			
 			try {
-				params.put("memberPassword", toSHA1(tfMemberPwd.getText().getBytes()));
+				if (tfMemberPwd.getText() == null || tfMemberPwd.getText().length() == 0)
+					params.put("memberPassword", null);
+				else 
+					params.put("memberPassword", toSHA1(tfMemberPwd.getText().getBytes()));
 			} catch (NoSuchAlgorithmException e) {
 				JOptionPane.showMessageDialog(mainFrame, e.getMessage()); //$NON-NLS-1$
 				return;
