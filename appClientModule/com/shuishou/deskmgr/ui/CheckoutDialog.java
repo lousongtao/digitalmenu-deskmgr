@@ -66,6 +66,7 @@ public class CheckoutDialog extends JDialog implements ActionListener, DocumentL
 	protected MainFrame mainFrame;
 	protected Desk desk;
 	protected Indent indent;
+	protected boolean isCancel = false;
 	
 	protected JLabel lbDiscountPrice = new JLabel();
 	protected JRadioButton rbPayCash = new JRadioButton(Messages.getString("CheckoutDialog.Cash")+"   ", true); //$NON-NLS-1$
@@ -302,6 +303,7 @@ public class CheckoutDialog extends JDialog implements ActionListener, DocumentL
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == btnClose){
+			isCancel = true;
 			setVisible(false);
 		} else if (e.getSource() == btnCancelOrder){
 			doCancelOrder();
@@ -315,6 +317,9 @@ public class CheckoutDialog extends JDialog implements ActionListener, DocumentL
 		}
 	}
 	
+	public boolean isCancel(){
+		return isCancel;
+	}
 	private void doLookforMember(){
 		lbMemberInfo.setText("");
 		member = null;

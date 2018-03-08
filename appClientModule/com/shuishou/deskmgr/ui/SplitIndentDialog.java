@@ -228,6 +228,9 @@ public class SplitIndentDialog extends JDialog {
 	 * 客户端进行检查, 如果发现操作员把原订单下所有的IndentDetail都选择进来, 意味着操作员想付款订单的整个剩余部分, 此时直接调用订单的付款接口即可
 	 */
 	private void doPay(){
+		if (tableModelIndentDown.items == null || tableModelIndentDown.items.isEmpty()){
+			return;
+		}
 		//build a indent object
 		Indent tempIndent = new Indent();
 		tempIndent.setItems(tableModelIndentDown.items);
@@ -249,6 +252,8 @@ public class SplitIndentDialog extends JDialog {
 //		desk.setName(indent.getDeskName());
 		CheckoutSplitIndentDialog dlg = new CheckoutSplitIndentDialog(mainFrame, Messages.getString("MainFrame.CheckoutTitle"), true, desk, tempIndent, this.indent.getId());
 		dlg.setVisible(true);
+		if (dlg.isCancel)
+			return;
 		//clear down table
 		tableModelIndentDown.items.clear();
 		tableModelIndentDown.fireTableDataChanged();
@@ -267,12 +272,12 @@ public class SplitIndentDialog extends JDialog {
 		for(DeskCell dc : mainFrame.getDeskcellList()){
 			if (dc.getDesk().getName().equals(desk.getName())){
 				dc.setIndent(this.indent);
-				if (indent.getStatus() == ConstantValue.INDENT_STATUS_PAID){
+				if (indent != null && indent.getStatus() == ConstantValue.INDENT_STATUS_PAID){
 					dc.setIndent(null);
 				}
 			}
 			//if the indent status changed to paid, then clear the merge data
-			if (indent.getStatus() == ConstantValue.INDENT_STATUS_PAID){
+			if (indent != null && indent.getStatus() == ConstantValue.INDENT_STATUS_PAID){
 				if (desk.getName().equals(dc.getDesk().getMergeTo())){
 					dc.getDesk().setMergeTo(null);
 					dc.setMergeTo(null);
