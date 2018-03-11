@@ -52,11 +52,15 @@ import com.shuishou.deskmgr.ConstantValue;
 import com.shuishou.deskmgr.Messages;
 import com.shuishou.deskmgr.beans.Desk;
 import com.shuishou.deskmgr.beans.DiscountTemplate;
+import com.shuishou.deskmgr.beans.Dish;
 import com.shuishou.deskmgr.beans.HttpResult;
 import com.shuishou.deskmgr.beans.Indent;
+import com.shuishou.deskmgr.beans.IndentDetail;
 import com.shuishou.deskmgr.beans.Member;
 import com.shuishou.deskmgr.beans.PayWay;
 import com.shuishou.deskmgr.http.HttpUtil;
+import com.shuishou.deskmgr.printertool.PrintJob;
+import com.shuishou.deskmgr.printertool.PrintQueue;
 import com.shuishou.deskmgr.ui.components.IconButton;
 import com.shuishou.deskmgr.ui.components.JBlockedButton;
 import com.shuishou.deskmgr.ui.components.NumberTextField;
@@ -473,22 +477,86 @@ public class CheckoutDialog extends JDialog implements ActionListener, DocumentL
 			logger.error("Do checkout failed. URL = " + url + ", param = "+ params);
 			JOptionPane.showMessageDialog(mainFrame, result.result); //$NON-NLS-1$
 		}
-		//clean table
 		CheckoutDialog.this.setVisible(false);
-		mainFrame.loadDesks();
-		mainFrame.loadCurrentIndentInfo();
-		if (rbPayCash.isSelected()){
-			mainFrame.doOpenCashdrawer(false);
-		}
+		
+		String change = "0";
 		if (rbPayCash.isSelected()){
 			double getcash = 0;
 			if (numGetCash.getText() != null && numGetCash.getText().length() !=0){
 				getcash = Double.parseDouble(numGetCash.getText());
 			}
+			change = String.format(ConstantValue.FORMAT_DOUBLE, getcash - discountPrice);
+		}
+		
+		//print ticket
+		if(result.success){
+			double getPay = Double.parseDouble(params.get("paidPrice"));
+			if (rbPayCash.isSelected() && numGetCash.getText() != null && numGetCash.getText().length() > 0){
+				getPay = Double.parseDouble(numGetCash.getText());
+			}
+			doPrint(indent, discountPrice, getPay, params.get("payWay"), change);
+		}
+		
+		if (rbPayCash.isSelected()){
 			JOptionPane.showMessageDialog(mainFrame, Messages.getString("CheckoutDialog.GetCash") + numGetCash.getText()
 			+ "\n" + Messages.getString("CheckoutDialog.ShouldPayAmount") + String.format(ConstantValue.FORMAT_DOUBLE, discountPrice)
-			+ "\n" + Messages.getString("CheckoutDialog.Charge") + String.format(ConstantValue.FORMAT_DOUBLE, getcash - discountPrice));
+			+ "\n" + Messages.getString("CheckoutDialog.Charge") + change);
 		}
+		
+		//clean table
+		mainFrame.loadDesks();
+		mainFrame.loadCurrentIndentInfo();
+		if (rbPayCash.isSelected()){
+			mainFrame.doOpenCashdrawer(false);
+		}
+		
+	}
+	
+	protected void doPrint(Indent indent, double paidPrice, double getPay, String payway, String change){
+		Map<String,String> keys = new HashMap<String, String>();
+		keys.put("sequence", indent.getDailySequence()+"");
+		keys.put("customerAmount", indent.getCustomerAmount()+"");
+		keys.put("tableNo", indent.getDeskName());
+		keys.put("printType", "Invoice");
+		keys.put("dateTime", ConstantValue.DFYMDHMS.format(indent.getStartTime()));
+		keys.put("totalPrice", String.format(ConstantValue.FORMAT_DOUBLE, indent.getTotalPrice()));
+		keys.put("paidPrice", String.format(ConstantValue.FORMAT_DOUBLE, discountPrice));
+		keys.put("gst", String.format(ConstantValue.FORMAT_DOUBLE,(double)(discountPrice/11)));
+		keys.put("printTime", ConstantValue.DFYMDHMS.format(new Date()));
+		keys.put("payway", payway);
+		if (getPay > 0){
+			keys.put("change", String.format(ConstantValue.FORMAT_DOUBLE, getPay - discountPrice));
+		} else {
+			keys.put("change", "0");
+		}
+		List<Map<String, String>> goods = new ArrayList<Map<String, String>>();
+		for(IndentDetail d : indent.getItems()){
+			Dish dish = mainFrame.getDishById(d.getDishId());
+			Map<String, String> mg = new HashMap<String, String>();
+			mg.put("name", d.getDishFirstLanguageName());
+			mg.put("price", String.format(ConstantValue.FORMAT_DOUBLE,d.getDishPrice()));
+			mg.put("amount", d.getAmount()+"");
+			
+			String requirement = "";
+			if (d.getAdditionalRequirements() != null)
+				requirement += d.getAdditionalRequirements();
+			//按重量卖的dish, 把重量加入requirement
+			if (dish.getPurchaseType() == ConstantValue.DISH_PURCHASETYPE_WEIGHT)
+				requirement += " " + d.getWeight();
+			if (dish.getPurchaseType() == ConstantValue.DISH_PURCHASETYPE_WEIGHT){
+				mg.put("totalPrice", String.format(ConstantValue.FORMAT_DOUBLE,d.getWeight() * d.getDishPrice() * d.getAmount()));
+			} else if (dish.getPurchaseType() == ConstantValue.DISH_PURCHASETYPE_UNIT){
+				mg.put("totalPrice", String.format(ConstantValue.FORMAT_DOUBLE,d.getDishPrice() * d.getAmount()));
+			}
+			mg.put("requirement", requirement);
+			goods.add(mg);
+			
+		}
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("keys", keys);
+		params.put("goods", goods);
+		PrintJob job = new PrintJob("/payorder_template.json", params, mainFrame.printerName);
+		PrintQueue.add(job);
 	}
 	
 	private void doSplitIndent(){

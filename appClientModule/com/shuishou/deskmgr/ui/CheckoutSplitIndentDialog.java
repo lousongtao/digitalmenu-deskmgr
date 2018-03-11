@@ -138,26 +138,42 @@ public class CheckoutSplitIndentDialog extends CheckoutDialog{
 			return;
 		}
 		Gson gson = new GsonBuilder().setDateFormat(ConstantValue.DATE_PATTERN_YMDHMS).create();
-		HttpResult<Indent> result = gson.fromJson(response, new TypeToken<HttpResult<Indent>>(){}.getType());
+		HttpResult<ArrayList<Indent>> result = gson.fromJson(response, new TypeToken<HttpResult<ArrayList<Indent>>>(){}.getType());
 		if (!result.success){
 			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 			logger.error("return false while pay splited indent. URL = " + url + ", response = "+response);
 			JOptionPane.showMessageDialog(mainFrame, result.result); //$NON-NLS-1$
 			return;
 		}
-		indentAfterSplit = result.data;
-		this.setVisible(false);
-		if (rbPayCash.isSelected()){
-			mainFrame.doOpenCashdrawer(false);
-		}
+		
+		String change = "0";
 		if (rbPayCash.isSelected()){
 			double getcash = 0;
 			if (numGetCash.getText() != null && numGetCash.getText().length() !=0){
 				getcash = Double.parseDouble(numGetCash.getText());
 			}
+			change = String.format(ConstantValue.FORMAT_DOUBLE, getcash - discountPrice);
+		}
+		
+		//print ticket
+		if (result.success){
+			double getPay = Double.parseDouble(params.get("paidPrice"));
+			if (rbPayCash.isSelected() && numGetCash.getText() != null && numGetCash.getText().length() > 0){
+				getPay = Double.parseDouble(numGetCash.getText());
+			}
+			doPrint(result.data.get(1), discountPrice, getPay, params.get("payWay"), change);
+		}
+		
+		if (rbPayCash.isSelected()){
 			JOptionPane.showMessageDialog(mainFrame, Messages.getString("CheckoutDialog.GetCash") + numGetCash.getText()
 			+ "\n" + Messages.getString("CheckoutDialog.ShouldPayAmount") + String.format(ConstantValue.FORMAT_DOUBLE, discountPrice)
-			+ "\n" + Messages.getString("CheckoutDialog.Charge") + String.format(ConstantValue.FORMAT_DOUBLE, getcash - discountPrice));
+			+ "\n" + Messages.getString("CheckoutDialog.Charge") + change);
+		}
+		
+		indentAfterSplit = result.data.get(0);
+		this.setVisible(false);
+		if (rbPayCash.isSelected()){
+			mainFrame.doOpenCashdrawer(false);
 		}
 	}
 

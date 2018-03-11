@@ -1,8 +1,5 @@
 package com.shuishou.deskmgr.ui;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -10,47 +7,30 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
-import javax.swing.BorderFactory;
-import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.table.DefaultTableModel;
 
 import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
 import com.shuishou.deskmgr.ConstantValue;
 import com.shuishou.deskmgr.Messages;
-import com.shuishou.deskmgr.beans.Desk;
 import com.shuishou.deskmgr.beans.Dish;
-import com.shuishou.deskmgr.beans.HttpResult;
 import com.shuishou.deskmgr.beans.Indent;
 import com.shuishou.deskmgr.beans.IndentDetail;
-import com.shuishou.deskmgr.http.HttpUtil;
-import com.shuishou.deskmgr.ui.components.NumberInputDialog;
+import com.shuishou.deskmgr.printertool.PrintJob;
+import com.shuishou.deskmgr.printertool.PrintQueue;
 
 public class ViewHistoryIndentByDeskDialog extends JDialog {
 	private final Logger logger = Logger.getLogger(ViewHistoryIndentByDeskDialog.class.getName());
@@ -115,30 +95,79 @@ public class ViewHistoryIndentByDeskDialog extends JDialog {
 		
 	}
 	
+//	private void doPrint(){
+//		int row = table.getSelectedRow();
+//		if (row < 0)
+//			return;
+//		if (JOptionPane.showConfirmDialog(this, Messages.getString("ViewHistoryIndentByDeskDialog.ConfirmPrint"), "", JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION)
+//			return;
+//		String url = "indent/printindent";
+//		Map<String, String> params = new HashMap<String, String>();
+//		params.put("userId", mainFrame.getOnDutyUser().getId()+"");
+//		params.put("indentId", tableModel.getObjectAt(row).getId()+"");
+//		String response = HttpUtil.getJSONObjectByPost(MainFrame.SERVER_URL + url, params, "UTF-8");
+//		if (response == null || response.length() == 0){
+//			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
+//			logger.error("get null from server while print indent. URL = " + url + ", param = "+ params);
+//			JOptionPane.showMessageDialog(this, "get null from server while print indent. URL = " + url + ", param = "+ params);
+//			return;
+//		}
+//		HttpResult<Indent> result = new Gson().fromJson(response, new TypeToken<HttpResult<Indent>>(){}.getType());
+//		if (!result.success){
+//			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
+//			logger.error("return false while print indent. URL = " + url + ", response = "+response);
+//			JOptionPane.showMessageDialog(this, "return false while print indent. URL = " + url + ", response = "+response);
+//			return;
+//		}
+//	}
+	
 	private void doPrint(){
 		int row = table.getSelectedRow();
 		if (row < 0)
 			return;
 		if (JOptionPane.showConfirmDialog(this, Messages.getString("ViewHistoryIndentByDeskDialog.ConfirmPrint"), "", JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION)
 			return;
-		String url = "indent/printindent";
-		Map<String, String> params = new HashMap<String, String>();
-		params.put("userId", mainFrame.getOnDutyUser().getId()+"");
-		params.put("indentId", tableModel.getObjectAt(row).getId()+"");
-		String response = HttpUtil.getJSONObjectByPost(MainFrame.SERVER_URL + url, params, "UTF-8");
-		if (response == null || response.length() == 0){
-			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
-			logger.error("get null from server while print indent. URL = " + url + ", param = "+ params);
-			JOptionPane.showMessageDialog(this, "get null from server while print indent. URL = " + url + ", param = "+ params);
-			return;
+		Indent indent = tableModel.getObjectAt(row);
+		Map<String,String> keys = new HashMap<String, String>();
+		keys.put("sequence", indent.getDailySequence()+"");
+		keys.put("customerAmount", indent.getCustomerAmount()+"");
+		keys.put("tableNo", indent.getDeskName());
+		keys.put("printType", "Invoice");
+		keys.put("dateTime", ConstantValue.DFYMDHMS.format(indent.getStartTime()));
+		keys.put("totalPrice", String.format("%.2f", indent.getTotalPrice()));
+		keys.put("paidPrice", String.format("%.2f", indent.getPaidPrice()));
+		keys.put("gst", String.format("%.2f",(double)(indent.getPaidPrice()/11)));
+		keys.put("printTime", ConstantValue.DFYMDHMS.format(new Date()));
+		keys.put("payway", indent.getPayWay());
+			keys.put("charge", "");
+		List<Map<String, String>> goods = new ArrayList<Map<String, String>>();
+		for(IndentDetail d : indent.getItems()){
+			Dish dish = mainFrame.getDishById(d.getDishId());
+			Map<String, String> mg = new HashMap<String, String>();
+			mg.put("name", d.getDishFirstLanguageName());
+			mg.put("price", String.format("%.2f",d.getDishPrice()));
+			mg.put("amount", d.getAmount()+"");
+			
+			String requirement = "";
+			if (d.getAdditionalRequirements() != null)
+				requirement += d.getAdditionalRequirements();
+			//按重量卖的dish, 把重量加入requirement
+			if (dish.getPurchaseType() == ConstantValue.DISH_PURCHASETYPE_WEIGHT)
+				requirement += " " + d.getWeight();
+			if (dish.getPurchaseType() == ConstantValue.DISH_PURCHASETYPE_WEIGHT){
+				mg.put("totalPrice", String.format("%.2f",d.getWeight() * d.getDishPrice() * d.getAmount()));
+			} else if (dish.getPurchaseType() == ConstantValue.DISH_PURCHASETYPE_UNIT){
+				mg.put("totalPrice", String.format("%.2f",d.getDishPrice() * d.getAmount()));
+			}
+			mg.put("requirement", requirement);
+			goods.add(mg);
+			
 		}
-		HttpResult<Indent> result = new Gson().fromJson(response, new TypeToken<HttpResult<Indent>>(){}.getType());
-		if (!result.success){
-			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
-			logger.error("return false while print indent. URL = " + url + ", response = "+response);
-			JOptionPane.showMessageDialog(this, "return false while print indent. URL = " + url + ", response = "+response);
-			return;
-		}
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("keys", keys);
+		params.put("goods", goods);
+		PrintJob job = new PrintJob("/newIndent_template.json", params, mainFrame.printerName);
+		PrintQueue.add(job);
 	}
 	
 	class IndentModel extends AbstractTableModel{

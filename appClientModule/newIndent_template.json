@@ -1,0 +1,179 @@
+{
+	"header": [
+	{
+		"text": "HAO SZECHUAN 好吃嘴 北桥总店",
+		"size": 10,
+		"bold": true,
+		"align": 1,
+		"line": true,
+		"type": 0
+	},
+	{
+		"text": "ABN：86163933686",
+		"size": 9,
+		"bold": false,
+		"align": 0,
+		"line": true,
+		"type": 0
+	},
+	{
+		"text": "ADDRESS: 74 FRANCIS ST, NORTHBIRDHE, 6003",
+		"size": 9,
+		"bold": false,
+		"align": 0,
+		"line": true,
+		"type": 0
+	},
+	{
+		"text": "TEL：(08)92280636",
+		"size": 9,
+		"bold": false,
+		"align": 0,
+		"line": true,
+		"type": 0
+	},
+	{
+		"text": "               {$printType}",
+		"size": 9,
+		"bold": false,
+		"align": 0,
+		"line": true,
+		"type": 0
+	},
+	{
+		"text": "订单编号：{$sequence}  ",
+		"size": 9,
+		"bold": false,
+		"align": 0,
+		"line": false,
+		"type": 0
+	},
+	{
+		"text": "人数：{$customerAmount}   ",
+		"size": 9,
+		"bold": false,
+		"align": 0,
+		"line": false,
+		"type": 0
+	},
+	{
+		"text": "桌号：{$tableNo}",
+		"size": 9,
+		"bold": false,
+		"align": 0,
+		"line": true,
+		"type": 0
+	},
+	{
+		"text": "单据日期：{$dateTime}",
+		"size": 9,
+		"bold": false,
+		"align": 0,
+		"line": true,
+		"type": 0
+	},
+	{
+		"text": "--------------------------------",
+		"size": 9,
+		"bold": false,
+		"align": 0,
+		"line": true,
+		"type": 0
+	}],
+	
+	"goods": [{
+		"name": "菜品",
+		"width": 20,
+		"size":9,
+		"bold": false,
+		"variable": "name"
+	},
+	{
+		"name": "单价",
+		"width": 8,
+		"size":9,
+		"bold": false,
+		"variable": "price"
+	},
+	{
+		"name": "数量",
+		"width": 6,
+		"size":9,
+		"bold": false,
+		"variable": "amount"
+	},
+	{
+		"name": "金额",
+		"width": 10,
+		"size":9,
+		"bold": false,
+		"variable": "totalPrice"
+	}],
+	
+
+	"msg": [{
+		"text": "--------------------------------",
+		"size": 9,
+		"bold": false,
+		"align": 0,
+		"line": true,
+		"type": 0
+	},
+	{
+		"text": "合计:                    ${$totalPrice}",
+		"size": 9,
+		"bold": false,
+		"align": 0,
+		"line": true,
+		"type": 0
+	},
+	{
+		"text": "打印时间: {$printTime}",
+		"size": 9,
+		"bold": false,
+		"align": 0,
+		"line": true,
+		"type": 0
+	},
+	{
+		"text": "-",
+		"size": 9,
+		"bold": false,
+		"align": 0,
+		"line": true,
+		"type": 0
+	},
+	{
+		"text": "-",
+		"size": 9,
+		"bold": false,
+		"align": 0,
+		"line": true,
+		"type": 0
+	},
+	{
+		"text": "澳大利亚好吃嘴 欢迎您的光临",
+		"size": 9,
+		"bold": false,
+		"align": 0,
+		"line": true,
+		"type": 0
+	},
+	{
+		"text": "-",
+		"size": 9,
+		"bold": false,
+		"align": 0,
+		"line": true,
+		"type": 0
+	},
+	{
+		"text": "-",
+		"size": 9,
+		"bold": false,
+		"align": 0,
+		"line": true,
+		"type": 0
+	},
+	]
+}

@@ -67,6 +67,7 @@ import com.shuishou.deskmgr.beans.Indent;
 import com.shuishou.deskmgr.beans.PayWay;
 import com.shuishou.deskmgr.beans.UserData;
 import com.shuishou.deskmgr.http.HttpUtil;
+import com.shuishou.deskmgr.printertool.PrintThread;
 import com.shuishou.deskmgr.ui.components.IconButton;
 import com.shuishou.deskmgr.ui.components.JBlockedButton;
 
@@ -88,6 +89,7 @@ public class MainFrame extends JFrame implements ActionListener{
 	public static String SERVER_URL;
 	private OutputStream outputStreamCashdrawer;
 	public static String portCashdrawer;
+	public static String printerName;
 	
 	private JPanel pDeskArea = null;
 	private JLabel lbStatusLogin = new JLabel();
@@ -211,6 +213,9 @@ public class MainFrame extends JFrame implements ActionListener{
 		this.getContentPane().add(jspDeskArea, BorderLayout.CENTER);
 		this.getContentPane().add(pFunction, BorderLayout.EAST);
 		this.getContentPane().add(pStatus, BorderLayout.SOUTH);
+		
+		//start printer thread
+        new PrintThread().startThread();
 	}
 	
 	private void initData(){
@@ -925,6 +930,25 @@ public class MainFrame extends JFrame implements ActionListener{
 		return dishes;
 	}
 	
+	public Dish getDishById(int id){
+		for (int i = 0; i < category1List.size(); i++) {
+			Category1 c1 = category1List.get(i);
+			if (c1.getCategory2s() !=null){
+				Collections.sort(c1.getCategory2s(), category2Comparator);
+				for (int j = 0; j < c1.getCategory2s().size(); j++) {
+					Category2 c2 = c1.getCategory2s().get(j);
+					if (c2.getDishes() != null){
+						for(Dish dish : c2.getDishes()){
+							if (dish.getId() == id)
+								return dish;
+						}
+					}
+				}
+			}
+		}
+		return null;
+	}
+	
 	public ArrayList<Category2> getAllCategory2s(){
 		ArrayList<Category2> c2s = new ArrayList<>();
 		for (int i = 0; i < category1List.size(); i++) {
@@ -1027,6 +1051,7 @@ public class MainFrame extends JFrame implements ActionListener{
 		MainFrame.WINDOW_LOCATIONY = Integer.parseInt(prop.getProperty("mainframe.locationy"));
 		MainFrame.language = prop.getProperty("language");
 		MainFrame.portCashdrawer=prop.getProperty("portCashdrawer");
+		MainFrame.printerName = prop.getProperty("printerName");
 		final MainFrame f = new MainFrame();
 		f.setExtendedState(JFrame.MAXIMIZED_BOTH);
 //		f.setUndecorated(true);
