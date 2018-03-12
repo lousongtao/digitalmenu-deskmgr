@@ -14,6 +14,8 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
@@ -59,6 +61,12 @@ public class DishConfigDialog extends JDialog {
 		btnClose.setPreferredSize(new Dimension(150, 50));
 		btnConfirm.setPreferredSize(new Dimension(150, 50));
 		ArrayList<DishConfigGroup> groups = dish.getConfigGroups();
+		Collections.sort(groups, new Comparator<DishConfigGroup>(){
+
+			@Override
+			public int compare(DishConfigGroup o1, DishConfigGroup o2) {
+				return o1.getSequence() - o2.getSequence();
+			}});
 		JPanel pGroup = new JPanel(new GridBagLayout());
 		for (int i = 0; i < groups.size(); i++) {
 			DishConfigGroup group = groups.get(i);

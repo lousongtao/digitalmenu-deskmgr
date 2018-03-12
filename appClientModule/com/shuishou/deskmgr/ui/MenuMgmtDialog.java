@@ -58,7 +58,7 @@ public class MenuMgmtDialog extends JDialog {
 	private JButton btnCancelSoldout = new JButton(Messages.getString("MenuMgmtDialog.CancelSoldout"));
 	private JButton btnClose = new JButton(Messages.getString("CloseDialog"));
 	private JBlockedButton btnMakeSoldout = new JBlockedButton(Messages.getString("MenuMgmtDialog.MakeSoldout"), null);
-	private JPanel pDishes = new JPanel(new FlowLayout(FlowLayout.LEFT));
+	private JPanel pDishes = new JPanel(new GridBagLayout());
 	private JList<Dish> listDish = new JList<>();
 	private DefaultListModel<Dish> listModelDish = new DefaultListModel<>();
 	
@@ -82,6 +82,8 @@ public class MenuMgmtDialog extends JDialog {
 		JScrollPane jspChooseDish = new JScrollPane(listDish, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 		pDishes.setBorder(BorderFactory.createTitledBorder("Dishes"));
 		pDishes.setBackground(Color.white);
+		JScrollPane jspDish = new JScrollPane(pDishes, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+		
 		JPanel pDishDishplay = new JPanel(new GridBagLayout());
 		
 		JPanel pSearch = new JPanel(new BorderLayout());
@@ -96,7 +98,7 @@ public class MenuMgmtDialog extends JDialog {
 		
 		
 		pDishDishplay.add(pCategory2, 		new GridBagConstraints(0, 0, 1, 1, 1, 0.2, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
-		pDishDishplay.add(pDishes, 			new GridBagConstraints(0, 1, 1, 1, 1, 0.5, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+		pDishDishplay.add(jspDish, 			new GridBagConstraints(0, 1, 1, 1, 1, 0.5, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
 		
 		JPanel pChoosedDish = new JPanel(new GridBagLayout());
 		pChoosedDish.add(jspChooseDish, 	new GridBagConstraints(0, 2, 2, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
@@ -210,10 +212,12 @@ public class MenuMgmtDialog extends JDialog {
 	}
 	
 	private void doCategory2ButtonClick(Category2 c2){
+		int amountPerRow = 4;
 		pDishes.removeAll();
-		for(Dish dish : c2.getDishes()){
+		for(int i = 0; i < c2.getDishes().size(); i++){
+			Dish dish = c2.getDishes().get(i);
 			DishButton btn = new DishButton(dish);
-			pDishes.add(btn);
+			pDishes.add(btn, new GridBagConstraints(i % amountPerRow, (int) i / amountPerRow, 1, 1, 1, 0.2, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 		}
 		pDishes.updateUI();
 	}

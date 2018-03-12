@@ -336,12 +336,12 @@ public class OpenTableDialog extends JDialog implements ActionListener{
 				requires += config.getFirstLanguageName();
 				if (config.getPrice() !=0 )
 					requires += "$" + config.getPrice();
-				requires += " ";
+				requires += "\n";
 			}
 		}
 		if (cd.flavors != null && !cd.flavors.isEmpty()){
 			for(Flavor f : cd.flavors){
-				requires += f.getFirstLanguageName() + " ";
+				requires += f.getFirstLanguageName() + "\n";
 			}
 		}
 		return requires;
