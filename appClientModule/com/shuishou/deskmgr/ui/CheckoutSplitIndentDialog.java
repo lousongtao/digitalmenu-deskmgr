@@ -59,6 +59,7 @@ import com.shuishou.deskmgr.ui.OpenTableDialog.ChoosedDish;
 import com.shuishou.deskmgr.ui.components.IconButton;
 import com.shuishou.deskmgr.ui.components.JBlockedButton;
 import com.shuishou.deskmgr.ui.components.NumberTextField;
+import com.shuishou.deskmgr.ui.components.WaitDialog;
 
 public class CheckoutSplitIndentDialog extends CheckoutDialog{
 	private final Logger logger = Logger.getLogger(CheckoutSplitIndentDialog.class.getName());
@@ -97,8 +98,8 @@ public class CheckoutSplitIndentDialog extends CheckoutDialog{
 			ja.put(jo);
 		}
 		
-		String url = "indent/splitindentandpay";
-		Map<String, String> params = new HashMap<String, String>();
+		final String url = "indent/splitindentandpay";
+		final Map<String, String> params = new HashMap<String, String>();
 		params.put("userId", mainFrame.getOnDutyUser().getId() + "");
 		params.put("confirmCode", mainFrame.getConfigsMap().get(ConstantValue.CONFIGS_CONFIRMCODE));
 		params.put("originIndentId",originIndentId+"");
@@ -130,7 +131,12 @@ public class CheckoutSplitIndentDialog extends CheckoutDialog{
 		} else {
 			params.put("paidCash", String.format(ConstantValue.FORMAT_DOUBLE, Double.parseDouble(numGetCash.getText())));
 		}
-		String response = HttpUtil.getJSONObjectByPost(MainFrame.SERVER_URL + url, params, "UTF-8");
+		WaitDialog wdlg = new WaitDialog(this, "Posting data..."){
+			public Object work(){
+				return HttpUtil.getJSONObjectByPost(MainFrame.SERVER_URL + url, params, "UTF-8");
+			}
+		};
+		String response = (String)wdlg.getReturnResult();
 		if (response == null || response.length() == 0){
 			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 			logger.error("get null from server while pay splited indent. URL = " + url + ", param = "+ params);

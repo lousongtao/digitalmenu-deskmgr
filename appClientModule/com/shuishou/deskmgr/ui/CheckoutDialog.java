@@ -64,6 +64,7 @@ import com.shuishou.deskmgr.printertool.PrintQueue;
 import com.shuishou.deskmgr.ui.components.IconButton;
 import com.shuishou.deskmgr.ui.components.JBlockedButton;
 import com.shuishou.deskmgr.ui.components.NumberTextField;
+import com.shuishou.deskmgr.ui.components.WaitDialog;
 
 public class CheckoutDialog extends JDialog implements ActionListener, DocumentListener, ItemListener{
 	private final Logger logger = Logger.getLogger(CheckoutDialog.class.getName());
@@ -432,8 +433,8 @@ public class CheckoutDialog extends JDialog implements ActionListener, DocumentL
 				return;
 			}
 		}
-		String url = "indent/dopayindent";
-		Map<String, String> params = new HashMap<String, String>();
+		final String url = "indent/dopayindent";
+		final Map<String, String> params = new HashMap<String, String>();
 		params.put("userId", mainFrame.getOnDutyUser().getId() + "");
 		params.put("id", indent.getId() + "");
 		params.put("operatetype", ConstantValue.INDENT_OPERATIONTYPE_PAY+"");
@@ -468,7 +469,13 @@ public class CheckoutDialog extends JDialog implements ActionListener, DocumentL
 				}
 			}
 		}
-		String response = HttpUtil.getJSONObjectByPost(MainFrame.SERVER_URL + url, params, "UTF-8");
+		
+		WaitDialog wdlg = new WaitDialog(this, "Posting data..."){
+			public Object work(){
+				return HttpUtil.getJSONObjectByPost(MainFrame.SERVER_URL + url, params, "UTF-8");
+			}
+		};
+		String response = (String)wdlg.getReturnResult();
 		HttpResult<Object> result = new Gson().fromJson(response, new TypeToken<HttpResult<Object>>(){}.getType());
 //		JSONObject jsonObj = new JSONObject(response);
 //		if (!jsonObj.getBoolean("success")){
