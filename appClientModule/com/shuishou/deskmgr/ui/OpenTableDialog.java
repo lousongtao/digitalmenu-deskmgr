@@ -47,6 +47,7 @@ import com.shuishou.deskmgr.beans.DishConfig;
 import com.shuishou.deskmgr.beans.Flavor;
 import com.shuishou.deskmgr.beans.HttpResult;
 import com.shuishou.deskmgr.http.HttpUtil;
+import com.shuishou.deskmgr.ui.MenuMgmtDialog.DishButton;
 import com.shuishou.deskmgr.ui.components.JBlockedButton;
 import com.shuishou.deskmgr.ui.components.NumberInputDialog;
 import com.shuishou.deskmgr.ui.components.NumberTextField;
@@ -64,7 +65,7 @@ public class OpenTableDialog extends JDialog implements ActionListener{
 	private JButton btnFlavor = new JButton(Messages.getString("OpenTableDialog.SetFlavor"));
 	private JButton btnTakeaway = new JButton(Messages.getString("OpenTableDialog.Takeaway"));
 	private JBlockedButton btnConfirm = new JBlockedButton(Messages.getString("OpenTableDialog.ConfirmOrder"), null);
-	private JPanel pDishes = new JPanel(new FlowLayout(FlowLayout.LEFT));
+	private JPanel pDishes = new JPanel(new GridBagLayout());
 	private JList<ChoosedDish> listChoosedDish = new JList<>();
 	private ListModel<ChoosedDish> listModelChoosedDish = new ListModel();
 	private JTextField tfWholeOrderComment = new JTextField();
@@ -108,6 +109,7 @@ public class OpenTableDialog extends JDialog implements ActionListener{
 		JScrollPane jspChooseDish = new JScrollPane(listChoosedDish, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 		pDishes.setBorder(BorderFactory.createTitledBorder("Dishes"));
 		pDishes.setBackground(Color.white);
+		JScrollPane jspDish = new JScrollPane(pDishes, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 		JPanel pDishDishplay = new JPanel(new GridBagLayout());
 		
 		JPanel pSearch = new JPanel(new BorderLayout());
@@ -122,7 +124,7 @@ public class OpenTableDialog extends JDialog implements ActionListener{
 		
 		
 		pDishDishplay.add(pCategory2, 	new GridBagConstraints(0, 0, 1, 1, 1, 0.2, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
-		pDishDishplay.add(pDishes, 			new GridBagConstraints(0, 1, 1, 1, 1, 0.5, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+		pDishDishplay.add(jspDish, 		new GridBagConstraints(0, 1, 1, 1, 1, 0.5, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
 		
 		JPanel pChoosedDish = new JPanel(new GridBagLayout());
 		pChoosedDish.add(lbDeskNo, 			new GridBagConstraints(0, 0, 2, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
@@ -348,10 +350,12 @@ public class OpenTableDialog extends JDialog implements ActionListener{
 	}
 	
 	private void doCategory2ButtonClick(Category2 c2){
+		int amountPerRow = 4;
 		pDishes.removeAll();
-		for(Dish dish : c2.getDishes()){
+		for(int i = 0; i < c2.getDishes().size(); i++){
+			Dish dish = c2.getDishes().get(i);
 			DishButton btn = new DishButton(dish);
-			pDishes.add(btn);
+			pDishes.add(btn, new GridBagConstraints(i % amountPerRow, (int) i / amountPerRow, 1, 1, 1, 0.2, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 		}
 		pDishes.updateUI();
 	}

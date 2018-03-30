@@ -52,7 +52,7 @@ public class NumberInputDialog extends JDialog{
 					return;
 				isConfirm = true;
 				inputDouble = Double.parseDouble(txt.getText());
-				inputInteger = Integer.parseInt(txt.getText());
+				inputInteger = (int)inputDouble;
 				setVisible(false);
 			}
 		});

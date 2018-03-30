@@ -101,10 +101,11 @@ public class ViewIndentDialog extends JDialog implements ActionListener{
 		tabIndentDetail.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		tabIndentDetail.setRowHeight(50);
 		tabIndentDetail.getColumnModel().getColumn(0).setPreferredWidth(120);
-		tabIndentDetail.getColumnModel().getColumn(1).setPreferredWidth(120);
-		tabIndentDetail.getColumnModel().getColumn(2).setPreferredWidth(30);
+//		tabIndentDetail.getColumnModel().getColumn(1).setPreferredWidth(120);
+		tabIndentDetail.getColumnModel().getColumn(1).setPreferredWidth(30);
+		tabIndentDetail.getColumnModel().getColumn(2).setPreferredWidth(50);
 		tabIndentDetail.getColumnModel().getColumn(3).setPreferredWidth(50);
-		tabIndentDetail.getColumnModel().getColumn(4).setPreferredWidth(50);
+		tabIndentDetail.getColumnModel().getColumn(4).setPreferredWidth(140);
 		tabIndentDetail.getColumnModel().getColumn(5).setPreferredWidth(400);
 		JScrollPane jspTable = new JScrollPane(tabIndentDetail, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 		JPanel pTop = new JPanel(new GridBagLayout());
@@ -265,10 +266,11 @@ public class ViewIndentDialog extends JDialog implements ActionListener{
 		private List<IndentDetail> items;
 		private String[] header = new String[]{
 				Messages.getString("ViewIndentDialog.Header.FirstLanguageName"),
-				Messages.getString("ViewIndentDialog.Header.SecondLanguageName"),
+//				Messages.getString("ViewIndentDialog.Header.SecondLanguageName"),
 				Messages.getString("ViewIndentDialog.Header.Amount"),
 				Messages.getString("ViewIndentDialog.Header.Price"),
 				Messages.getString("ViewIndentDialog.Header.Weight"),
+				Messages.getString("ViewIndentDialog.Header.Time"),
 				Messages.getString("ViewIndentDialog.Header.Requirements")
 		};
 		public IndentDetailModel(List<IndentDetail> items){
@@ -290,15 +292,19 @@ public class ViewIndentDialog extends JDialog implements ActionListener{
 			switch(columnIndex){
 			case 0:
 				return d.getDishFirstLanguageName();
+//			case 1:
+//				return d.getDishSecondLanguageName();
 			case 1:
-				return d.getDishSecondLanguageName();
-			case 2:
 				return d.getAmount();
-			case 3:
+			case 2:
 				return d.getDishPrice();
-			case 4:
+			case 3:
 				if (d.getWeight() > 0)
 					return d.getWeight()+"";
+				else return "";
+			case 4:
+				if (d.getTime() != null)
+					return ConstantValue.DFYMDHMS.format(d.getTime());
 				else return "";
 			case 5:
 				return d.getAdditionalRequirements();
