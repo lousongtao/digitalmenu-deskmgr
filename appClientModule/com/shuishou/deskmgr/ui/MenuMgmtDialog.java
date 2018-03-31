@@ -154,6 +154,8 @@ public class MenuMgmtDialog extends JDialog {
 	}
 	
 	private void initSoldoutList(){
+		//reload the menu data
+		mainFrame.loadMenu();
 		ArrayList<Dish> dishes = mainFrame.getAllDishes();
 		for (int j = 0; j < dishes.size(); j++) {
 			if (dishes.get(j).isSoldOut()) {
