@@ -243,9 +243,9 @@ public class MainFrame extends JFrame implements ActionListener{
 	}
 	
 	/**
-	 * this class just hold Category1 objects. if need dish object, please loop into the category1 objects
+	 * this class just hold Category1 objects. if need dish object, loop into the category1 objects
 	 */
-	private void loadMenu(){
+	public void loadMenu(){
 		String url = "menu/querymenu";
 		String response = HttpUtil.getJSONObjectByGet(SERVER_URL + url);
 		if (response == null){

@@ -1,5 +1,7 @@
 package com.shuishou.deskmgr.beans;
 
+import java.util.Date;
+
 public class IndentDetail {
 
 	private int id;
@@ -20,6 +22,7 @@ public class IndentDetail {
 
 	private double weight;
 	
+	private Date time;
 	
 	public double getWeight() {
 		return weight;
@@ -68,6 +71,14 @@ public class IndentDetail {
 
 	public void setDishPrice(double dishPrice) {
 		this.dishPrice = dishPrice;
+	}
+
+	public Date getTime() {
+		return time;
+	}
+
+	public void setTime(Date time) {
+		this.time = time;
 	}
 
 	public String getAdditionalRequirements() {
