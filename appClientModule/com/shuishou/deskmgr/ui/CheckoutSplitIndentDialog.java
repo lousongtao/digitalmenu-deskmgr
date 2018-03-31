@@ -170,16 +170,16 @@ public class CheckoutSplitIndentDialog extends CheckoutDialog{
 			doPrint(result.data.get(1), discountPrice, getPay, params.get("payWay"), change);
 		}
 		
-		if (rbPayCash.isSelected()){
-			JOptionPane.showMessageDialog(mainFrame, Messages.getString("CheckoutDialog.GetCash") + numGetCash.getText()
-			+ "\n" + Messages.getString("CheckoutDialog.ShouldPayAmount") + String.format(ConstantValue.FORMAT_DOUBLE, discountPrice)
-			+ "\n" + Messages.getString("CheckoutDialog.Charge") + change);
-		}
-		
 		indentAfterSplit = result.data.get(0);
 		this.setVisible(false);
 		if (rbPayCash.isSelected()){
 			mainFrame.doOpenCashdrawer(false);
+		}
+		
+		if (rbPayCash.isSelected()){
+			JOptionPane.showMessageDialog(mainFrame, Messages.getString("CheckoutDialog.GetCash") + numGetCash.getText()
+			+ "\n" + Messages.getString("CheckoutDialog.ShouldPayAmount") + String.format(ConstantValue.FORMAT_DOUBLE, discountPrice)
+			+ "\n" + Messages.getString("CheckoutDialog.Charge") + change);
 		}
 	}
 
