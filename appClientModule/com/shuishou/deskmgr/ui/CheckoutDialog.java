@@ -505,12 +505,6 @@ public class CheckoutDialog extends JDialog implements ActionListener, DocumentL
 			doPrint(indent, discountPrice, getPay, params.get("payWay"), change);
 		}
 		
-		if (rbPayCash.isSelected()){
-			JOptionPane.showMessageDialog(mainFrame, Messages.getString("CheckoutDialog.GetCash") + numGetCash.getText()
-			+ "\n" + Messages.getString("CheckoutDialog.ShouldPayAmount") + String.format(ConstantValue.FORMAT_DOUBLE, discountPrice)
-			+ "\n" + Messages.getString("CheckoutDialog.Charge") + change);
-		}
-		
 		//clean table
 		mainFrame.loadDesks();
 		mainFrame.loadCurrentIndentInfo();
@@ -518,6 +512,11 @@ public class CheckoutDialog extends JDialog implements ActionListener, DocumentL
 			mainFrame.doOpenCashdrawer(false);
 		}
 		
+		if (rbPayCash.isSelected()){
+			JOptionPane.showMessageDialog(mainFrame, Messages.getString("CheckoutDialog.GetCash") + numGetCash.getText()
+			+ "\n" + Messages.getString("CheckoutDialog.ShouldPayAmount") + String.format(ConstantValue.FORMAT_DOUBLE, discountPrice)
+			+ "\n" + Messages.getString("CheckoutDialog.Charge") + change);
+		}
 	}
 	
 	protected void doPrint(Indent indent, double paidPrice, double getPay, String payway, String change){
