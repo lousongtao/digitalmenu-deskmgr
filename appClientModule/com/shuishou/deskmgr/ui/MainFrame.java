@@ -90,6 +90,7 @@ public class MainFrame extends JFrame implements ActionListener{
 	private OutputStream outputStreamCashdrawer;
 	public static String portCashdrawer;
 	public static String printerName;
+	public static String functionlist;
 	
 	private JPanel pDeskArea = null;
 	private JLabel lbStatusLogin = new JLabel();
@@ -1052,6 +1053,7 @@ public class MainFrame extends JFrame implements ActionListener{
 		MainFrame.language = prop.getProperty("language");
 		MainFrame.portCashdrawer=prop.getProperty("portCashdrawer");
 		MainFrame.printerName = prop.getProperty("printerName");
+		MainFrame.functionlist = prop.getProperty("mainframe.functionlist");
 		final MainFrame f = new MainFrame();
 		f.setExtendedState(JFrame.MAXIMIZED_BOTH);
 //		f.setUndecorated(true);

@@ -107,4 +107,19 @@ public class ConstantValue {
 	public static final String CONFIGS_MEMBERMGR_BYSCORE= "MEMBERMGR_BYSCORE";
 	public static final String CONFIGS_MEMBERMGR_BYDEPOSIT = "MEMBERMGR_BYDEPOSIT";
 	public static final String CONFIGS_MEMBERMGR_SCOREPERDOLLAR = "MEMBERMGR_SCOREPERDOLLAR";
+	
+	public static final String FUNCTION_ACCOUNT="ACCOUNT";
+	public static final String FUNCTION_CONFIG="CONFIG";
+	public static final String FUNCTION_MENU="MENU";
+	public static final String FUNCTION_FLAVOR="FLAVOR";
+	public static final String FUNCTION_DESK="DESK";
+	public static final String FUNCTION_PAYWAY="PAYWAY";
+	public static final String FUNCTION_DISCOUNT="DISCOUNT";
+	public static final String FUNCTION_PRINTER="PRINTER";
+	public static final String FUNCTION_MATERIAL="MATERIAL";
+	public static final String FUNCTION_LOGQUERY="LOGQUERY";
+	public static final String FUNCTION_ORDERQUERY="ORDERQUERY";
+	public static final String FUNCTION_SHIFTWORK="SHIFTWORK";
+	public static final String FUNCTION_STATISTICS="STATISTICS";
+	public static final String FUNCTION_MEMBER="MEMBER";
 }

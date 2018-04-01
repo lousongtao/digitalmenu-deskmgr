@@ -126,6 +126,7 @@ public class CheckoutDialog extends JDialog implements ActionListener, DocumentL
 			pMember.add(tfMemberPwd, 	new GridBagConstraints(4, 0, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
 		}
 		pMember.add(lbMemberInfo, 	new GridBagConstraints(0, 1, GridBagConstraints.REMAINDER, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
+		pMember.setVisible(MainFrame.functionlist.indexOf(ConstantValue.FUNCTION_MEMBER) >= 0);
 		
 		JPanel pPayway = new JPanel(new GridBagLayout());
 		pPayway.setBorder(BorderFactory.createTitledBorder(Messages.getString("CheckoutDialog.PayWay"))); //$NON-NLS-1$
