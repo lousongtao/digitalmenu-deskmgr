@@ -6,14 +6,17 @@ public class DiscountTemplate {
 	
 	private String name;
 	
-	private double rate;
+	private double value;
+	
+	private int type;
 
 	public DiscountTemplate(){}
 	
-	public DiscountTemplate(int id, String name, double rate){
+	public DiscountTemplate(int id, String name, double value, int type){
 		this.id = id;
 		this.name = name;
-		this.rate = rate;
+		this.value = value;
+		this.type = type;
 	}
 
 	public int getId() {
@@ -24,20 +27,28 @@ public class DiscountTemplate {
 		this.id = id;
 	}
 
-	public double getRate() {
-		return rate;
-	}
-
-	public void setRate(double rate) {
-		this.rate = rate;
-	}
-
 	public String getName() {
 		return name;
 	}
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public double getValue() {
+		return value;
+	}
+
+	public void setValue(double value) {
+		this.value = value;
+	}
+
+	public int getType() {
+		return type;
+	}
+
+	public void setType(int type) {
+		this.type = type;
 	}
 
 	@Override

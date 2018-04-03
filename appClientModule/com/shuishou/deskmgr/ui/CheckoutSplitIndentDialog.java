@@ -55,6 +55,7 @@ import com.shuishou.deskmgr.beans.Indent;
 import com.shuishou.deskmgr.beans.IndentDetail;
 import com.shuishou.deskmgr.beans.PayWay;
 import com.shuishou.deskmgr.http.HttpUtil;
+import com.shuishou.deskmgr.ui.CheckoutDialog.DiscountTemplateRadioButton;
 import com.shuishou.deskmgr.ui.OpenTableDialog.ChoosedDish;
 import com.shuishou.deskmgr.ui.components.IconButton;
 import com.shuishou.deskmgr.ui.components.JBlockedButton;
@@ -130,6 +131,18 @@ public class CheckoutSplitIndentDialog extends CheckoutDialog{
 			params.put("paidCash", "0");
 		} else {
 			params.put("paidCash", String.format(ConstantValue.FORMAT_DOUBLE, Double.parseDouble(numGetCash.getText())));
+		}
+		if (rbDiscountNon.isSelected()){
+			params.put("discountTemplate", "");
+		} else if (rbDiscountDirect.isSelected()){
+			params.put("discountTemplate", tfDiscountAmount.getText());
+		} else {
+			DiscountTemplateRadioButton rbTemplate = getSelectedDiscountTemplateRadioButton();
+			if (rbTemplate == null){
+				discountTempRadioButtonList.get(0).setSelected(true);
+				rbTemplate = discountTempRadioButtonList.get(0);
+			}
+			params.put("discountTemplate", String.valueOf(rbTemplate.getDiscountTemplate().getType()));
 		}
 		WaitDialog wdlg = new WaitDialog(this, "Posting data..."){
 			public Object work(){

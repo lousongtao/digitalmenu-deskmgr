@@ -84,7 +84,7 @@ public class CheckoutDialog extends JDialog implements ActionListener, DocumentL
 	protected JButton btnQueryMember = new JButton("Query");
 	protected JPasswordField tfMemberPwd = new JPasswordField();
 	protected ArrayList<JRadioButton> listRBOtherPayway = new ArrayList<>();
-	protected NumberTextField tfDiscountPrice = null;
+	protected NumberTextField tfDiscountAmount = null;
 	protected JTextField tfMember = new JTextField();
 	protected JBlockedButton btnPay = new JBlockedButton(Messages.getString("CheckoutDialog.PayButton"), "/resource/checkout.png"); //$NON-NLS-1$
 	protected JButton btnClose = new JButton(Messages.getString("CloseDialog")); //$NON-NLS-1$
@@ -95,7 +95,7 @@ public class CheckoutDialog extends JDialog implements ActionListener, DocumentL
 	protected double discountPrice = 0;
 	
 	protected Member member;
-	private List<DiscountTemplateRadioButton> discountTempRadioButtonList = new ArrayList<DiscountTemplateRadioButton>();
+	protected List<DiscountTemplateRadioButton> discountTempRadioButtonList = new ArrayList<DiscountTemplateRadioButton>();
 	public CheckoutDialog(MainFrame mainFrame,String title, boolean modal, Desk desk, Indent indent){
 		super(mainFrame, title, modal);
 		this.mainFrame = mainFrame;
@@ -109,7 +109,7 @@ public class CheckoutDialog extends JDialog implements ActionListener, DocumentL
 		JLabel lbDeskNo = new JLabel();
 		JLabel lbPrice = new JLabel();
 		
-		tfDiscountPrice = new NumberTextField(this, true);
+		tfDiscountAmount = new NumberTextField(this, true);
 		
 		numGetCash = new NumberTextField(this, true);
 		JLabel lbGetCash = new JLabel(Messages.getString("CheckoutDialog.GetCash"));
@@ -176,9 +176,9 @@ public class CheckoutDialog extends JDialog implements ActionListener, DocumentL
 			}
 		}
 		
-		Dimension dDiscountPrice = tfDiscountPrice.getPreferredSize();
+		Dimension dDiscountPrice = tfDiscountAmount.getPreferredSize();
 		dDiscountPrice.width = 150;
-		tfDiscountPrice.setPreferredSize(dDiscountPrice);
+		tfDiscountAmount.setPreferredSize(dDiscountPrice);
 		
 		JPanel pDiscount = new JPanel(new GridBagLayout());
 		pDiscount.setBorder(BorderFactory.createTitledBorder(Messages.getString("CheckoutDialog.BorderDiscount"))); //$NON-NLS-1$
@@ -188,7 +188,7 @@ public class CheckoutDialog extends JDialog implements ActionListener, DocumentL
 		bgDiscount.add(rbDiscountDirect);
 		pDiscount.add(rbDiscountNon, 	new GridBagConstraints(0, 0, 1, 1, 0, 1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 		pDiscount.add(rbDiscountDirect, new GridBagConstraints(1, 0, 1, 1, 0, 1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(10, 50, 0, 0), 0, 0));
-		pDiscount.add(tfDiscountPrice, 	new GridBagConstraints(2, 0, 1, 1, 0, 1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(10, 20, 0, 0), 0, 0));
+		pDiscount.add(tfDiscountAmount, new GridBagConstraints(2, 0, 1, 1, 0, 1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(10, 20, 0, 0), 0, 0));
 		pDiscount.add(rbDiscountTemp, 	new GridBagConstraints(0, 1, 1, 1, 0, 1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(10, 0, 0, 0), 0, 0));
 		pDiscount.add(pDiscountTemplate,new GridBagConstraints(0, 2, 3, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 0, 0, 0), 0, 0));
 		
@@ -231,7 +231,7 @@ public class CheckoutDialog extends JDialog implements ActionListener, DocumentL
 		btnQueryMember.addActionListener(this);
 		
 		numGetCash.getDocument().addDocumentListener(this);
-		tfDiscountPrice.getDocument().addDocumentListener(this);
+		tfDiscountAmount.getDocument().addDocumentListener(this);
 		tfMember.getDocument().addDocumentListener(this);
 		
 		rbDiscountNon.addItemListener(this);
@@ -269,7 +269,7 @@ public class CheckoutDialog extends JDialog implements ActionListener, DocumentL
 		if (e.getDocument() == numGetCash.getDocument()){
 			rbPayCash.setSelected(true);
 			showChargeText();
-		} else if (e.getDocument() == tfDiscountPrice.getDocument()){
+		} else if (e.getDocument() == tfDiscountAmount.getDocument()){
 			rbDiscountDirect.setSelected(true);
 			calculatePaidPrice();
 		} else if (e.getDocument() == tfMember.getDocument()){
@@ -283,7 +283,7 @@ public class CheckoutDialog extends JDialog implements ActionListener, DocumentL
 		if (e.getDocument() == numGetCash.getDocument()){
 			rbPayCash.setSelected(true);
 			showChargeText();
-		} else if (e.getDocument() == tfDiscountPrice.getDocument()){
+		} else if (e.getDocument() == tfDiscountAmount.getDocument()){
 			rbDiscountDirect.setSelected(true);
 			calculatePaidPrice();
 		} else if (e.getDocument() == tfMember.getDocument()){
@@ -297,7 +297,7 @@ public class CheckoutDialog extends JDialog implements ActionListener, DocumentL
 		if (e.getDocument() == numGetCash.getDocument()){
 			rbPayCash.setSelected(true);
 			showChargeText();
-		} else if (e.getDocument() == tfDiscountPrice.getDocument()){
+		} else if (e.getDocument() == tfDiscountAmount.getDocument()){
 			rbDiscountDirect.setSelected(true);
 			calculatePaidPrice();
 		} else if (e.getDocument() == tfMember.getDocument()){
@@ -392,7 +392,7 @@ public class CheckoutDialog extends JDialog implements ActionListener, DocumentL
 		lbCharge.setText(Messages.getString("CheckoutDialog.Charge")+" $" + String.format("%.2f", value - discountPrice));
 	}
 	
-	private DiscountTemplateRadioButton getSelectedDiscountTemplateRadioButton(){
+	protected DiscountTemplateRadioButton getSelectedDiscountTemplateRadioButton(){
 		for (DiscountTemplateRadioButton rb : discountTempRadioButtonList) {
 			if (rb.isSelected())
 				return rb;
@@ -409,11 +409,16 @@ public class CheckoutDialog extends JDialog implements ActionListener, DocumentL
 				discountTempRadioButtonList.get(0).setSelected(true);
 				rbTemplate = discountTempRadioButtonList.get(0);
 			}
-			discountPrice = indent.getTotalPrice() * rbTemplate.getDiscountTemplate().getRate();
+			if (rbTemplate.getDiscountTemplate().getType() == ConstantValue.DISCOUNTTYPE_QUANTITY){
+				discountPrice = indent.getTotalPrice() + rbTemplate.getDiscountTemplate().getValue();
+			} else if (rbTemplate.getDiscountTemplate().getType() == ConstantValue.DISCOUNTTYPE_RATE){
+				discountPrice = indent.getTotalPrice() * rbTemplate.getDiscountTemplate().getValue();
+			}
+			
 		} else if (rbDiscountDirect.isSelected()) {
 			double dp = 0;
 			try{
-				dp = Double.parseDouble(tfDiscountPrice.getText());
+				dp = Double.parseDouble(tfDiscountAmount.getText());
 			}catch(Exception e){}
 			discountPrice = indent.getTotalPrice() - dp;
 		}
@@ -469,6 +474,18 @@ public class CheckoutDialog extends JDialog implements ActionListener, DocumentL
 					break;
 				}
 			}
+		}
+		if (rbDiscountNon.isSelected()){
+			params.put("discountTemplate", "");
+		} else if (rbDiscountDirect.isSelected()){
+			params.put("discountTemplate", tfDiscountAmount.getText());
+		} else {
+			DiscountTemplateRadioButton rbTemplate = getSelectedDiscountTemplateRadioButton();
+			if (rbTemplate == null){
+				discountTempRadioButtonList.get(0).setSelected(true);
+				rbTemplate = discountTempRadioButtonList.get(0);
+			}
+			params.put("discountTemplate", String.valueOf(rbTemplate.getDiscountTemplate().getName()));
 		}
 		
 		WaitDialog wdlg = new WaitDialog(this, "Posting data..."){
@@ -539,6 +556,10 @@ public class CheckoutDialog extends JDialog implements ActionListener, DocumentL
 		List<Map<String, String>> goods = new ArrayList<Map<String, String>>();
 		for(IndentDetail d : indent.getItems()){
 			Dish dish = mainFrame.getDishById(d.getDishId());
+			if (dish == null){
+				JOptionPane.showMessageDialog(mainFrame, "Print ticket failed. The reason is that cannot find dish by ID " + d.getDishId() +". Please restart this app and retry");
+				return;
+			}
 			Map<String, String> mg = new HashMap<String, String>();
 			mg.put("name", d.getDishFirstLanguageName());
 			mg.put("price", String.format(ConstantValue.FORMAT_DOUBLE,d.getDishPrice()));

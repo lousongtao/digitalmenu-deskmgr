@@ -143,6 +143,10 @@ public class ViewHistoryIndentByDeskDialog extends JDialog {
 		List<Map<String, String>> goods = new ArrayList<Map<String, String>>();
 		for(IndentDetail d : indent.getItems()){
 			Dish dish = mainFrame.getDishById(d.getDishId());
+			if (dish == null){
+				JOptionPane.showMessageDialog(mainFrame, "Print ticket failed. The reason is that cannot find dish by ID " + d.getDishId() +". Please restart this app and retry");
+				return;
+			}
 			Map<String, String> mg = new HashMap<String, String>();
 			mg.put("name", d.getDishFirstLanguageName());
 			mg.put("price", String.format("%.2f",d.getDishPrice()));

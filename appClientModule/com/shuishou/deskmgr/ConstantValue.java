@@ -122,4 +122,7 @@ public class ConstantValue {
 	public static final String FUNCTION_SHIFTWORK="SHIFTWORK";
 	public static final String FUNCTION_STATISTICS="STATISTICS";
 	public static final String FUNCTION_MEMBER="MEMBER";
+	
+	public static final int DISCOUNTTYPE_RATE= 1;     //折扣类型-按比例折扣
+	public static final int DISCOUNTTYPE_QUANTITY = 2;//折扣类型-直接减数量
 }
