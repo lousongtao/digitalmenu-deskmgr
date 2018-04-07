@@ -160,6 +160,14 @@
 		"type": 0
 	},
 	{
+		"text": "{$memberinfo}",
+		"size": 9,
+		"bold": false,
+		"align": 0,
+		"line": true,
+		"type": 0
+	},
+	{
 		"text": "打印时间: {$printTime}",
 		"size": 9,
 		"bold": false,

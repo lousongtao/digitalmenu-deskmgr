@@ -553,6 +553,14 @@ public class CheckoutDialog extends JDialog implements ActionListener, DocumentL
 		} else {
 			keys.put("change", "0");
 		}
+		if (ConstantValue.INDENT_PAYWAY_MEMBER.equals(payway)){
+			Member m = doLookforMember(member.getMemberCard());
+			if (m == null)
+				keys.put("memberinfo", "");
+			else keys.put("memberinfo", "Member: balance \\$" + m.getBalanceMoney() + ", score " + m.getScore());
+		} else {
+			keys.put("memberinfo", "");
+		}
 		List<Map<String, String>> goods = new ArrayList<Map<String, String>>();
 		for(IndentDetail d : indent.getItems()){
 			Dish dish = mainFrame.getDishById(d.getDishId());
@@ -585,6 +593,28 @@ public class CheckoutDialog extends JDialog implements ActionListener, DocumentL
 		params.put("goods", goods);
 		PrintJob job = new PrintJob("/payorder_template.json", params, mainFrame.printerName);
 		PrintQueue.add(job);
+	}
+	
+	private Member doLookforMember(String memberCard){
+		String url = "member/querymember";
+		Map<String, String> params = new HashMap<String, String>();
+		params.put("userId", mainFrame.getOnDutyUser().getId()+"");
+		params.put("memberCard", member.getMemberCard());
+		String response = HttpUtil.getJSONObjectByPost(MainFrame.SERVER_URL + url, params, "UTF-8");
+		if (response == null || response.length() == 0){
+			return null;
+		}
+		Gson gsonTime = new GsonBuilder().setDateFormat(ConstantValue.DATE_PATTERN_YMDHMS).create();
+		HttpResult<ArrayList<Member>> result = gsonTime.fromJson(response, new TypeToken<HttpResult<ArrayList<Member>>>(){}.getType());
+		if (!result.success){
+			return null;
+		}
+		ArrayList<Member> ms = result.data;
+		if (ms == null || ms.isEmpty()){
+			return null;
+		} else {
+			return ms.get(0);
+		} 
 	}
 	
 	private void doSplitIndent(){
