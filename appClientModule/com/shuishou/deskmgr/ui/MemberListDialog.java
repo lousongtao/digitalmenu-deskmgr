@@ -141,7 +141,7 @@ public class MemberListDialog extends JDialog{
 			case 5:
 				return m.getDiscountRate();
 			case 6:
-				return m.getBalanceMoney();
+				return String.format(ConstantValue.FORMAT_DOUBLE, m.getBalanceMoney());
 			}
 			return "";
 		}

@@ -234,6 +234,14 @@ public class CheckoutDialog extends JDialog implements ActionListener, DocumentL
 		tfDiscountAmount.getDocument().addDocumentListener(this);
 		tfMember.getDocument().addDocumentListener(this);
 		
+		tfMember.addKeyListener(new KeyAdapter(){
+			public void keyPressed(KeyEvent e) {
+				if (e.getKeyCode() == KeyEvent.VK_ENTER){
+					doLookforMember();
+				}
+			}
+		});
+		
 		rbDiscountNon.addItemListener(this);
 		rbDiscountTemp.addItemListener(this);
 		rbDiscountDirect.addItemListener(this);
@@ -326,20 +334,67 @@ public class CheckoutDialog extends JDialog implements ActionListener, DocumentL
 	public boolean isCancel(){
 		return isCancel;
 	}
+	
+	/**
+	 * 1. 先从本地通过 名称/电话/卡号 进行模糊查找, 
+	 * 2. 查找到一个会员时, 直接显示该会员信息
+	 * 3. 查找到多个会员时, 列表显示所有会员, 让用户选择
+	 * 4. 查找到0个会员, 考虑到可能是后端刚录入的数据, 则调用服务端接口进行模糊查询
+	 */
 	private void doLookforMember(){
 		lbMemberInfo.setText("");
 		member = null;
 		if (tfMember.getText() == null || tfMember.getText().length() == 0)
 			return;
+		ArrayList<Member> mlist = mainFrame.getMemberList();
+		ArrayList<Member> matchMember = new ArrayList<>();
+		if (mlist != null && !mlist.isEmpty()){
+			for (int i = 0; i < mlist.size(); i++) {
+				Member m = mlist.get(i);
+				if (m.getName().toLowerCase().indexOf(tfMember.getText().toLowerCase()) >= 0){
+					matchMember.add(m);
+				} else if (m.getMemberCard().indexOf(tfMember.getText().toLowerCase()) >= 0){
+					matchMember.add(m);
+				} else if (m.getTelephone() != null && m.getTelephone().indexOf(tfMember.getText()) >= 0){
+					matchMember.add(m);
+				}
+			}
+		}
+		if (matchMember.size() == 1){
+			member = matchMember.get(0);
+			showMemberInfo(member);
+		} else if (matchMember.size() > 1){
+			MemberListDialog dlg = new MemberListDialog(mainFrame, matchMember, 1000, 600);
+			dlg.setVisible(true);
+			member = dlg.getChoosedMember();
+			showMemberInfo(member);
+		} else if (matchMember.size() == 0){
+			ArrayList<Member> ms = doLookforMemberHazilyServer(tfMember.getText());
+			if (ms != null && !ms.isEmpty()){
+				member = ms.get(0);
+				showMemberInfo(member);
+			}
+		}
+		if (member == null){
+			JOptionPane.showMessageDialog(this, "cannot find member by key = " + tfMember.getText());
+			return;
+		}
+	}
+	
+	/**
+	 * 根据key值, 去server端模糊查找会员
+	 * @return
+	 */
+	private ArrayList<Member> doLookforMemberHazilyServer(String key){
 		String url = "member/querymemberhazily";
 		Map<String, String> params = new HashMap<String, String>();
-		params.put("key", tfMember.getText());
+		params.put("key", key);
 		String response = HttpUtil.getJSONObjectByPost(MainFrame.SERVER_URL + url, params, "UTF-8");
 		if (response == null || response.length() == 0){
 			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 			logger.error("get null from server while query member with key. URL = " + url + ", param = "+ params);
 			JOptionPane.showMessageDialog(this, "get null from server while query member with key. URL = " + url + ", param = "+ params);
-			return;
+			return null;
 		}
 		Gson gsonTime = new GsonBuilder().setDateFormat(ConstantValue.DATE_PATTERN_YMDHMS).create();
 		HttpResult<ArrayList<Member>> result = gsonTime.fromJson(response, new TypeToken<HttpResult<ArrayList<Member>>>(){}.getType());
@@ -347,20 +402,9 @@ public class CheckoutDialog extends JDialog implements ActionListener, DocumentL
 			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 			logger.error("return false while query member with key. URL = " + url + ", response = "+response);
 			JOptionPane.showMessageDialog(this, "return false while query member with key. URL = " + url + ", response = "+response);
-			return;
+			return null;
 		}
-		ArrayList<Member> ms = result.data;
-		if (ms == null || ms.isEmpty()){
-			JOptionPane.showMessageDialog(this, Messages.getString("CheckoutDialog.NofindMember") + tfMember.getText());
-			return;
-		} else if (ms.size() == 1){
-			member = ms.get(0);
-		} else {
-			MemberListDialog dlg = new MemberListDialog(mainFrame, ms, 1000, 600);
-			dlg.setVisible(true);
-			member = dlg.getChoosedMember();
-		}
-		showMemberInfo(member);
+		return result.data;
 	}
 	
 	private void showMemberInfo(Member m){
@@ -557,10 +601,11 @@ public class CheckoutDialog extends JDialog implements ActionListener, DocumentL
 			Member m = doLookforMember(member.getMemberCard());
 			if (m == null)
 				keys.put("memberinfo", "");
-			else keys.put("memberinfo", "Member: balance \\$" + m.getBalanceMoney() + ", score " + m.getScore());
+			else keys.put("memberinfo", "Member: balance \\$" + String.format(ConstantValue.FORMAT_DOUBLE, m.getBalanceMoney()) + ", score " + m.getScore());
 		} else {
 			keys.put("memberinfo", "");
 		}
+		boolean print2ndLanguage = Boolean.parseBoolean(mainFrame.getConfigsMap().get(ConstantValue.CONFIGS_PRINT2NDLANGUAGENAME));
 		List<Map<String, String>> goods = new ArrayList<Map<String, String>>();
 		for(IndentDetail d : indent.getItems()){
 			Dish dish = mainFrame.getDishById(d.getDishId());
@@ -569,7 +614,7 @@ public class CheckoutDialog extends JDialog implements ActionListener, DocumentL
 				return;
 			}
 			Map<String, String> mg = new HashMap<String, String>();
-			mg.put("name", d.getDishFirstLanguageName());
+			mg.put("name", print2ndLanguage ? d.getDishSecondLanguageName() : d.getDishFirstLanguageName());
 			mg.put("price", String.format(ConstantValue.FORMAT_DOUBLE,d.getDishPrice()));
 			mg.put("amount", d.getAmount()+"");
 			

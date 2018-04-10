@@ -64,6 +64,7 @@ import com.shuishou.deskmgr.beans.Dish;
 import com.shuishou.deskmgr.beans.Flavor;
 import com.shuishou.deskmgr.beans.HttpResult;
 import com.shuishou.deskmgr.beans.Indent;
+import com.shuishou.deskmgr.beans.Member;
 import com.shuishou.deskmgr.beans.PayWay;
 import com.shuishou.deskmgr.beans.UserData;
 import com.shuishou.deskmgr.http.HttpUtil;
@@ -115,6 +116,7 @@ public class MainFrame extends JFrame implements ActionListener{
 	private ArrayList<DeskCell> deskcellList = new ArrayList<>();
 	private ArrayList<Category1> category1List = new ArrayList<>();
 	private ArrayList<Flavor> flavorList = new ArrayList<>();
+	private ArrayList<Member> memberList = new ArrayList<>();
 //	private UserData loginUser = null;
 	private UserData onDutyUser = null;//在值班状态用户名称
 //	private String confirmCode = null;
@@ -158,6 +160,10 @@ public class MainFrame extends JFrame implements ActionListener{
 
 	public void setFlavorList(ArrayList<Flavor> flavorList) {
 		this.flavorList = flavorList;
+	}
+	
+	public ArrayList<Member> getMemberList() {
+		return memberList;
 	}
 
 	public void startLogin(String userName, String password){
@@ -227,6 +233,7 @@ public class MainFrame extends JFrame implements ActionListener{
 		loadConfigsMap();
 		loadPayWay();
 		loadFlavor();
+		loadMember();
 		initRefreshTimer();
 		buildDeskCells();
 	}
@@ -374,6 +381,27 @@ public class MainFrame extends JFrame implements ActionListener{
 		}
 		flavorList.clear();
 		flavorList.addAll(result.data);
+	}
+	
+	private void loadMember(){
+		String url = "member/queryallmember";
+		String response = HttpUtil.getJSONObjectByGet(SERVER_URL + url);
+		if (response == null){
+			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
+			logger.error("get null from server for member. URL = " + url);
+			JOptionPane.showMessageDialog(this, "get null from server for member. URL = " + url);
+			return;
+		}
+		HttpResult<ArrayList<Member>> result = gsonTime.fromJson(response, new TypeToken<HttpResult<ArrayList<Member>>>(){}.getType());
+		if (!result.success){
+			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
+			logger.error("return false while get member. URL = " + url + ", response = "+response);
+			JOptionPane.showMessageDialog(this, "return false while get member. URL = " + url + ", response = "+response);
+			return;
+		}
+		memberList.clear();
+		if (result.data != null)
+			memberList.addAll(result.data);
 	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
