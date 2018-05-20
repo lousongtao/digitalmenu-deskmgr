@@ -141,6 +141,7 @@ public class ViewHistoryIndentByDeskDialog extends JDialog {
 		keys.put("payway", indent.getPayWay());
 			keys.put("charge", "");
 		List<Map<String, String>> goods = new ArrayList<Map<String, String>>();
+		boolean print2ndLanguage = Boolean.parseBoolean(mainFrame.getConfigsMap().get(ConstantValue.CONFIGS_PRINT2NDLANGUAGENAME));
 		for(IndentDetail d : indent.getItems()){
 			Dish dish = mainFrame.getDishById(d.getDishId());
 			if (dish == null){
@@ -148,7 +149,7 @@ public class ViewHistoryIndentByDeskDialog extends JDialog {
 				return;
 			}
 			Map<String, String> mg = new HashMap<String, String>();
-			mg.put("name", d.getDishFirstLanguageName());
+			mg.put("name", print2ndLanguage ? d.getDishSecondLanguageName() : d.getDishFirstLanguageName());
 			mg.put("price", String.format("%.2f",d.getDishPrice()));
 			mg.put("amount", d.getAmount()+"");
 			

@@ -19,6 +19,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.Socket;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -91,6 +93,7 @@ public class MainFrame extends JFrame implements ActionListener{
 	private OutputStream outputStreamCashdrawer;
 	public static String portCashdrawer;
 	public static String printerName;
+	public static String printerIP;
 	public static String functionlist;
 	
 	private JPanel pDeskArea = null;
@@ -805,33 +808,28 @@ public class MainFrame extends JFrame implements ActionListener{
 			}
 		}
 		
-		if (outputStreamCashdrawer == null){
-			Enumeration portList = CommPortIdentifier.getPortIdentifiers();
-			while (portList.hasMoreElements()) {
-				CommPortIdentifier portId = (CommPortIdentifier) portList.nextElement();
-				if (portId.getPortType() == CommPortIdentifier.PORT_SERIAL) {
-					if (portId.getName().equals(portCashdrawer)) {
-						try {
-							SerialPort serialPort = (SerialPort) portId.open("SimpleWriteApp", 2000);
-							outputStreamCashdrawer = serialPort.getOutputStream();
-							serialPort.setSerialPortParams(9600, SerialPort.DATABITS_8, SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
-						} catch (PortInUseException | IOException | UnsupportedCommOperationException e) {
-							logger.error(e);
-						}
-						break;
-					}
-				}
-			}
-		}
+		Socket socket = null;
+		OutputStream socketOut = null;
+		OutputStreamWriter writer = null;
 		try {
-			if (outputStreamCashdrawer == null){
-				JOptionPane.showMessageDialog(this, Messages.getString("MainFrame.WrongCashdrawerPort"));
-				return;
-			}
-			outputStreamCashdrawer.write("A".getBytes());// any string is ok
+			socket = new Socket(printerIP, 9100);//打印机默认端口是9100, 如果某些型号打印机不是这个, 单独配置
+			socket.setSoTimeout(1000);
+			socketOut = socket.getOutputStream();
+			writer = new OutputStreamWriter(socketOut, "GBK");
+			char[] c = {27, 'p', 0, 60, 240};
+			writer.write(c);
+			writer.flush();
 		} catch (IOException e) {
-			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
-			logger.error("",e);
+			logger.error("", e);
+		} finally{
+			try {
+				if (socket != null)
+					socket.close();
+				if (socketOut != null)
+					socketOut.close();
+				if (writer != null)
+					writer.close();
+			} catch (IOException e) {}
 		}
 	}
 	
@@ -1081,6 +1079,7 @@ public class MainFrame extends JFrame implements ActionListener{
 		MainFrame.language = prop.getProperty("language");
 		MainFrame.portCashdrawer=prop.getProperty("portCashdrawer");
 		MainFrame.printerName = prop.getProperty("printerName");
+		MainFrame.printerIP = prop.getProperty("printerIP");
 		MainFrame.functionlist = prop.getProperty("mainframe.functionlist");
 		final MainFrame f = new MainFrame();
 		f.setExtendedState(JFrame.MAXIMIZED_BOTH);
