@@ -19,16 +19,16 @@ import com.shuishou.deskmgr.beans.DishConfig;
 import com.shuishou.deskmgr.beans.DishConfigGroup;
 
 /**
- * 必须选择一个配置项, 使用RadioButton
+ * 要求选择数量为1个, 不可以是0个或多个 : 此时使用RadioButton做为控件, 默认选中第一个选项
  * @author Administrator
  *
  */
-public class ChooseOneConfigPanel extends JPanel implements DishConfigGroupIFC{
+public class ChooseOnlyOneConfigPanel extends JPanel implements DishConfigGroupIFC{
 	private ArrayList<ConfigRadioButton> components = new ArrayList<>();
 	private DishConfigGroup group;
 	private DishConfigDialog parent;
 	private int COMPONENT_ROWAMOUNT = 4;
-	public ChooseOneConfigPanel(DishConfigDialog parent, DishConfigGroup group){
+	public ChooseOnlyOneConfigPanel(DishConfigDialog parent, DishConfigGroup group){
 		this.group = group;
 		this.parent = parent;
 		initUI();

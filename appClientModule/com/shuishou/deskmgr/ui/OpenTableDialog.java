@@ -83,11 +83,13 @@ public class OpenTableDialog extends JDialog implements ActionListener{
 	}
 	
 	private void initUI(){
+		
 		JLabel lbDeskNo = new JLabel(Messages.getString("OpenTableDialog.TableNo") + desk.getName());
 		lbDeskNo.setFont(ConstantValue.FONT_25BOLD);
 		JLabel lbCustomerAmount = new JLabel();
 		lbCustomerAmount.setFont(ConstantValue.FONT_25BOLD);
 		lbCustomerAmount.setText(Messages.getString("OpenTableDialog.CustomerAmount"));
+		tfCustomerAmount.setText("2");
 		if (status == ADDDISH){
 			lbCustomerAmount.setVisible(false);
 			tfCustomerAmount.setVisible(false);
@@ -365,8 +367,19 @@ public class OpenTableDialog extends JDialog implements ActionListener{
 	 * 1. 需要弹出提示消息. 
 	 * 		这类不用特殊处理, 因为这个提示消息是给安卓端看的
 	 * 
-	 * 2. 需要选择subitem
-	 * 		弹出一个对话框, 强制选择subitem, 并将选中的subitem作为requirement记录到indentdetail里面, 然后将dish加入choose列表
+	 * 2. 存在配置项
+	 * 		弹出一个对话框, 要求用户选择某个或者多个配置, 将选择结果作为requirement记录到indentdetail里面, 然后将dish加入choose列表
+	 *      配置项根据情况不同, 有不同的选择方式. 针对一个dish, 配置项可能有多个不同的类属.
+	 *      2.1 要求选择数量为1个, 不可以是0个或多个 : 
+	 *      	此时使用RadioButton做为控件, 默认选中第一个选项
+	 *      2.2 要求选择数量为多个(大于等于2), 且不可以重复
+	 *      	此时使用CheckBox做为控件, 结束时要检查是否数量相同
+	 *      2.3要求选择数量为任意个, 0-n个, 且不可以重复
+	 *      	此时使用CheckBox做为控件, 
+	 *      2.4要求选择数量为n个(n>1), 且允许重复
+	 *      	此时使用一个list控件, 在结束时, 检查选择数量是否正确
+	 *      2.5要求选择数量为0个, 即可选择数量可以为0-n任意个
+	 *      	此时使用一个list, 结束时不用检查数量
 	 * 
 	 * 3. 普通类型
 	 * 		直接将dish加入choose列表即可
@@ -395,9 +408,10 @@ public class OpenTableDialog extends JDialog implements ActionListener{
 		if (dish.getConfigGroups() != null && !dish.getConfigGroups().isEmpty()){
 			DishConfigDialog dlg = new DishConfigDialog(this, "Choose Config", dish);
 			dlg.setVisible(true);
-			if (dlg.choosed == null || dlg.choosed.isEmpty())
+			if (dlg.isCancel())
 				return;
-			cd.configs.addAll(dlg.choosed);
+			if (dlg.choosed != null)
+				cd.configs.addAll(dlg.choosed);
 		}
 //		if (dish.getChooseMode() == ConstantValue.DISH_CHOOSEMODE_SUBITEM){
 //			DishSubitemDialog dlg = new DishSubitemDialog(this, Messages.getString("OpenTableDialog.ChooseSubitem"), dish);

@@ -49,6 +49,7 @@ public class DishConfigDialog extends JDialog {
 	private JPanel pSubitems = new JPanel(new GridLayout(0, 3, 5, 5));
 	private ArrayList<DishConfigGroupIFC> groupPanelList = new ArrayList<>();
 	public ArrayList<DishConfig> choosed = new ArrayList<>();
+	public boolean isCancel = false;//记录客户是否点击了取消按钮
 	public DishConfigDialog(Dialog parent, String title, Dish dish){
 		super(parent, title, true);
 		this.parent = parent;
@@ -68,20 +69,36 @@ public class DishConfigDialog extends JDialog {
 				return o1.getSequence() - o2.getSequence();
 			}});
 		JPanel pGroup = new JPanel(new GridBagLayout());
+		/**
+		 * 弹出一个对话框, 要求用户选择某个或者多个配置, 将选择结果作为requirement记录到indentdetail里面, 然后将dish加入choose列表
+		 *      配置项根据情况不同, 有不同的选择方式. 针对一个dish, 配置项可能有多个不同的类属.
+		 *      2.1 要求选择数量为1个, 不可以是0个或多个 : 
+		 *      	此时使用RadioButton做为控件, 默认选中第一个选项
+		 *      2.2 要求选择数量为多个(大于等于2), 且不可以重复
+		 *      	此时使用CheckBox做为控件, 结束时要检查是否数量相同
+		 *      2.3要求选择数量为任意个, 0-n个, 且不可以重复
+		 *      	此时使用CheckBox做为控件, 
+		 *      2.4要求选择数量为n个(n>1), 且允许重复
+		 *      	此时使用一个list控件, 在结束时, 检查选择数量是否正确
+		 *      2.5要求选择数量为0个, 即可选择数量可以为0-n任意个
+		 *      	此时使用一个list, 结束时不用检查数量
+		 */
 		for (int i = 0; i < groups.size(); i++) {
 			DishConfigGroup group = groups.get(i);
 			if (group.getRequiredQuantity() == 1){
-				ChooseOneConfigPanel p = new ChooseOneConfigPanel(this,group);
-				pGroup.add(p, new GridBagConstraints(0, i, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
-				groupPanelList.add(p);
-			} else if (group.getRequiredQuantity() > 1){
-				ChooseMoreConfigPanel p = new ChooseMoreConfigPanel(this, group);
+				ChooseOnlyOneConfigPanel p = new ChooseOnlyOneConfigPanel(this,group);
 				pGroup.add(p, new GridBagConstraints(0, i, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
 				groupPanelList.add(p);
 			} else {
-				ChooseAnyConfigPanel p = new ChooseAnyConfigPanel(this, group);
-				pGroup.add(p, new GridBagConstraints(0, i, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
-				groupPanelList.add(p);
+				if (group.isAllowDuplicate()){
+					ChooseDuplicatableConfigPanel p = new ChooseDuplicatableConfigPanel(this, group);
+					pGroup.add(p, new GridBagConstraints(0, i, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
+					groupPanelList.add(p);
+				} else {
+					ChooseNonDuplicatableConfigPanel p = new ChooseNonDuplicatableConfigPanel(this, group);
+					pGroup.add(p, new GridBagConstraints(0, i, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
+					groupPanelList.add(p);
+				}
 			}
 		}
 		JScrollPane jsp = new JScrollPane(pGroup, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -109,15 +126,20 @@ public class DishConfigDialog extends JDialog {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				choosed.clear();
+				isCancel = true;
 				setVisible(false);
 			}});
+	}
+	
+	public boolean isCancel(){
+		return isCancel;
 	}
 	
 	private void doConfirm(){
 		choosed.clear();
         for (int i = 0; i < groupPanelList.size(); i++) {
             DishConfigGroupIFC cview = groupPanelList.get(i);
-            if (!cview.checkData())
+            if (!cview.checkData())//check data
                 return;
             choosed.addAll(cview.getChoosedData());
         }

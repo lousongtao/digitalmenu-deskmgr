@@ -17,16 +17,16 @@ import com.shuishou.deskmgr.beans.DishConfig;
 import com.shuishou.deskmgr.beans.DishConfigGroup;
 
 /**
- * 需要选择0个或者一个以上配置项, 且不允许重复的情况
+ * 需要选择0个或者多个配置项, 不允许选择一个, 不允许重复
  * @author Administrator
  *
  */
-public class ChooseAnyConfigPanel extends JPanel implements DishConfigGroupIFC{
+public class ChooseNonDuplicatableConfigPanel extends JPanel implements DishConfigGroupIFC{
 	private ArrayList<ConfigCheckBox> components = new ArrayList<>();
 	private DishConfigGroup group;
 	private DishConfigDialog parent;
 	private int COMPONENT_ROWAMOUNT = 4;
-	public ChooseAnyConfigPanel(DishConfigDialog parent, DishConfigGroup group){
+	public ChooseNonDuplicatableConfigPanel(DishConfigDialog parent, DishConfigGroup group){
 		this.group = group;
 		this.parent = parent;
 		initUI();
@@ -48,7 +48,11 @@ public class ChooseAnyConfigPanel extends JPanel implements DishConfigGroupIFC{
 	
 	@Override
 	public boolean checkData() {
-		return true;
+		if (group.getRequiredQuantity() == 0)
+			return true;
+		else {
+			return getChoosedData().size() == group.getRequiredQuantity();
+		}
 	}
 
 	@Override

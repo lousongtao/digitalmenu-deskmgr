@@ -35,13 +35,13 @@ import com.shuishou.deskmgr.beans.DishConfigGroup;
  * @author Administrator
  *
  */
-public class ChooseMoreConfigPanel extends JPanel implements DishConfigGroupIFC{
+public class ChooseDuplicatableConfigPanel extends JPanel implements DishConfigGroupIFC{
 	private DishConfigGroup group;
 	private JButton btnRemove = new JButton(Messages.getString("Remove"));
 	private JList<DishConfig> listChoosed = new JList<>();
 	private DefaultListModel<DishConfig> listModelChoosed = new DefaultListModel<>();
 	private DishConfigDialog parent;
-	public ChooseMoreConfigPanel(DishConfigDialog parent, DishConfigGroup group){
+	public ChooseDuplicatableConfigPanel(DishConfigDialog parent, DishConfigGroup group){
 		this.group = group;
 		this.parent = parent;
 		initUI();
@@ -101,6 +101,9 @@ public class ChooseMoreConfigPanel extends JPanel implements DishConfigGroupIFC{
 	
 	@Override
 	public boolean checkData() {
+		if (group.getRequiredQuantity() == 0){
+			return true;
+		}
 		if (listChoosed.getModel().getSize() != group.getRequiredQuantity()){
 			String msg = "The required amount in ["+group.getFirstLanguageName()+"] is "+ group.getRequiredQuantity();
 			JOptionPane.showMessageDialog(this, msg);

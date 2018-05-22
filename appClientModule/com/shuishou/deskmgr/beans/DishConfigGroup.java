@@ -22,9 +22,19 @@ public class DishConfigGroup implements Serializable{
 
 	private ArrayList<DishConfig> dishConfigs;
 	
+	private boolean allowDuplicate = false;
+	
 	private String uniqueName;
 	
 	
+	public boolean isAllowDuplicate() {
+		return allowDuplicate;
+	}
+
+	public void setAllowDuplicate(boolean allowDuplicate) {
+		this.allowDuplicate = allowDuplicate;
+	}
+
 	public String getUniqueName() {
 		return uniqueName;
 	}
