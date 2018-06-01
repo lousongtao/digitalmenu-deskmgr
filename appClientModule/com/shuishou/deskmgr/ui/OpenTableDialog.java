@@ -9,6 +9,7 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -46,6 +47,7 @@ import com.shuishou.deskmgr.beans.Dish;
 import com.shuishou.deskmgr.beans.DishConfig;
 import com.shuishou.deskmgr.beans.Flavor;
 import com.shuishou.deskmgr.beans.HttpResult;
+import com.shuishou.deskmgr.beans.Indent;
 import com.shuishou.deskmgr.http.HttpUtil;
 import com.shuishou.deskmgr.ui.MenuMgmtDialog.DishButton;
 import com.shuishou.deskmgr.ui.components.JBlockedButton;
@@ -65,6 +67,7 @@ public class OpenTableDialog extends JDialog implements ActionListener{
 	private JButton btnFlavor = new JButton(Messages.getString("OpenTableDialog.SetFlavor"));
 	private JButton btnTakeaway = new JButton(Messages.getString("OpenTableDialog.Takeaway"));
 	private JBlockedButton btnConfirm = new JBlockedButton(Messages.getString("OpenTableDialog.ConfirmOrder"), null);
+	private JBlockedButton btnConfirmAndPay = new JBlockedButton(Messages.getString("OpenTableDialog.ConfirmAndPayOrder"), null);
 	private JPanel pDishes = new JPanel(new GridBagLayout());
 	private JList<ChoosedDish> listChoosedDish = new JList<>();
 	private ListModel<ChoosedDish> listModelChoosedDish = new ListModel();
@@ -134,19 +137,29 @@ public class OpenTableDialog extends JDialog implements ActionListener{
 		pChoosedDish.add(tfCustomerAmount, 	new GridBagConstraints(1, 1, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
 		pChoosedDish.add(jspChooseDish, 	new GridBagConstraints(0, 2, 2, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
 		pChoosedDish.add(tfWholeOrderComment,new GridBagConstraints(0, 3, 2, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
-		pChoosedDish.add(btnClose,	 		new GridBagConstraints(0, 4, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
-		pChoosedDish.add(btnRemove,	 		new GridBagConstraints(1, 4, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
-		pChoosedDish.add(btnFlavor,			new GridBagConstraints(0, 5, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 0, 0, 0), 0, 0));
-		pChoosedDish.add(btnTakeaway,		new GridBagConstraints(1, 5, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 0, 0, 0), 0, 0));
-		pChoosedDish.add(btnConfirm,		new GridBagConstraints(0, 6, 2, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 0, 0, 0), 0, 0));
 		
+		btnClose.setPreferredSize(new Dimension(100, 50));
+		btnRemove.setPreferredSize(new Dimension(100, 50));
+		btnFlavor.setPreferredSize(new Dimension(100, 50));
+		btnTakeaway.setPreferredSize(new Dimension(100, 50));
+		btnConfirm.setPreferredSize(new Dimension(100, 50));
+		btnConfirmAndPay.setPreferredSize(new Dimension(100, 50));
+		JPanel pButton = new JPanel(new GridLayout(1, 0, 20, 0));
+		pButton.add(btnClose);
+		pButton.add(btnRemove);
+		pButton.add(btnFlavor);
+		pButton.add(btnTakeaway);
+		pButton.add(btnConfirm);
+		pButton.add(btnConfirmAndPay);
 		Container c = this.getContentPane();
 		c.setLayout(new BorderLayout());
 		c.add(pChoosedDish, BorderLayout.WEST);
 		c.add(pDishDishplay,BorderLayout.CENTER);
+		c.add(pButton, BorderLayout.SOUTH);
 		btnClose.addActionListener(this);
 		btnConfirm.addActionListener(this);
 		btnRemove.addActionListener(this);
+		btnConfirmAndPay.addActionListener(this);
 		tfSearchCode.addKeyListener(new KeyAdapter(){
 			public void keyReleased(KeyEvent e) {
 				doSearchDish();
@@ -183,7 +196,27 @@ public class OpenTableDialog extends JDialog implements ActionListener{
 			doSearchDish();
 		} else if (e.getSource() == btnFlavor){
 			doSetFlavor();
-		} 
+		} else if (e.getSource() == btnConfirmAndPay){
+			doConfirmAndPay();
+		}
+	}
+	
+	private void doConfirmAndPay(){
+		boolean successOrder = false;
+		if (status == MAKENEWORDER){
+			successOrder = doMakeNewOrder();
+		} else if (status == ADDDISH){
+			successOrder = doAddDish();
+		}
+		if (successOrder){
+			OpenTableDialog.this.setVisible(false);
+			Indent indent = mainFrame.loadIndentByDesk(desk.getName());
+			if (indent == null)
+				return;
+			CheckoutDialog dlg = new CheckoutDialog(mainFrame, Messages.getString("MainFrame.CheckoutTitle"), true, desk, indent); //$NON-NLS-1$
+			dlg.setVisible(true);
+		}
+		
 	}
 	
 	private void generateCategory2Panel(JPanel p ){
@@ -259,6 +292,7 @@ public class OpenTableDialog extends JDialog implements ActionListener{
 			jo.put("id", cd.dish.getId());
 			jo.put("amount", cd.amount);
 			jo.put("dishPrice", cd.getPrice());
+			jo.put("operator", mainFrame.getOnDutyUser().getName());
 			String requires = generateRequires(cd);
 			if (requires.length() > 0)
 				jo.put("additionalRequirements", requires);
@@ -274,6 +308,7 @@ public class OpenTableDialog extends JDialog implements ActionListener{
 		params.put("deskid", desk.getId()+"");
 		params.put("customerAmount", tfCustomerAmount.getText());
 		params.put("comments", tfWholeOrderComment.getText());
+		
 		String response = HttpUtil.getJSONObjectByPost(MainFrame.SERVER_URL + url, params, "UTF-8");
 		if (response == null || response.length() == 0){
 			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
@@ -304,6 +339,7 @@ public class OpenTableDialog extends JDialog implements ActionListener{
 			jo.put("id", cd.dish.getId());
 			jo.put("amount", cd.amount);
 			jo.put("dishPrice", cd.getPrice());
+			jo.put("operator", mainFrame.getOnDutyUser().getName());
 			String requires = generateRequires(cd);
 			if (requires.length() > 0)
 				jo.put("additionalRequirements", requires);

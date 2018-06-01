@@ -3,3 +3,4 @@
 	
 20180601
 	1. define 2 ways to open cashdrawer, via printer and COM port. Printer is the first priority
+	2. put a new button to allow openning payment dialog immediately after make order
