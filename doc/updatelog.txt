@@ -1,2 +1,5 @@
 20180521
 	1. use code to open cashdrawer
+	
+20180601
+	1. define 2 ways to open cashdrawer, via printer and COM port. Printer is the first priority

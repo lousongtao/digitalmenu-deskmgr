@@ -808,6 +808,17 @@ public class MainFrame extends JFrame implements ActionListener{
 			}
 		}
 		
+		if (printerIP != null) {
+			doOpenCashdrawerByPrinter();
+		} else if (portCashdrawer != null) {
+			doOpenCashdrawerByCard();
+		}
+	}
+	
+	/**
+	 * 基于网线打印机接口打开钱箱
+	 */
+	private void doOpenCashdrawerByPrinter(){
 		Socket socket = null;
 		OutputStream socketOut = null;
 		OutputStreamWriter writer = null;
@@ -830,6 +841,41 @@ public class MainFrame extends JFrame implements ActionListener{
 				if (writer != null)
 					writer.close();
 			} catch (IOException e) {}
+		}
+	}
+	
+	/**
+	 * 基于钱箱卡打开钱箱
+	 */
+	private void doOpenCashdrawerByCard() {
+		if (outputStreamCashdrawer == null) {
+			Enumeration portList = CommPortIdentifier.getPortIdentifiers();
+			while (portList.hasMoreElements()) {
+				CommPortIdentifier portId = (CommPortIdentifier) portList.nextElement();
+				if (portId.getPortType() == CommPortIdentifier.PORT_SERIAL) {
+					if (portId.getName().equals(portCashdrawer)) {
+						try {
+							SerialPort serialPort = (SerialPort) portId.open("SimpleWriteApp", 2000);
+							outputStreamCashdrawer = serialPort.getOutputStream();
+							serialPort.setSerialPortParams(9600, SerialPort.DATABITS_8, SerialPort.STOPBITS_1,
+									SerialPort.PARITY_NONE);
+						} catch (PortInUseException | IOException | UnsupportedCommOperationException e) {
+							logger.error(e);
+						}
+						break;
+					}
+				}
+			}
+		}
+		try {
+			if (outputStreamCashdrawer == null) {
+				JOptionPane.showMessageDialog(this, Messages.getString("MainFrame.WrongCashdrawerPort"));
+				return;
+			}
+			outputStreamCashdrawer.write("A".getBytes());// any string is ok
+		} catch (IOException e) {
+			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
+			logger.error("", e);
 		}
 	}
 	
