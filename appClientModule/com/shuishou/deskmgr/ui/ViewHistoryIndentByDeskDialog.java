@@ -175,7 +175,7 @@ public class ViewHistoryIndentByDeskDialog extends JDialog implements ActionList
 		keys.put("dateTime", ConstantValue.DFYMDHMS.format(indent.getStartTime()));
 		keys.put("totalPrice", String.format("%.2f", indent.getTotalPrice()));
 		keys.put("paidPrice", String.format("%.2f", indent.getPaidPrice()));
-		keys.put("gst", String.format("%.2f",(double)(indent.getPaidPrice()/11)));
+		keys.put("gst", String.format("%.2f",(double)(indent.getTotalPrice()/11)));
 		keys.put("printTime", ConstantValue.DFYMDHMS.format(new Date()));
 		keys.put("payway", indent.getPayWay());
 		keys.put("charge", "");
