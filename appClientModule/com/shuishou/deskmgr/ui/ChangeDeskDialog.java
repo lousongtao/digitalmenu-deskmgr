@@ -117,7 +117,7 @@ public class ChangeDeskDialog extends JDialog {
 		if (!result.success){
 			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 			logger.error("return false while changing tables. URL = " + url + ", response = "+response);
-			JOptionPane.showMessageDialog(this, "return false while changing tables. URL = " + url + ", response = "+response);
+			JOptionPane.showMessageDialog(this, result.result);
 			return;
 		}
 //		mainFrame.loadCurrentIndentInfo();

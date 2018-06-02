@@ -320,7 +320,7 @@ public class OpenTableDialog extends JDialog implements ActionListener{
 		if (!result.success){
 			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 			logger.error("return false while making order. URL = " + url + ", response = "+response);
-			JOptionPane.showMessageDialog(this, "return false while making order. URL = " + url + ", response = "+response);
+			JOptionPane.showMessageDialog(this, result.result);
 			return false;
 		}
 		return true;
@@ -363,7 +363,7 @@ public class OpenTableDialog extends JDialog implements ActionListener{
 		if (!result.success){
 			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 			logger.error("return false while add dish to order. URL = " + url + ", response = "+response);
-			JOptionPane.showMessageDialog(this, "return false while add dish to order. URL = " + url + ", response = "+response);
+			JOptionPane.showMessageDialog(this, result.result);
 			return false;
 		}
 		return true;

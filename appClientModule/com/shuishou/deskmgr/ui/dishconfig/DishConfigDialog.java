@@ -46,7 +46,6 @@ public class DishConfigDialog extends JDialog {
 	private JLabel lbInfo = new JLabel();
 	private JButton btnClose = new JButton(Messages.getString("CloseDialog"));
 	private JBlockedButton btnConfirm = new JBlockedButton(Messages.getString("ConfirmDialog"), null);
-	private JPanel pSubitems = new JPanel(new GridLayout(0, 3, 5, 5));
 	private ArrayList<DishConfigGroupIFC> groupPanelList = new ArrayList<>();
 	public ArrayList<DishConfig> choosed = new ArrayList<>();
 	public boolean isCancel = false;//记录客户是否点击了取消按钮
@@ -175,7 +174,7 @@ public class DishConfigDialog extends JDialog {
         String pricepm = "+";
         if (price < 0)
             pricepm = "-";
-        lbInfo.setText("Price : " + pricepm +"$"+Math.abs(price) + ", " + msg);
+        lbInfo.setText("Price : " + pricepm +"$"+String.format(ConstantValue.FORMAT_DOUBLE, Math.abs(price)) + ", " + msg);
     }
 	
 	

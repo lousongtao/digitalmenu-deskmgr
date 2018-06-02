@@ -269,7 +269,7 @@ public class MainFrame extends JFrame implements ActionListener{
 		if (!result.success){
 			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 			logger.error("return false while loading menu. URL = " + url + ", response = "+response);
-			JOptionPane.showMessageDialog(this, "return false while loading menu. URL = " + url + ", response = "+response);
+			JOptionPane.showMessageDialog(this, result.result);
 			return;
 		}
 		category1List = result.data;
@@ -289,7 +289,7 @@ public class MainFrame extends JFrame implements ActionListener{
 		if (!result.success){
 			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 			logger.error("return false while loading configs. URL = " + url + ", response = "+response);
-			JOptionPane.showMessageDialog(this, "return false while loading configs. URL = " + url + ", response = "+response);
+			JOptionPane.showMessageDialog(this, result.result);
 			return;
 		}
 		configsMap = result.data;	
@@ -308,7 +308,7 @@ public class MainFrame extends JFrame implements ActionListener{
 		if (!result.success){
 			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 			logger.error("return false while get duty employee info. URL = " + url + ", response = "+response);
-			JOptionPane.showMessageDialog(this, "return false while get duty employee info. URL = " + url + ", response = "+response);
+			JOptionPane.showMessageDialog(this, result.result);
 			return;
 		}
 		if (result.data != null && result.data.currentDutyId > 0){
@@ -339,7 +339,7 @@ public class MainFrame extends JFrame implements ActionListener{
 		if (!result.success){
 			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 			logger.error("return false while get discount templates. URL = " + url + ", response = "+response);
-			JOptionPane.showMessageDialog(this, "return false while get discount templates. URL = " + url + ", response = "+response);
+			JOptionPane.showMessageDialog(this, result.result);
 			return;
 		}
 		discountTemplateList.clear();
@@ -359,7 +359,7 @@ public class MainFrame extends JFrame implements ActionListener{
 		if (!result.success){
 			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 			logger.error("return false while get pay way. URL = " + url + ", response = "+response);
-			JOptionPane.showMessageDialog(this, "return false while get pay way. URL = " + url + ", response = "+response);
+			JOptionPane.showMessageDialog(this, result.result);
 			return;
 		}
 		paywayList.clear();
@@ -379,7 +379,7 @@ public class MainFrame extends JFrame implements ActionListener{
 		if (!result.success){
 			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 			logger.error("return false while get flavor. URL = " + url + ", response = "+response);
-			JOptionPane.showMessageDialog(this, "return false while get flavor. URL = " + url + ", response = "+response);
+			JOptionPane.showMessageDialog(this, result.result);
 			return;
 		}
 		flavorList.clear();
@@ -399,7 +399,7 @@ public class MainFrame extends JFrame implements ActionListener{
 		if (!result.success){
 			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 			logger.error("return false while get member. URL = " + url + ", response = "+response);
-			JOptionPane.showMessageDialog(this, "return false while get member. URL = " + url + ", response = "+response);
+			JOptionPane.showMessageDialog(this, result.result);
 			return;
 		}
 		memberList.clear();
@@ -436,7 +436,7 @@ public class MainFrame extends JFrame implements ActionListener{
 		if (!result.success){
 			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 			logger.error("return false while get desks. URL = " + url + ", response = "+response);
-			JOptionPane.showMessageDialog(this, "return false while get desks. URL = " + url + ", response = "+response);
+			JOptionPane.showMessageDialog(this, result.result);
 			return;
 		}
 		deskList.clear();
@@ -473,7 +473,7 @@ public class MainFrame extends JFrame implements ActionListener{
 		if (!result.success){
 			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 			logger.error("return false while get indents. URL = " + url + ", response = "+response);
-			JOptionPane.showMessageDialog(this, "return false while get indents. URL = " + url + ", response = "+response);
+			JOptionPane.showMessageDialog(this, result.result);
 			return;
 		}
 		for (int i = 0; i < deskcellList.size(); i++) {
@@ -515,7 +515,7 @@ public class MainFrame extends JFrame implements ActionListener{
 		if (!result.success){
 			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 			logger.error("return false while get indents by desk . URL = " + url + ", response = "+response);
-			JOptionPane.showMessageDialog(this, "return false while get indents by desk . URL = " + url + ", response = "+response);
+			JOptionPane.showMessageDialog(this, result.result);
 			return null;
 		}
 		if (result.data == null || result.data.isEmpty())
@@ -553,7 +553,7 @@ public class MainFrame extends JFrame implements ActionListener{
 		if (!result.success){
 			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 			logger.error("return false while starting shiftwork. URL = " + url + ", response = "+response);
-			JOptionPane.showMessageDialog(this, "return false while starting shiftwork. URL = " + url + ", response = "+response);
+			JOptionPane.showMessageDialog(this, result.result);
 			return;
 		}
 		Date startTime = null;
@@ -585,7 +585,7 @@ public class MainFrame extends JFrame implements ActionListener{
 		if (!result.success){
 			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 			logger.error("return false while end shiftwork. URL = " + url + ", response = "+response);
-			JOptionPane.showMessageDialog(this, "return false while end shiftwork. URL = " + url + ", response = "+response);
+			JOptionPane.showMessageDialog(this, result.result);
 			return;
 		}
 		
@@ -659,7 +659,7 @@ public class MainFrame extends JFrame implements ActionListener{
 		if (!result.success){
 			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 			logger.error("return false while clean table. URL = " + url + ", response = "+response);
-			JOptionPane.showMessageDialog(this, "return false while clean table. URL = " + url + ", response = "+response);
+			JOptionPane.showMessageDialog(this, result.result);
 			return;
 		}
 		loadCurrentIndentInfo();
@@ -768,31 +768,8 @@ public class MainFrame extends JFrame implements ActionListener{
 		DeskCell selectDC = getSelectedDesk();
 		if (selectDC == null)
 			return;
-		String url = "indent/queryindent";
-		Map<String, String> params = new HashMap<String, String>();
-		params.put("userId", onDutyUser.getId()+"");
-		params.put("starttime", ConstantValue.DFYMDHMS.format(System.currentTimeMillis() - 24*60*60*1000));
-		params.put("deskname", selectDC.getDesk().getName()); 
-		params.put("orderbydesc", "id"); 
-		String response = HttpUtil.getJSONObjectByPost(MainFrame.SERVER_URL + url, params, "UTF-8");
-		if (response == null || response.length() == 0){
-			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
-			logger.error("get null from server while print indent. URL = " + url + ", param = "+ params);
-			JOptionPane.showMessageDialog(this, "get null from server while print indent. URL = " + url + ", param = "+ params);
-			return;
-		}
-		HttpResult<ArrayList<Indent>> result = gsonTime.fromJson(response, new TypeToken<HttpResult<ArrayList<Indent>>>(){}.getType());
-		if (!result.success){
-			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
-			logger.error("return false while print indent. URL = " + url + ", response = "+response);
-			JOptionPane.showMessageDialog(this, "return false while print indent. URL = " + url + ", response = "+response);
-			return;
-		}
-		if (result.data == null || result.data.isEmpty()){
-			JOptionPane.showMessageDialog(this, Messages.getString("MainFrame.NoIndentToPrint"));
-			return;
-		}
-		ViewHistoryIndentByDeskDialog dlg = new ViewHistoryIndentByDeskDialog(this, "", true, result.data);
+		
+		ViewHistoryIndentByDeskDialog dlg = new ViewHistoryIndentByDeskDialog(this, "", true, selectDC.getDesk());
 		dlg.setVisible(true);
 	}
 	

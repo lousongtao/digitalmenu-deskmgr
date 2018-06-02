@@ -7,6 +7,8 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
@@ -35,6 +37,12 @@ public class ChooseNonDuplicatableConfigPanel extends JPanel implements DishConf
 	private void initUI(){
 		this.setLayout(new GridBagLayout());
 		if (!group.getDishConfigs().isEmpty()){
+			Collections.sort(group.getDishConfigs(), new Comparator<DishConfig>(){
+
+				@Override
+				public int compare(DishConfig o1, DishConfig o2) {
+					return o1.getSequence() - o2.getSequence();
+				}});
 			for (int i = 0; i < group.getDishConfigs().size(); i++) {
 				DishConfig config = group.getDishConfigs().get(i);
 				

@@ -213,7 +213,7 @@ public class ViewIndentDialog extends JDialog implements ActionListener{
 		if (!result.success){
 			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 			logger.error("return false while delete indent detail. URL = " + url + ", response = "+response);
-			JOptionPane.showMessageDialog(this, "return false while delete indent detail. URL = " + url + ", response = "+response);
+			JOptionPane.showMessageDialog(this, result.result);
 			return;
 		}
 		this.indent = result.data;
@@ -254,7 +254,7 @@ public class ViewIndentDialog extends JDialog implements ActionListener{
 		if (!result.success){
 			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 			logger.error("return false while delete indent detail. URL = " + url + ", response = "+response);
-			JOptionPane.showMessageDialog(this, "return false while delete indent detail. URL = " + url + ", response = "+response);
+			JOptionPane.showMessageDialog(this, result.result);
 			return;
 		}
 		this.indent = result.data;

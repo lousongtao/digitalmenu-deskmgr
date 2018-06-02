@@ -401,7 +401,7 @@ public class CheckoutDialog extends JDialog implements ActionListener, DocumentL
 		if (!result.success){
 			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 			logger.error("return false while query member with key. URL = " + url + ", response = "+response);
-			JOptionPane.showMessageDialog(this, "return false while query member with key. URL = " + url + ", response = "+response);
+			JOptionPane.showMessageDialog(this, result.result);
 			return null;
 		}
 		return result.data;

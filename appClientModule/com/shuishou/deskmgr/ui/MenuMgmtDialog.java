@@ -206,7 +206,7 @@ public class MenuMgmtDialog extends JDialog {
 		if (!result.success){
 			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 			logger.error("return false while set/cancel sold out. URL = " + url + ", response = "+response);
-			JOptionPane.showMessageDialog(this, "return false while set/cancel sold out. URL = " + url + ", response = "+response);
+			JOptionPane.showMessageDialog(this, result.result);
 			return false;
 		}
 		dish.setSoldOut(isSoldout);
