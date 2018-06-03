@@ -26,7 +26,7 @@ import com.shuishou.deskmgr.beans.DishConfigGroup;
  *
  */
 public class ChooseOnlyOneConfigPanel extends JPanel implements DishConfigGroupIFC{
-	private ArrayList<ConfigRadioButton> components = new ArrayList<>();
+	private ArrayList<DishConfigRadioButton> components = new ArrayList<>();
 	private DishConfigGroup group;
 	private DishConfigDialog parent;
 	private int COMPONENT_ROWAMOUNT = 4;
@@ -49,9 +49,9 @@ public class ChooseOnlyOneConfigPanel extends JPanel implements DishConfigGroupI
 			for (int i = 0; i < group.getDishConfigs().size(); i++) {
 				DishConfig config = group.getDishConfigs().get(i);
 				
-				ConfigRadioButton rb = new ConfigRadioButton(config);
-				this.add(rb, new GridBagConstraints(i % COMPONENT_ROWAMOUNT, (int)i/COMPONENT_ROWAMOUNT, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
-				bg.add(rb);
+				DishConfigRadioButton rb = new DishConfigRadioButton(parent, config);
+				this.add(rb, new GridBagConstraints(i % COMPONENT_ROWAMOUNT, (int)i/COMPONENT_ROWAMOUNT, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 0, 0, 0), 0, 0));
+				bg.add(rb.getRadioButton());
 				components.add(rb);
 				if (i == 0){
 					rb.setSelected(true);
@@ -71,7 +71,7 @@ public class ChooseOnlyOneConfigPanel extends JPanel implements DishConfigGroupI
 		ArrayList<DishConfig> configs = new ArrayList<>();
         for (int i = 0; i < components.size(); i++) {
             if (components.get(i).isSelected()){
-                configs.add(components.get(i).config);
+                configs.add(components.get(i).getDishConfig());
             }
         }
         return configs;
@@ -82,28 +82,5 @@ public class ChooseOnlyOneConfigPanel extends JPanel implements DishConfigGroupI
 		return group;
 	}
 
-	class ConfigRadioButton extends JRadioButton implements DishConfigIFC{
-		public DishConfig config;
-		public ConfigRadioButton(DishConfig config){
-			super();
-			String txt = config.getFirstLanguageName();
-			if (config.getPrice() != 0){
-				txt += "$" + config.getPrice();
-			}
-			this.config = config;
-			setText(txt);
-			setFont(ConstantValue.FONT_20BOLD);
-			addActionListener(new ActionListener(){
-
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					parent.onChooseChange();
-				}});
-		}
-		@Override
-		public DishConfig getDishConfig() {
-			return config;
-		}
-	}
 
 }
