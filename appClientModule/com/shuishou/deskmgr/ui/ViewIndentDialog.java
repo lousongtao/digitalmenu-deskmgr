@@ -68,7 +68,7 @@ public class ViewIndentDialog extends JDialog implements ActionListener{
 	private JButton btnClose = new JButton(Messages.getString("CloseDialog"));
 	private IconButton btnNextpage = new IconButton(Messages.getString("ViewIndentDialog.NextPage"), "/resource/arrowdown.png"); //$NON-NLS-1$
 	private IconButton btnPrepage = new IconButton(Messages.getString("ViewIndentDialog.PrePage"), "/resource/arrowup.png"); //$NON-NLS-1$
-	private IconButton btnCheckout = new IconButton(Messages.getString("MainFrame.Checkout"), "/resource/checkout.png"); //$NON-NLS-1$
+	private IconButton btnCheckout = new IconButton(Messages.getString("ViewIndentDialog.Checkout"), "/resource/checkout.png"); //$NON-NLS-1$
 	
 	private JLabel lbPrice = new JLabel();
 	private JTable tabIndentDetail = new JTable();

@@ -143,7 +143,7 @@ public class ChangeDeskDialog extends JDialog {
 			setBackground(colorUnselect);
 			JLabel lbDeskNo = new JLabel(desk.getName());
 			add(lbDeskNo);
-			setPreferredSize(new Dimension(100,100));
+			setPreferredSize(new Dimension(50,50));
 			addMouseListener(new MouseAdapter(){
 				public void mouseClicked(MouseEvent e){
 					//unselect all first, then select this
