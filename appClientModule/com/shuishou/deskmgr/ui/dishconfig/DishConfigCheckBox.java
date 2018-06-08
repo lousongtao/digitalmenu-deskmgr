@@ -48,8 +48,7 @@ public class DishConfigCheckBox extends JPanel implements DishConfigIFC{
 			}});
 		label.addMouseListener(new MouseAdapter(){
 			public void mousePressed(MouseEvent e) {
-				if (!cb.isSelected())
-					cb.setSelected(true);
+				cb.setSelected(!cb.isSelected());
 			}
 		});
 		label.setBorder(BorderFactory.createLineBorder(Color.gray));
