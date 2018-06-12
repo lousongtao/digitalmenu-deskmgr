@@ -83,7 +83,7 @@ public class DriverPos {
         	// print goods title
         	for (Goods goods : posTpl.getGoods()) {
         		//跳过requirement项
-        		if (!"备注".equals(goods.getName()))
+        		if (!"requirement".equals(goods.getName()))
         			bodyList.add(printTitle(goods));
         	}
         	//换行
@@ -93,7 +93,7 @@ public class DriverPos {
         	for (Map<String, Object> goods : goodsParam) {
         		for(Goods goodTitle : posTpl.getGoods()){
         			//跳过requirement项
-            		if (!"备注".equals(goodTitle.getName()))
+            		if (!"requirement".equals(goodTitle.getName()))
             			bodyList.add(printGoods(goods, goodTitle));
         		}
         		//换行
@@ -101,14 +101,17 @@ public class DriverPos {
         		//格外需求用回车区分不同项, 每项打印一行
         		if(goods.get("requirement") != null && goods.get("requirement").toString().length() > 0){
         			
-        			String reqs = String.valueOf(goods.get("requirement"));
-        			String[] reqlist = reqs.split("\n");
-        			for (int i = 0; i < reqlist.length; i++) {
-        				bodyList.add(new _PagerBody().setFeeLine(true));
-            			bodyList.add(new _PagerBody().setFeeLine(true));
-            			bodyList.add(printRemark(reqlist[i], 12, true));
-					}
-        			
+        			for(Goods goodTitle : posTpl.getGoods()){
+                		if ("requirement".equals(goodTitle.getName())){
+                			String reqs = String.valueOf(goods.get("requirement"));
+                			String[] reqlist = reqs.split("\n");
+                			for (int i = 0; i < reqlist.length; i++) {
+                				bodyList.add(new _PagerBody().setFeeLine(true));
+                    			bodyList.add(new _PagerBody().setFeeLine(true));
+                    			bodyList.add(printRequirement(reqlist[i], goodTitle));
+        					}
+                		}
+            		}
         		}
         		//换行
         		bodyList.add(new _PagerBody().setFeeLine(true));
@@ -249,6 +252,19 @@ public class DriverPos {
 		//根据variable替换字段
 
 		pagerBody.setContent(addBlank(goodMap.get(goodTitle.getVariable())+"", goodTitle.getWidth()))
+					.setFeeLine(false)
+					.setFontSize(goodTitle.getSize())
+					.isBold(goodTitle.isBold());
+		
+		return pagerBody;
+	}
+
+	private _PagerBody printRequirement(String req, Goods goodTitle) {
+		
+		_PagerBody pagerBody = new _PagerBody();
+		//根据variable替换字段
+
+		pagerBody.setContent(addBlank(req, goodTitle.getWidth()))
 					.setFeeLine(false)
 					.setFontSize(goodTitle.getSize())
 					.isBold(goodTitle.isBold());
