@@ -228,6 +228,8 @@ public class ViewHistoryIndentByDeskDialog extends JDialog implements ActionList
 		}
 		@Override
 		public int getRowCount() {
+			if (indents == null)
+				return 0;
 			return indents.size();
 		}
 
