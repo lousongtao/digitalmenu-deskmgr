@@ -245,8 +245,8 @@ public class ViewIndentDialog extends JDialog implements ActionListener{
 		String response = HttpUtil.getJSONObjectByPost(MainFrame.SERVER_URL + url, params, "UTF-8");
 		if (response == null || response.length() == 0){
 			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
-			logger.error("get null from server while delete indent detail. URL = " + url + ", param = "+ params);
-			JOptionPane.showMessageDialog(this, "get null from server while delete indent detail. URL = " + url + ", param = "+ params);
+			logger.error("get null from server while change amount. URL = " + url + ", param = "+ params);
+			JOptionPane.showMessageDialog(this, "get null from server while change amount. URL = " + url + ", param = "+ params);
 			return;
 		}
 		Gson gson = new GsonBuilder().setDateFormat("HH:mm:ss").create();

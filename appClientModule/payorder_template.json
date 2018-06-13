@@ -108,6 +108,13 @@
 		"size":9,
 		"bold": false,
 		"variable": "totalPrice"
+	},
+	{
+		"name": "requirement",
+		"width": 10,
+		"size":6,
+		"bold": false,
+		"variable": "requirement"
 	}],
 	
 

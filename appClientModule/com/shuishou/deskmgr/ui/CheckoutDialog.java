@@ -64,6 +64,7 @@ import com.shuishou.deskmgr.printertool.PrintQueue;
 import com.shuishou.deskmgr.ui.components.IconButton;
 import com.shuishou.deskmgr.ui.components.JBlockedButton;
 import com.shuishou.deskmgr.ui.components.NumberTextField;
+import com.shuishou.deskmgr.ui.components.VividRadioButton;
 import com.shuishou.deskmgr.ui.components.WaitDialog;
 
 public class CheckoutDialog extends JDialog implements ActionListener, DocumentListener, ItemListener{
@@ -74,12 +75,12 @@ public class CheckoutDialog extends JDialog implements ActionListener, DocumentL
 	protected boolean isCancel = false;
 	
 	protected JLabel lbDiscountPrice = new JLabel();
-	protected JRadioButton rbPayCash = new JRadioButton(Messages.getString("CheckoutDialog.Cash")+"   ", true); //$NON-NLS-1$
-	protected JRadioButton rbPayBankCard = new JRadioButton(Messages.getString("CheckoutDialog.BandCard"), false); //$NON-NLS-1$
-	protected JRadioButton rbPayMember = new JRadioButton(Messages.getString("CheckoutDialog.MemberCard"), false); //$NON-NLS-1$
-	protected JRadioButton rbDiscountNon = new JRadioButton(Messages.getString("CheckoutDialog.NoDiscount"), true); //$NON-NLS-1$
-	protected JRadioButton rbDiscountTemp = new JRadioButton(Messages.getString("CheckoutDialog.TempDiscount"), false); //$NON-NLS-1$
-	protected JRadioButton rbDiscountDirect = new JRadioButton(Messages.getString("CheckoutDialog.DirectDiscount"), false); //$NON-NLS-1$
+	protected VividRadioButton rbPayCash = new VividRadioButton(Messages.getString("CheckoutDialog.Cash")+"   ", true); //$NON-NLS-1$
+	protected VividRadioButton rbPayBankCard = new VividRadioButton(Messages.getString("CheckoutDialog.BandCard"), false); //$NON-NLS-1$
+	protected VividRadioButton rbPayMember = new VividRadioButton(Messages.getString("CheckoutDialog.MemberCard"), false); //$NON-NLS-1$
+	protected VividRadioButton rbDiscountNon = new VividRadioButton(Messages.getString("CheckoutDialog.NoDiscount"), true); //$NON-NLS-1$
+	protected VividRadioButton rbDiscountTemp = new VividRadioButton(Messages.getString("CheckoutDialog.TempDiscount"), false); //$NON-NLS-1$
+	protected VividRadioButton rbDiscountDirect = new VividRadioButton(Messages.getString("CheckoutDialog.DirectDiscount"), false); //$NON-NLS-1$
 	protected JLabel lbMemberInfo = new JLabel();
 	protected JButton btnQueryMember = new JButton("Query");
 	protected JPasswordField tfMemberPwd = new JPasswordField();
@@ -93,6 +94,7 @@ public class CheckoutDialog extends JDialog implements ActionListener, DocumentL
 	protected NumberTextField numGetCash;
 	protected JLabel lbCharge;
 	protected double discountPrice = 0;
+	private ButtonGroup bgDiscountTemplate = new ButtonGroup();
 	
 	protected Member member;
 	protected List<DiscountTemplateRadioButton> discountTempRadioButtonList = new ArrayList<DiscountTemplateRadioButton>();
@@ -131,24 +133,24 @@ public class CheckoutDialog extends JDialog implements ActionListener, DocumentL
 		JPanel pPayway = new JPanel(new GridBagLayout());
 		pPayway.setBorder(BorderFactory.createTitledBorder(Messages.getString("CheckoutDialog.PayWay"))); //$NON-NLS-1$
 		ButtonGroup bgPayway = new ButtonGroup();
-		bgPayway.add(rbPayCash);
-		bgPayway.add(rbPayBankCard);
-		bgPayway.add(rbPayMember);
-		pPayway.add(rbPayCash, 		new GridBagConstraints(0, 0, 1, 1, 0, 1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
-		pPayway.add(lbGetCash, 		new GridBagConstraints(1, 0, 1, 1, 0, 1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 50, 0, 0), 0, 0));
-		pPayway.add(numGetCash, 	new GridBagConstraints(2, 0, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 20, 0, 0), 0, 0));
-		pPayway.add(lbCharge, 		new GridBagConstraints(3, 0, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 20, 0, 0), 0, 0));
-		pPayway.add(rbPayBankCard, 	new GridBagConstraints(0, 1, 1, 1, 0, 1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+		bgPayway.add(rbPayCash.getRadioButton());
+		bgPayway.add(rbPayBankCard.getRadioButton());
+		bgPayway.add(rbPayMember.getRadioButton());
+		pPayway.add(rbPayCash, 		new GridBagConstraints(0, 0, 1, 1, 0, 1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 0, 0, 0), 0, 0));
+		pPayway.add(lbGetCash, 		new GridBagConstraints(1, 0, 1, 1, 0, 1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 50, 0, 0), 0, 0));
+		pPayway.add(numGetCash, 	new GridBagConstraints(2, 0, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 20, 0, 0), 0, 0));
+		pPayway.add(lbCharge, 		new GridBagConstraints(3, 0, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 20, 0, 0), 0, 0));
+		pPayway.add(rbPayBankCard, 	new GridBagConstraints(0, 1, 1, 1, 0, 1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 0, 0, 0), 0, 0));
 		pPayway.add(pMember,		new GridBagConstraints(0, 2, GridBagConstraints.REMAINDER, 1, 0, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
 		if (!mainFrame.getPaywayList().isEmpty()){
 			JPanel pOtherPayway = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 5));
 			pOtherPayway.setBorder(BorderFactory.createTitledBorder(Messages.getString("CheckoutDialog.OtherPayWay")));
 			for (int i = 0; i < mainFrame.getPaywayList().size(); i++) {
 				PayWay pw = mainFrame.getPaywayList().get(i);
-				JRadioButton rbpw = new JRadioButton(pw.getName());
-				bgPayway.add(rbpw);
+				VividRadioButton rbpw = new VividRadioButton(pw.getName());
+				bgPayway.add(rbpw.getRadioButton());
 				pOtherPayway.add(rbpw);
-				listRBOtherPayway.add(rbpw);
+				listRBOtherPayway.add(rbpw.getRadioButton());
 			}
 			pPayway.add(pOtherPayway, new GridBagConstraints(0, 3, 4, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 0, 0, 0), 0, 0));
 		}
@@ -158,10 +160,10 @@ public class CheckoutDialog extends JDialog implements ActionListener, DocumentL
 			rbDiscountTemp.setEnabled(false);
 		} else {
 			discountTempRadioButtonList.clear();
-			ButtonGroup bg = new ButtonGroup();
+			
 			for (int i = 0; i < mainFrame.getDiscountTemplateList().size(); i++) {
 				DiscountTemplateRadioButton rb = new DiscountTemplateRadioButton(false, mainFrame.getDiscountTemplateList().get(i));
-				rb.addItemListener(new ItemListener(){
+				rb.getRadioButton().addItemListener(new ItemListener(){
 					@Override
 					public void itemStateChanged(ItemEvent e) {
 						if (e.getStateChange() == ItemEvent.SELECTED) {
@@ -171,7 +173,7 @@ public class CheckoutDialog extends JDialog implements ActionListener, DocumentL
 					}
 				});
 				discountTempRadioButtonList.add(rb);
-				bg.add(rb);
+				bgDiscountTemplate.add(rb.getRadioButton());
 				pDiscountTemplate.add(rb);
 			}
 		}
@@ -183,9 +185,9 @@ public class CheckoutDialog extends JDialog implements ActionListener, DocumentL
 		JPanel pDiscount = new JPanel(new GridBagLayout());
 		pDiscount.setBorder(BorderFactory.createTitledBorder(Messages.getString("CheckoutDialog.BorderDiscount"))); //$NON-NLS-1$
 		ButtonGroup bgDiscount = new ButtonGroup();
-		bgDiscount.add(rbDiscountNon);
-		bgDiscount.add(rbDiscountTemp);
-		bgDiscount.add(rbDiscountDirect);
+		bgDiscount.add(rbDiscountNon.getRadioButton());
+		bgDiscount.add(rbDiscountTemp.getRadioButton());
+		bgDiscount.add(rbDiscountDirect.getRadioButton());
 		pDiscount.add(rbDiscountNon, 	new GridBagConstraints(0, 0, 1, 1, 0, 1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 		pDiscount.add(rbDiscountDirect, new GridBagConstraints(1, 0, 1, 1, 0, 1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(10, 50, 0, 0), 0, 0));
 		pDiscount.add(tfDiscountAmount, new GridBagConstraints(2, 0, 1, 1, 0, 1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(10, 20, 0, 0), 0, 0));
@@ -207,6 +209,8 @@ public class CheckoutDialog extends JDialog implements ActionListener, DocumentL
 		
 		lbDeskNo.setFont(ConstantValue.FONT_25BOLD);
 		lbPrice.setFont(ConstantValue.FONT_25BOLD);
+		lbDiscountPrice.setOpaque(true);
+		lbDiscountPrice.setBackground(Color.green);
 		lbDiscountPrice.setFont(ConstantValue.FONT_25BOLD);
 		lbDeskNo.setText(Messages.getString("CheckoutDialog.TableNo") + desk.getName()); //$NON-NLS-1$
 		lbPrice.setText(Messages.getString("CheckoutDialog.Price") + indent.getFormatTotalPrice()); //$NON-NLS-1$
@@ -242,27 +246,34 @@ public class CheckoutDialog extends JDialog implements ActionListener, DocumentL
 			}
 		});
 		
-		rbDiscountNon.addItemListener(this);
-		rbDiscountTemp.addItemListener(this);
-		rbDiscountDirect.addItemListener(this);
-		rbPayMember.addItemListener(this);
+		rbDiscountNon.getRadioButton().addItemListener(this);
+		rbDiscountTemp.getRadioButton().addItemListener(this);
+		rbDiscountDirect.getRadioButton().addItemListener(this);
+		rbPayMember.getRadioButton().addItemListener(this);
 	}
 	
 	@Override
 	public void itemStateChanged(ItemEvent e) {
-		if (e.getSource() == rbDiscountNon){
+		if (e.getSource() == rbDiscountNon.getRadioButton()){
+			if (e.getStateChange() == ItemEvent.SELECTED) {
+				calculatePaidPrice();
+				bgDiscountTemplate.clearSelection();
+//				if (discountTempRadioButtonList != null && !discountTempRadioButtonList.isEmpty()){
+//					for (int i = 0; i < discountTempRadioButtonList.size(); i++) {
+//						discountTempRadioButtonList.get(i).setSelected(false);
+//					}
+//				}
+		    } 
+		} else if (e.getSource() == rbDiscountTemp.getRadioButton()){
 			if (e.getStateChange() == ItemEvent.SELECTED) {
 				calculatePaidPrice();
 		    } 
-		} else if (e.getSource() == rbDiscountTemp){
+		} else if (e.getSource() == rbDiscountDirect.getRadioButton()){
 			if (e.getStateChange() == ItemEvent.SELECTED) {
 				calculatePaidPrice();
+				bgDiscountTemplate.clearSelection();
 		    } 
-		} else if (e.getSource() == rbDiscountDirect){
-			if (e.getStateChange() == ItemEvent.SELECTED) {
-				calculatePaidPrice();
-		    } 
-		} else if (e.getSource() == rbPayMember){
+		} else if (e.getSource() == rbPayMember.getRadioButton()){
 			if (e.getStateChange() == ItemEvent.DESELECTED) {
 				member = null;
 				lbMemberInfo.setText("");
@@ -726,7 +737,7 @@ public class CheckoutDialog extends JDialog implements ActionListener, DocumentL
 		return sb.toString();
 	}
 
-	class DiscountTemplateRadioButton extends JRadioButton{
+	class DiscountTemplateRadioButton extends VividRadioButton{
 		private DiscountTemplate temp;
 		public DiscountTemplateRadioButton (boolean selected, DiscountTemplate temp) {
 	        super(temp.getName(), selected);

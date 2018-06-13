@@ -7,3 +7,14 @@
 	
 20180603
 	1. build new component for dishconfig choice; make the choice selected easily and clearly
+	
+20180608
+	1. correct a bug to cancel selection of the DishConfigCheckBox
+	2. shrinke the icon size in change desk dialog 
+
+20180612
+	1. extend JRadioButton, making it is easily touchable and highlight
+	
+20180613
+	1. correct the bug about that the REQUIREMENT in indentdetail cannot be controlled by font and bold
+	   REMEMBER: update the print template file while the restaurant do upgrade.
