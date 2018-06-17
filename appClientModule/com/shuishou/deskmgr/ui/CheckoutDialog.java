@@ -92,7 +92,7 @@ public class CheckoutDialog extends JDialog implements ActionListener, DocumentL
 	protected IconButton btnSplitIndent = new IconButton(Messages.getString("CheckoutDialog.SplitIndentButton"), "/resource/splitorder.png"); //$NON-NLS-1$
 	protected JButton btnCancelOrder = new JButton(Messages.getString("CheckoutDialog.CancelOrderButton")); //$NON-NLS-1$
 	protected NumberTextField numGetCash;
-	protected JLabel lbCharge;
+	protected JLabel lbChange;
 	protected double discountPrice = 0;
 	private ButtonGroup bgDiscountTemplate = new ButtonGroup();
 	
@@ -115,7 +115,7 @@ public class CheckoutDialog extends JDialog implements ActionListener, DocumentL
 		
 		numGetCash = new NumberTextField(this, true);
 		JLabel lbGetCash = new JLabel(Messages.getString("CheckoutDialog.GetCash"));
-		lbCharge = new JLabel();
+		lbChange = new JLabel();
 		
 		JPanel pMember = new JPanel(new GridBagLayout());
 		pMember.setBorder(BorderFactory.createTitledBorder(Messages.getString("CheckoutDialog.MemberCard")));
@@ -139,7 +139,7 @@ public class CheckoutDialog extends JDialog implements ActionListener, DocumentL
 		pPayway.add(rbPayCash, 		new GridBagConstraints(0, 0, 1, 1, 0, 1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 0, 0, 0), 0, 0));
 		pPayway.add(lbGetCash, 		new GridBagConstraints(1, 0, 1, 1, 0, 1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 50, 0, 0), 0, 0));
 		pPayway.add(numGetCash, 	new GridBagConstraints(2, 0, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 20, 0, 0), 0, 0));
-		pPayway.add(lbCharge, 		new GridBagConstraints(3, 0, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 20, 0, 0), 0, 0));
+		pPayway.add(lbChange, 		new GridBagConstraints(3, 0, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 20, 0, 0), 0, 0));
 		pPayway.add(rbPayBankCard, 	new GridBagConstraints(0, 1, 1, 1, 0, 1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 0, 0, 0), 0, 0));
 		pPayway.add(pMember,		new GridBagConstraints(0, 2, GridBagConstraints.REMAINDER, 1, 0, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
 		if (!mainFrame.getPaywayList().isEmpty()){
@@ -287,7 +287,7 @@ public class CheckoutDialog extends JDialog implements ActionListener, DocumentL
 	public void insertUpdate(DocumentEvent e) {
 		if (e.getDocument() == numGetCash.getDocument()){
 			rbPayCash.setSelected(true);
-			showChargeText();
+			showChangeText();
 		} else if (e.getDocument() == tfDiscountAmount.getDocument()){
 			rbDiscountDirect.setSelected(true);
 			calculatePaidPrice();
@@ -301,7 +301,7 @@ public class CheckoutDialog extends JDialog implements ActionListener, DocumentL
 	public void removeUpdate(DocumentEvent e) {
 		if (e.getDocument() == numGetCash.getDocument()){
 			rbPayCash.setSelected(true);
-			showChargeText();
+			showChangeText();
 		} else if (e.getDocument() == tfDiscountAmount.getDocument()){
 			rbDiscountDirect.setSelected(true);
 			calculatePaidPrice();
@@ -315,7 +315,7 @@ public class CheckoutDialog extends JDialog implements ActionListener, DocumentL
 	public void changedUpdate(DocumentEvent e) {
 		if (e.getDocument() == numGetCash.getDocument()){
 			rbPayCash.setSelected(true);
-			showChargeText();
+			showChangeText();
 		} else if (e.getDocument() == tfDiscountAmount.getDocument()){
 			rbDiscountDirect.setSelected(true);
 			calculatePaidPrice();
@@ -434,17 +434,17 @@ public class CheckoutDialog extends JDialog implements ActionListener, DocumentL
 		}
 	}
 	
-	private void showChargeText(){
+	private void showChangeText(){
 		if (!rbPayCash.isSelected())
 			return;
 		if (numGetCash.getText() == null || numGetCash.getText().length() == 0){
-			lbCharge.setText("");
+			lbChange.setText("");
 			return;
 		}
 		double value = Double.parseDouble(numGetCash.getText());
 		if (value < discountPrice)
 			return;
-		lbCharge.setText(Messages.getString("CheckoutDialog.Charge")+" $" + String.format("%.2f", value - discountPrice));
+		lbChange.setText(Messages.getString("CheckoutDialog.Change")+" $" + String.format("%.2f", value - discountPrice));
 	}
 	
 	protected DiscountTemplateRadioButton getSelectedDiscountTemplateRadioButton(){
@@ -479,7 +479,7 @@ public class CheckoutDialog extends JDialog implements ActionListener, DocumentL
 		}
 		
 		lbDiscountPrice.setText(Messages.getString("CheckoutDialog.DiscountPrice") + new DecimalFormat("0.00").format(discountPrice)); //$NON-NLS-1$
-		showChargeText();
+		showChangeText();
 	}
 	
 	public void doPay(){
@@ -587,7 +587,7 @@ public class CheckoutDialog extends JDialog implements ActionListener, DocumentL
 		if (rbPayCash.isSelected()){
 			JOptionPane.showMessageDialog(mainFrame, Messages.getString("CheckoutDialog.GetCash") + numGetCash.getText()
 			+ "\n" + Messages.getString("CheckoutDialog.ShouldPayAmount") + String.format(ConstantValue.FORMAT_DOUBLE, discountPrice)
-			+ "\n" + Messages.getString("CheckoutDialog.Charge") + change);
+			+ "\n" + Messages.getString("CheckoutDialog.Change") + change);
 		}
 	}
 	
