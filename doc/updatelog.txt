@@ -18,3 +18,6 @@
 20180613
 	1. correct the bug about that the REQUIREMENT in indentdetail cannot be controlled by font and bold
 	   REMEMBER: update the print template file while the restaurant do upgrade.
+	   
+20180617
+	1. add log to track exception in print thread
