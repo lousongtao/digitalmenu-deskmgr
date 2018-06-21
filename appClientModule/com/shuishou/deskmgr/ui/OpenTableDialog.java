@@ -167,9 +167,9 @@ public class OpenTableDialog extends JDialog implements ActionListener{
 		});
 		btnFlavor.addActionListener(this);
 		btnTakeaway.addActionListener(this);
-		this.setSize(new Dimension(MainFrame.WINDOW_WIDTH, MainFrame.WINDOW_HEIGHT));
-		this.setLocation((int)(mainFrame.getWidth() / 2 - this.getWidth() /2 + mainFrame.getLocation().getX()), 
-				(int)(mainFrame.getHeight() / 2 - this.getHeight() / 2 + mainFrame.getLocation().getY()));
+		this.setSize(new Dimension(mainFrame.getWidth(), mainFrame.getHeight()));
+//		this.setLocation((int)(mainFrame.getWidth() / 2 - this.getWidth() /2 + mainFrame.getLocation().getX()), 
+//				(int)(mainFrame.getHeight() / 2 - this.getHeight() / 2 + mainFrame.getLocation().getY()));
 	}
 	
 	@Override
@@ -374,8 +374,8 @@ public class OpenTableDialog extends JDialog implements ActionListener{
 		if (cd.configs != null && !cd.configs.isEmpty()){
 			for(DishConfig config : cd.configs){
 				requires += config.getFirstLanguageName();
-				if (config.getPrice() !=0 )
-					requires += "$" + config.getPrice();
+//				if (config.getPrice() !=0 )
+//					requires += "$" + config.getPrice();
 				requires += "\n";
 			}
 		}
