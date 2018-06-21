@@ -17,6 +17,7 @@ import javax.swing.JPanel;
 import com.shuishou.deskmgr.ConstantValue;
 import com.shuishou.deskmgr.beans.DishConfig;
 import com.shuishou.deskmgr.beans.DishConfigGroup;
+import com.shuishou.deskmgr.ui.MainFrame;
 
 /**
  * 需要选择0个或者多个配置项, 不允许选择一个, 不允许重复
@@ -27,7 +28,6 @@ public class ChooseNonDuplicatableConfigPanel extends JPanel implements DishConf
 	private ArrayList<DishConfigCheckBox> components = new ArrayList<>();
 	private DishConfigGroup group;
 	private DishConfigDialog parent;
-	private int COMPONENT_ROWAMOUNT = 4;
 	public ChooseNonDuplicatableConfigPanel(DishConfigDialog parent, DishConfigGroup group){
 		this.group = group;
 		this.parent = parent;
@@ -35,6 +35,12 @@ public class ChooseNonDuplicatableConfigPanel extends JPanel implements DishConf
 	}
 	
 	private void initUI(){
+		int COMPONENT_ROWAMOUNT = 5;
+		if (MainFrame.WINDOW_WIDTH < 800){
+			COMPONENT_ROWAMOUNT = 4;
+		} else if (MainFrame.WINDOW_WIDTH > 1000){
+			COMPONENT_ROWAMOUNT = 6;
+		}
 		this.setLayout(new GridBagLayout());
 		if (!group.getDishConfigs().isEmpty()){
 			Collections.sort(group.getDishConfigs(), new Comparator<DishConfig>(){
