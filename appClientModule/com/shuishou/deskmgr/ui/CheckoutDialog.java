@@ -602,6 +602,19 @@ public class CheckoutDialog extends JDialog implements ActionListener, DocumentL
 		keys.put("paidPrice", String.format(ConstantValue.FORMAT_DOUBLE, discountPrice));
 		keys.put("gst", String.format(ConstantValue.FORMAT_DOUBLE,(double)(discountPrice/11)));
 		keys.put("printTime", ConstantValue.DFYMDHMS.format(new Date()));
+		
+		if (rbDiscountNon.isSelected())
+			keys.put("discountTemp", "\\$0");
+		else if (rbDiscountDirect.isSelected()){
+			keys.put("discountTemp", "\\$" + tfDiscountAmount.getText());
+		} 
+		DiscountTemplateRadioButton trb = getSelectedDiscountTemplateRadioButton();
+		if (trb != null){
+			if (trb.getDiscountTemplate().getType() == ConstantValue.DISCOUNTTYPE_RATE)
+				keys.put("discountTemp", (trb.getDiscountTemplate().getValue() * 100) +"%");
+			else if (trb.getDiscountTemplate().getType() == ConstantValue.DISCOUNTTYPE_QUANTITY)
+				keys.put("discountTemp", "\\$" + trb.getDiscountTemplate().getValue());
+		}
 		keys.put("payway", payway);
 		if (getPay > 0){
 			keys.put("change", String.format(ConstantValue.FORMAT_DOUBLE, getPay - discountPrice));

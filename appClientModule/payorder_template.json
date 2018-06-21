@@ -143,6 +143,14 @@
 		"type": 0
 	},
 	{
+		"text": "discount:                {$discountTemp}",
+		"size": 9,
+		"bold": false,
+		"align": 0,
+		"line": true,
+		"type": 0
+	},
+	{
 		"text": "GST:                     ${$gst}",
 		"size": 9,
 		"bold": false,
