@@ -188,9 +188,12 @@ public class CheckoutDialog extends JDialog implements ActionListener, DocumentL
 		bgDiscount.add(rbDiscountNon.getRadioButton());
 		bgDiscount.add(rbDiscountTemp.getRadioButton());
 		bgDiscount.add(rbDiscountDirect.getRadioButton());
+		JPanel pDiscountDirect = new JPanel(new GridBagLayout());
+		pDiscountDirect.add(rbDiscountDirect, new GridBagConstraints(0, 0, 1, 1, 0, 1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+		pDiscountDirect.add(tfDiscountAmount, new GridBagConstraints(1, 0, GridBagConstraints.REMAINDER, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(10, 50, 0, 0), 0, 0));
 		pDiscount.add(rbDiscountNon, 	new GridBagConstraints(0, 0, 1, 1, 0, 1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
-		pDiscount.add(rbDiscountDirect, new GridBagConstraints(1, 0, 1, 1, 0, 1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(10, 50, 0, 0), 0, 0));
-		pDiscount.add(tfDiscountAmount, new GridBagConstraints(2, 0, 1, 1, 0, 1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(10, 20, 0, 0), 0, 0));
+		pDiscount.add(pDiscountDirect, 	new GridBagConstraints(1, 0, GridBagConstraints.REMAINDER, 1, 0, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 50, 0, 0), 0, 0));
+//		pDiscount.add(tfDiscountAmount, new GridBagConstraints(2, 0, 1, 1, 0, 1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(10, 20, 0, 0), 0, 0));
 		pDiscount.add(rbDiscountTemp, 	new GridBagConstraints(0, 1, 1, 1, 0, 1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(10, 0, 0, 0), 0, 0));
 		pDiscount.add(pDiscountTemplate,new GridBagConstraints(0, 2, 3, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 0, 0, 0), 0, 0));
 		

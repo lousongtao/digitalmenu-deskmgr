@@ -60,6 +60,7 @@ import com.shuishou.deskmgr.ui.OpenTableDialog.ChoosedDish;
 import com.shuishou.deskmgr.ui.components.IconButton;
 import com.shuishou.deskmgr.ui.components.JBlockedButton;
 import com.shuishou.deskmgr.ui.components.NumberTextField;
+import com.shuishou.deskmgr.ui.components.VividRadioButton;
 import com.shuishou.deskmgr.ui.components.WaitDialog;
 
 public class CheckoutSplitIndentDialog extends CheckoutDialog{
@@ -120,9 +121,9 @@ public class CheckoutSplitIndentDialog extends CheckoutDialog{
 				return;
 			}
 		} else {
-			for(JRadioButton rb : listRBOtherPayway){
+			for(VividRadioButton rb : listRBOtherPayway){
 				if (rb.isSelected()){
-					params.put("payWay", rb.getText());
+					params.put("payWay", rb.getLabel().getText());
 					break;
 				}
 			}
