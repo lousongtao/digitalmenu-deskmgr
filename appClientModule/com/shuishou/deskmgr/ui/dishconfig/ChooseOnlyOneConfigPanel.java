@@ -19,6 +19,7 @@ import javax.swing.JRadioButton;
 import com.shuishou.deskmgr.ConstantValue;
 import com.shuishou.deskmgr.beans.DishConfig;
 import com.shuishou.deskmgr.beans.DishConfigGroup;
+import com.shuishou.deskmgr.ui.MainFrame;
 
 /**
  * 要求选择数量为1个, 不可以是0个或多个 : 此时使用RadioButton做为控件, 默认选中第一个选项
@@ -29,7 +30,6 @@ public class ChooseOnlyOneConfigPanel extends JPanel implements DishConfigGroupI
 	private ArrayList<DishConfigRadioButton> components = new ArrayList<>();
 	private DishConfigGroup group;
 	private DishConfigDialog parent;
-	private int COMPONENT_ROWAMOUNT = 4;
 	public ChooseOnlyOneConfigPanel(DishConfigDialog parent, DishConfigGroup group){
 		this.group = group;
 		this.parent = parent;
@@ -37,6 +37,12 @@ public class ChooseOnlyOneConfigPanel extends JPanel implements DishConfigGroupI
 	}
 	
 	private void initUI(){
+		int COMPONENT_ROWAMOUNT = 5;
+		if (MainFrame.WINDOW_WIDTH < 800){
+			COMPONENT_ROWAMOUNT = 4;
+		} else if (MainFrame.WINDOW_WIDTH > 1000){
+			COMPONENT_ROWAMOUNT = 6;
+		}
 		this.setLayout(new GridBagLayout());
 		if (!group.getDishConfigs().isEmpty()){
 			ButtonGroup bg = new ButtonGroup();

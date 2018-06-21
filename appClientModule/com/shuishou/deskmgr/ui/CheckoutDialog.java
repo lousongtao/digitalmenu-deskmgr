@@ -84,7 +84,7 @@ public class CheckoutDialog extends JDialog implements ActionListener, DocumentL
 	protected JLabel lbMemberInfo = new JLabel();
 	protected JButton btnQueryMember = new JButton("Query");
 	protected JPasswordField tfMemberPwd = new JPasswordField();
-	protected ArrayList<JRadioButton> listRBOtherPayway = new ArrayList<>();
+	protected ArrayList<VividRadioButton> listRBOtherPayway = new ArrayList<>();
 	protected NumberTextField tfDiscountAmount = null;
 	protected JTextField tfMember = new JTextField();
 	protected JBlockedButton btnPay = new JBlockedButton(Messages.getString("CheckoutDialog.PayButton"), "/resource/checkout.png"); //$NON-NLS-1$
@@ -150,7 +150,7 @@ public class CheckoutDialog extends JDialog implements ActionListener, DocumentL
 				VividRadioButton rbpw = new VividRadioButton(pw.getName());
 				bgPayway.add(rbpw.getRadioButton());
 				pOtherPayway.add(rbpw);
-				listRBOtherPayway.add(rbpw.getRadioButton());
+				listRBOtherPayway.add(rbpw);
 			}
 			pPayway.add(pOtherPayway, new GridBagConstraints(0, 3, 4, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 0, 0, 0), 0, 0));
 		}
@@ -225,7 +225,7 @@ public class CheckoutDialog extends JDialog implements ActionListener, DocumentL
 		c.add(lbDiscountPrice, 	new GridBagConstraints(0, 4, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
 		c.add(pButton, 			new GridBagConstraints(0, 5, 2, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
 		
-		this.setSize(new Dimension(750, 700));
+		this.setSize(new Dimension(1050, 700));
 		this.setLocation((int)(mainFrame.getWidth() / 2 - this.getWidth() /2 + mainFrame.getLocation().getX()), 
 				(int)(mainFrame.getHeight() / 2 - this.getHeight() / 2 + mainFrame.getLocation().getY()));
 		btnClose.addActionListener(this);
@@ -523,9 +523,9 @@ public class CheckoutDialog extends JDialog implements ActionListener, DocumentL
 				return;
 			}
 		} else {
-			for(JRadioButton rb : listRBOtherPayway){
+			for(VividRadioButton rb : listRBOtherPayway){
 				if (rb.isSelected()){
-					params.put("payWay", rb.getText());
+					params.put("payWay", rb.getLabel().getText());
 					break;
 				}
 			}
