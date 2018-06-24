@@ -50,6 +50,8 @@ public class ChooseDuplicatableConfigPanel extends JPanel implements DishConfigG
 	}
 	
 	private void initUI(){
+		if (group.getDishConfigs() == null || group.getDishConfigs().isEmpty())
+			return;
 		this.setLayout(new FlowLayout(FlowLayout.LEFT));
 		if (!group.getDishConfigs().isEmpty()){
 			Collections.sort(group.getDishConfigs(), new Comparator<DishConfig>(){

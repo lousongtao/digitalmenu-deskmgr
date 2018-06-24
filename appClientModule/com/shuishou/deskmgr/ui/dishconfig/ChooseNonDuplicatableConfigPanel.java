@@ -35,6 +35,8 @@ public class ChooseNonDuplicatableConfigPanel extends JPanel implements DishConf
 	}
 	
 	private void initUI(){
+		if (group.getDishConfigs() == null || group.getDishConfigs().isEmpty())
+			return;
 		int COMPONENT_ROWAMOUNT = 5;
 		if (MainFrame.WINDOW_WIDTH < 800){
 			COMPONENT_ROWAMOUNT = 4;

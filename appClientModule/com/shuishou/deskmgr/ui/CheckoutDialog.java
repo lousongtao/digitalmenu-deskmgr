@@ -614,7 +614,7 @@ public class CheckoutDialog extends JDialog implements ActionListener, DocumentL
 		DiscountTemplateRadioButton trb = getSelectedDiscountTemplateRadioButton();
 		if (trb != null){
 			if (trb.getDiscountTemplate().getType() == ConstantValue.DISCOUNTTYPE_RATE)
-				keys.put("discountTemp", (trb.getDiscountTemplate().getValue() * 100) +"%");
+				keys.put("discountTemp", String.format(ConstantValue.FORMAT_DOUBLE, (1- trb.getDiscountTemplate().getValue()) * 100) +"%");
 			else if (trb.getDiscountTemplate().getType() == ConstantValue.DISCOUNTTYPE_QUANTITY)
 				keys.put("discountTemp", "\\$" + trb.getDiscountTemplate().getValue());
 		}
