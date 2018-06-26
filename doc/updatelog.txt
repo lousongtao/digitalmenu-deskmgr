@@ -21,3 +21,11 @@
 	   
 20180617
 	1. add log to track exception in print thread
+	
+20180621
+	1. add discount template on payment ticket
+	
+20180626
+	1. change the dish requirements' print style, reduce one empty line
+	2. add a config parameter for refresh interval
+	3. refund, allow only refund part of the order

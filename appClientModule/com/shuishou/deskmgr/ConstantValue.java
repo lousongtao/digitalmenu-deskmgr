@@ -78,6 +78,7 @@ public class ConstantValue {
 	public static final byte INDENTDETAIL_OPERATIONTYPE_ADD = 1;
 	public static final byte INDENTDETAIL_OPERATIONTYPE_DELETE = 2;
 	public static final byte INDENTDETAIL_OPERATIONTYPE_CHANGEAMOUNT = 5;
+	public static final byte INDENTDETAIL_OPERATIONTYPE_REFUND = 6;
 	
 	public static final byte MENUCHANGE_TYPE_SOLDOUT = 0;
 	

@@ -141,23 +141,14 @@ public class ViewHistoryIndentByDeskDialog extends JDialog implements ActionList
 		int row = table.getSelectedRow();
 		if (row < 0)
 			return;
-		if (JOptionPane.showConfirmDialog(this, "Do you confirm to refund this order", "", JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION)
-			return;
 		Indent indent = tableModel.getObjectAt(row);
-		String url = "indent/dorefundindent";
-		Map<String, String> params = new HashMap<String, String>();
-		params.put("userId", mainFrame.getOnDutyUser().getId() + "");
-		params.put("id", indent.getId() + "");
-		
-		String response = HttpUtil.getJSONObjectByPost(MainFrame.SERVER_URL + url, params, "UTF-8");
-		JSONObject jsonObj = new JSONObject(response);
-		if (!jsonObj.getBoolean("success")){
-			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
-			logger.error("Do refund failed. URL = " + url + ", param = "+ params);
-			JOptionPane.showMessageDialog(mainFrame, "Failed to refund this order!"); //$NON-NLS-1$
+		if (indent.getStatus() != ConstantValue.INDENT_STATUS_PAID){
+			JOptionPane.showMessageDialog(mainFrame, "This order is not PAID status, cannot do refund.");
+			return;
 		}
-		loadIndent();
-		tableModel.fireTableDataChanged();
+		setVisible(false);
+		RefundIndentDetailDialog refundDialog = new RefundIndentDetailDialog(mainFrame, desk, indent);
+		refundDialog.setVisible(true);
 	}
 	
 	private void doPrint(){

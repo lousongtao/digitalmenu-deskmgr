@@ -95,6 +95,7 @@ public class MainFrame extends JFrame implements ActionListener{
 	public static String printerName;
 	public static String printerIP;
 	public static String functionlist;
+	public static int refreshInterval = 60; //default 60 seconds
 	
 	private JPanel pDeskArea = null;
 	private JLabel lbStatusLogin = new JLabel();
@@ -250,7 +251,7 @@ public class MainFrame extends JFrame implements ActionListener{
 				loadCurrentIndentInfo();
 				//refresh time
 				lbCurrentTime.setText(ConstantValue.DFYMDHM.format(new Date()));
-			}}, 0, 60*1000);
+			}}, 0, refreshInterval * 1000);
 	}
 	
 	/**
@@ -911,7 +912,7 @@ public class MainFrame extends JFrame implements ActionListener{
 			return;
 		}
 		if (selectDC.getIndent() == null ){
-			OpenTableDialog dlg = new OpenTableDialog(this, Messages.getString("MainFrame.OpenDesk"), true, selectDC.getDesk(), OpenTableDialog.MAKENEWORDER); //$NON-NLS-1$
+			OpenTableDialog dlg = new OpenTableDialog(this, Messages.getString("MainFrame.OpenTable"), true, selectDC.getDesk(), OpenTableDialog.MAKENEWORDER); //$NON-NLS-1$
 			dlg.setVisible(true);
 		} else {
 			OpenTableDialog dlg = new OpenTableDialog(this, Messages.getString("MainFrame.AddDish"), true, selectDC.getDesk(), OpenTableDialog.ADDDISH); //$NON-NLS-1$
@@ -1104,6 +1105,9 @@ public class MainFrame extends JFrame implements ActionListener{
 		MainFrame.printerName = prop.getProperty("printerName");
 		MainFrame.printerIP = prop.getProperty("printerIP");
 		MainFrame.functionlist = prop.getProperty("mainframe.functionlist");
+		try{
+			MainFrame.refreshInterval = Integer.parseInt(prop.getProperty("refreshInterval"));
+		} catch (NumberFormatException e){}
 		final MainFrame f = new MainFrame();
 		f.setExtendedState(JFrame.MAXIMIZED_BOTH);
 //		f.setUndecorated(true);
