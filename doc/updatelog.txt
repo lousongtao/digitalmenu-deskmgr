@@ -29,3 +29,6 @@
 	1. change the dish requirements' print style, reduce one empty line
 	2. add a config parameter for refresh interval
 	3. refund, allow only refund part of the order
+	
+20180716
+	add price display in the open table dialog

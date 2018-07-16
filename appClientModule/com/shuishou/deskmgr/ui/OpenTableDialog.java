@@ -72,6 +72,7 @@ public class OpenTableDialog extends JDialog implements ActionListener{
 	private JList<ChoosedDish> listChoosedDish = new JList<>();
 	private ListModel<ChoosedDish> listModelChoosedDish = new ListModel();
 	private JTextField tfWholeOrderComment = new JTextField();
+	private JLabel lbPrice = new JLabel();
 	
 	public static final byte MAKENEWORDER = 1;
 	public static final byte ADDDISH = 2;
@@ -86,7 +87,7 @@ public class OpenTableDialog extends JDialog implements ActionListener{
 	}
 	
 	private void initUI(){
-		
+		lbPrice.setFont(ConstantValue.FONT_25BOLD);
 		JLabel lbDeskNo = new JLabel(Messages.getString("OpenTableDialog.TableNo") + desk.getName());
 		lbDeskNo.setFont(ConstantValue.FONT_25BOLD);
 		JLabel lbCustomerAmount = new JLabel();
@@ -135,8 +136,9 @@ public class OpenTableDialog extends JDialog implements ActionListener{
 		pChoosedDish.add(lbDeskNo, 			new GridBagConstraints(0, 0, 2, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
 		pChoosedDish.add(lbCustomerAmount, 	new GridBagConstraints(0, 1, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
 		pChoosedDish.add(tfCustomerAmount, 	new GridBagConstraints(1, 1, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
-		pChoosedDish.add(jspChooseDish, 	new GridBagConstraints(0, 2, 2, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
-		pChoosedDish.add(tfWholeOrderComment,new GridBagConstraints(0, 3, 2, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
+		pChoosedDish.add(lbPrice, 			new GridBagConstraints(0, 2, 2, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
+		pChoosedDish.add(jspChooseDish, 	new GridBagConstraints(0, 3, 2, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+		pChoosedDish.add(tfWholeOrderComment,new GridBagConstraints(0, 4, 2, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
 		
 		btnClose.setPreferredSize(new Dimension(100, 50));
 		btnRemove.setPreferredSize(new Dimension(100, 50));
@@ -251,6 +253,7 @@ public class OpenTableDialog extends JDialog implements ActionListener{
 		if (listChoosedDish.getSelectedIndex() < 0)
 			return;
 		listModelChoosedDish.removeElementAt(listChoosedDish.getSelectedIndex());
+		refreshPriceLabel();
 	}
 	
 	private void doSetFlavor(){
@@ -486,8 +489,24 @@ public class OpenTableDialog extends JDialog implements ActionListener{
 		} else {
 			listModelChoosedDish.insertElementAt(cd,0);
 		}
+		refreshPriceLabel();
 	}
 	
+	private void refreshPriceLabel(){
+		if (listModelChoosedDish.getSize() > 0){
+			double price = 0;
+			for (int i = 0; i < listModelChoosedDish.size(); i++) {
+				ChoosedDish cd = listModelChoosedDish.get(i);
+				if (cd.dish.getPurchaseType() == ConstantValue.DISH_PURCHASETYPE_UNIT)
+					price += cd.getPrice() * cd.amount;
+				else 
+					price += cd.getPrice() * cd.amount * cd.weight;
+			}
+			lbPrice.setText("Items: " + listModelChoosedDish.size() + "  Price: $" + String.format(ConstantValue.FORMAT_DOUBLE, price));
+		} else {
+			lbPrice.setText("");
+		}
+	}
 	
 	class ChoosedDishRenderer extends JPanel implements ListCellRenderer{
 		private JLabel lbDish = new JLabel();
