@@ -105,7 +105,7 @@ public class ChangeDeskDialog extends JDialog {
 		params.put("userId", mainFrame.getOnDutyUser().getId() + "");
 		params.put("deskId1", desk.getId() + "");
 		params.put("deskId2", selected.getDesk().getId() + "");
-		String response = HttpUtil.getJSONObjectByPost(MainFrame.SERVER_URL + url, params, "UTF-8");
+		String response = HttpUtil.getJSONObjectByPost(ConstantValue.SERVER_URL + url, params, "UTF-8");
 		if (response == null || response.length() == 0){
 			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 			logger.error("get null from server while changing tables. URL = " + url + ", param = "+ params);

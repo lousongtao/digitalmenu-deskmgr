@@ -81,21 +81,8 @@ import gnu.io.UnsupportedCommOperationException;
 
 public class MainFrame extends JFrame implements ActionListener{
 	public final static Logger logger = Logger.getLogger(MainFrame.class.getName());
-	public static int DESK_COLUMN_AMOUNT;
-	public static int TABLECELL_WIDTH;
-	public static int TABLECELL_HEIGHT;
-	public static int WINDOW_WIDTH;
-	public static int WINDOW_HEIGHT;
-	public static int WINDOW_LOCATIONX;
-	public static int WINDOW_LOCATIONY;
-	public static String language;
-	public static String SERVER_URL;
+	
 	private OutputStream outputStreamCashdrawer;
-	public static String portCashdrawer;
-	public static String printerName;
-	public static String printerIP;
-	public static String functionlist;
-	public static int refreshInterval = 60; //default 60 seconds
 	
 	private JPanel pDeskArea = null;
 	private JLabel lbStatusLogin = new JLabel();
@@ -135,7 +122,7 @@ public class MainFrame extends JFrame implements ActionListener{
 		initUI();
 		initData();
 //		setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
-		setLocation(WINDOW_LOCATIONX, WINDOW_LOCATIONY);
+		setLocation(ConstantValue.WINDOW_LOCATIONX, ConstantValue.WINDOW_LOCATIONY);
 		setTitle(Messages.getString("MainFrame.FrameTitle")); //$NON-NLS-1$
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
@@ -251,7 +238,7 @@ public class MainFrame extends JFrame implements ActionListener{
 				loadCurrentIndentInfo();
 				//refresh time
 				lbCurrentTime.setText(ConstantValue.DFYMDHM.format(new Date()));
-			}}, 0, refreshInterval * 1000);
+			}}, 0, ConstantValue.refreshInterval * 1000);
 	}
 	
 	/**
@@ -259,7 +246,7 @@ public class MainFrame extends JFrame implements ActionListener{
 	 */
 	public void loadMenu(){
 		String url = "menu/querymenu";
-		String response = HttpUtil.getJSONObjectByGet(SERVER_URL + url);
+		String response = HttpUtil.getJSONObjectByGet(ConstantValue.SERVER_URL + url);
 		if (response == null){
 			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 			logger.error("get null from server for loading menu. URL = " + url);
@@ -279,7 +266,7 @@ public class MainFrame extends JFrame implements ActionListener{
 	
 	private void loadConfigsMap(){
 		String url = "common/queryconfigmap";
-		String response = HttpUtil.getJSONObjectByGet(SERVER_URL + url);
+		String response = HttpUtil.getJSONObjectByGet(ConstantValue.SERVER_URL + url);
 		if (response == null){
 			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 			logger.error("get null from server for loading configs. URL = " + url);
@@ -298,7 +285,7 @@ public class MainFrame extends JFrame implements ActionListener{
 	
 	private void loadShiftDutyInfo(){
 		String url = "management/getcurrentduty";
-		String response = HttpUtil.getJSONObjectByGet(SERVER_URL + url);
+		String response = HttpUtil.getJSONObjectByGet(ConstantValue.SERVER_URL + url);
 		if (response == null){
 			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 			logger.error("get null from server for duty employee info. URL = " + url);
@@ -329,7 +316,7 @@ public class MainFrame extends JFrame implements ActionListener{
 	
 	private void loadDiscountTemplates(){
 		String url = "common/getdiscounttemplates";
-		String response = HttpUtil.getJSONObjectByGet(SERVER_URL + url);
+		String response = HttpUtil.getJSONObjectByGet(ConstantValue.SERVER_URL + url);
 		if (response == null){
 			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 			logger.error("get null from server for discount templates. URL = " + url);
@@ -349,7 +336,7 @@ public class MainFrame extends JFrame implements ActionListener{
 	
 	private void loadPayWay(){
 		String url = "common/getpayways";
-		String response = HttpUtil.getJSONObjectByGet(SERVER_URL + url);
+		String response = HttpUtil.getJSONObjectByGet(ConstantValue.SERVER_URL + url);
 		if (response == null){
 			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 			logger.error("get null from server for pay way. URL = " + url);
@@ -369,7 +356,7 @@ public class MainFrame extends JFrame implements ActionListener{
 	
 	private void loadFlavor(){
 		String url = "menu/queryflavor";
-		String response = HttpUtil.getJSONObjectByGet(SERVER_URL + url);
+		String response = HttpUtil.getJSONObjectByGet(ConstantValue.SERVER_URL + url);
 		if (response == null){
 			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 			logger.error("get null from server for flavor. URL = " + url);
@@ -389,7 +376,7 @@ public class MainFrame extends JFrame implements ActionListener{
 	
 	private void loadMember(){
 		String url = "member/queryallmember";
-		String response = HttpUtil.getJSONObjectByGet(SERVER_URL + url);
+		String response = HttpUtil.getJSONObjectByGet(ConstantValue.SERVER_URL + url);
 		if (response == null){
 			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 			logger.error("get null from server for member. URL = " + url);
@@ -415,7 +402,7 @@ public class MainFrame extends JFrame implements ActionListener{
 		
 		for (int i = 0; i < deskList.size(); i++) {
 			DeskCell dc = new DeskCell(this, deskList.get(i));
-			pDeskArea.add(dc, new GridBagConstraints(i % DESK_COLUMN_AMOUNT, (int)(i / DESK_COLUMN_AMOUNT), 1, 1,1,1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,0,0),0,0));
+			pDeskArea.add(dc, new GridBagConstraints(i % ConstantValue.DESK_COLUMN_AMOUNT, (int)(i / ConstantValue.DESK_COLUMN_AMOUNT), 1, 1,1,1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,0,0),0,0));
 			deskcellList.add(dc);
 		}
 		pDeskArea.updateUI();
@@ -426,7 +413,7 @@ public class MainFrame extends JFrame implements ActionListener{
 	 */
 	public void loadDesks(){
 		String url = "common/getdesks";
-		String response = HttpUtil.getJSONObjectByGet(SERVER_URL + url);
+		String response = HttpUtil.getJSONObjectByGet(ConstantValue.SERVER_URL + url);
 		if (response == null){
 			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 			logger.error("get null from server for desks list. URL = " + url);
@@ -462,7 +449,7 @@ public class MainFrame extends JFrame implements ActionListener{
 		String url = "indent/queryindent";
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("status", "Unpaid");
-		String response = HttpUtil.getJSONObjectByPost(SERVER_URL + url, params, "UTF-8");
+		String response = HttpUtil.getJSONObjectByPost(ConstantValue.SERVER_URL + url, params, "UTF-8");
 		if (response == null || response.length() == 0){
 			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 			logger.error("get null from server for query indent error. URL = " + url + ", param = "+ params);
@@ -504,7 +491,7 @@ public class MainFrame extends JFrame implements ActionListener{
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("status", "Unpaid");
 		params.put("deskname", deskName);
-		String response = HttpUtil.getJSONObjectByPost(SERVER_URL + url, params, "UTF-8");
+		String response = HttpUtil.getJSONObjectByPost(ConstantValue.SERVER_URL + url, params, "UTF-8");
 		if (response == null || response.length() == 0){
 			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 			logger.error("get null from server for query indent by desk error. URL = " + url + ", param = "+ params);
@@ -543,7 +530,7 @@ public class MainFrame extends JFrame implements ActionListener{
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("userId", String.valueOf(userId));
 		params.put("printLastDutyTicket", String.valueOf(printLastDutyTicket));
-		String response = HttpUtil.getJSONObjectByPost(SERVER_URL + url, params, "UTF-8");
+		String response = HttpUtil.getJSONObjectByPost(ConstantValue.SERVER_URL + url, params, "UTF-8");
 		if (response == null || response.length() == 0){
 			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 			logger.error("get null from server for starting shiftwork. URL = " + url + ", param = "+ params);
@@ -575,7 +562,7 @@ public class MainFrame extends JFrame implements ActionListener{
 		params.put("userId", String.valueOf(user.getId()));
 		params.put("printShiftTicket", Boolean.valueOf(print).toString());
 		params.put("startTime", ConstantValue.DFYMDHMS.format(user.getStartTime()));
-		String response = HttpUtil.getJSONObjectByPost(SERVER_URL + url, params, "UTF-8");
+		String response = HttpUtil.getJSONObjectByPost(ConstantValue.SERVER_URL + url, params, "UTF-8");
 		if (response == null || response.length() == 0){
 			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 			logger.error("get null from server while off duty. URL = " + url + ", param = "+ params);
@@ -649,7 +636,7 @@ public class MainFrame extends JFrame implements ActionListener{
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("userId", String.valueOf(onDutyUser.getId()));
 		params.put("deskId", String.valueOf(deskid));
-		String response = HttpUtil.getJSONObjectByPost(SERVER_URL + url, params, "UTF-8");
+		String response = HttpUtil.getJSONObjectByPost(ConstantValue.SERVER_URL + url, params, "UTF-8");
 		if (response == null || response.length() == 0){
 			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 			logger.error("get null from server while clear desks failed. URL = " + url + ", param = "+ params);
@@ -709,7 +696,7 @@ public class MainFrame extends JFrame implements ActionListener{
 		params.put("userId", String.valueOf(onDutyUser.getId()));
 		params.put("mainDeskId", String.valueOf(mainDeskid));
 		params.put("subDeskId", subDeskIds);
-		String response = HttpUtil.getJSONObjectByPost(SERVER_URL + url, params, "UTF-8");
+		String response = HttpUtil.getJSONObjectByPost(ConstantValue.SERVER_URL + url, params, "UTF-8");
 		if (response == null || response.length() == 0){
 			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 			logger.error("get null from server while do merge desks failed. URL = " + url + ", param = "+ params);
@@ -786,9 +773,9 @@ public class MainFrame extends JFrame implements ActionListener{
 			}
 		}
 		
-		if (printerIP != null) {
+		if (ConstantValue.printerIP != null) {
 			doOpenCashdrawerByPrinter();
-		} else if (portCashdrawer != null) {
+		} else if (ConstantValue.portCashdrawer != null) {
 			doOpenCashdrawerByCard();
 		}
 	}
@@ -801,7 +788,7 @@ public class MainFrame extends JFrame implements ActionListener{
 		OutputStream socketOut = null;
 		OutputStreamWriter writer = null;
 		try {
-			socket = new Socket(printerIP, 9100);//打印机默认端口是9100, 如果某些型号打印机不是这个, 单独配置
+			socket = new Socket(ConstantValue.printerIP, 9100);//打印机默认端口是9100, 如果某些型号打印机不是这个, 单独配置
 			socket.setSoTimeout(1000);
 			socketOut = socket.getOutputStream();
 			writer = new OutputStreamWriter(socketOut, "GBK");
@@ -831,7 +818,7 @@ public class MainFrame extends JFrame implements ActionListener{
 			while (portList.hasMoreElements()) {
 				CommPortIdentifier portId = (CommPortIdentifier) portList.nextElement();
 				if (portId.getPortType() == CommPortIdentifier.PORT_SERIAL) {
-					if (portId.getName().equals(portCashdrawer)) {
+					if (portId.getName().equals(ConstantValue.portCashdrawer)) {
 						try {
 							SerialPort serialPort = (SerialPort) portId.open("SimpleWriteApp", 2000);
 							outputStreamCashdrawer = serialPort.getOutputStream();
@@ -1092,22 +1079,28 @@ public class MainFrame extends JFrame implements ActionListener{
 				UIManager.put(key, font);
 			}
 		}
-		MainFrame.SERVER_URL = prop.getProperty("SERVER_URL");
-		MainFrame.DESK_COLUMN_AMOUNT = Integer.parseInt(prop.getProperty("onelinetables"));
-		MainFrame.TABLECELL_WIDTH = Integer.parseInt(prop.getProperty("tablecell.width"));
-		MainFrame.TABLECELL_HEIGHT = Integer.parseInt(prop.getProperty("tablecell.height"));
-		MainFrame.WINDOW_WIDTH = Integer.parseInt(prop.getProperty("mainframe.width"));
-		MainFrame.WINDOW_HEIGHT = Integer.parseInt(prop.getProperty("mainframe.height"));
-		MainFrame.WINDOW_LOCATIONX = Integer.parseInt(prop.getProperty("mainframe.locationx"));
-		MainFrame.WINDOW_LOCATIONY = Integer.parseInt(prop.getProperty("mainframe.locationy"));
-		MainFrame.language = prop.getProperty("language");
-		MainFrame.portCashdrawer=prop.getProperty("portCashdrawer");
-		MainFrame.printerName = prop.getProperty("printerName");
-		MainFrame.printerIP = prop.getProperty("printerIP");
-		MainFrame.functionlist = prop.getProperty("mainframe.functionlist");
+		ConstantValue.SERVER_URL = prop.getProperty("SERVER_URL");
+		ConstantValue.DESK_COLUMN_AMOUNT = Integer.parseInt(prop.getProperty("onelinetables"));
+		ConstantValue.TABLECELL_WIDTH = Integer.parseInt(prop.getProperty("tablecell.width"));
+		ConstantValue.TABLECELL_HEIGHT = Integer.parseInt(prop.getProperty("tablecell.height"));
+		ConstantValue.WINDOW_WIDTH = Integer.parseInt(prop.getProperty("mainframe.width"));
+		ConstantValue.WINDOW_HEIGHT = Integer.parseInt(prop.getProperty("mainframe.height"));
+		ConstantValue.WINDOW_LOCATIONX = Integer.parseInt(prop.getProperty("mainframe.locationx"));
+		ConstantValue.WINDOW_LOCATIONY = Integer.parseInt(prop.getProperty("mainframe.locationy"));
+		ConstantValue.language = prop.getProperty("language");
+		ConstantValue.portCashdrawer=prop.getProperty("portCashdrawer");
+		ConstantValue.printerName = prop.getProperty("printerName");
+		ConstantValue.printerIP = prop.getProperty("printerIP");
+		ConstantValue.functionlist = prop.getProperty("mainframe.functionlist");
 		try{
-			MainFrame.refreshInterval = Integer.parseInt(prop.getProperty("refreshInterval"));
-		} catch (NumberFormatException e){}
+			ConstantValue.refreshInterval = Integer.parseInt(prop.getProperty("refreshInterval"));
+			ConstantValue.openTableDialog_Category2Layout_Row = Integer.parseInt(prop.getProperty("OpenTableDialog.Category2Layout.Row"));
+			ConstantValue.openTableDialog_Category2Layout_Column = Integer.parseInt(prop.getProperty("OpenTableDialog.Category2Layout.Column"));
+			ConstantValue.openTableDialog_DishLayout_Row = Integer.parseInt(prop.getProperty("OpenTableDialog.DishLayout.Row"));
+			ConstantValue.openTableDialog_DishLayout_Column = Integer.parseInt(prop.getProperty("OpenTableDialog.DishLayout.Column"));
+		} catch (NumberFormatException e){
+			e.printStackTrace();
+		}
 		final MainFrame f = new MainFrame();
 		f.setExtendedState(JFrame.MAXIMIZED_BOTH);
 //		f.setUndecorated(true);

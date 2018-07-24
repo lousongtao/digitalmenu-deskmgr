@@ -147,7 +147,7 @@ public class CheckoutSplitIndentDialog extends CheckoutDialog{
 		}
 		WaitDialog wdlg = new WaitDialog(this, "Posting data..."){
 			public Object work(){
-				return HttpUtil.getJSONObjectByPost(MainFrame.SERVER_URL + url, params, "UTF-8");
+				return HttpUtil.getJSONObjectByPost(ConstantValue.SERVER_URL + url, params, "UTF-8");
 			}
 		};
 		String response = (String)wdlg.getReturnResult();

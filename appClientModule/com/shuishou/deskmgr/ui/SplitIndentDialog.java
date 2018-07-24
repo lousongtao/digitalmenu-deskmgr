@@ -158,7 +158,7 @@ public class SplitIndentDialog extends JDialog {
 			public void actionPerformed(ActionEvent e) {
 				doPayRest();
 			}});
-		this.setSize(new Dimension(MainFrame.WINDOW_WIDTH, MainFrame.WINDOW_HEIGHT));
+		this.setSize(new Dimension(ConstantValue.WINDOW_WIDTH, ConstantValue.WINDOW_HEIGHT));
 		this.setLocation((int)(mainFrame.getWidth() / 2 - this.getWidth() /2 + mainFrame.getLocation().getX()), 
 				(int)(mainFrame.getHeight() / 2 - this.getHeight() / 2 + mainFrame.getLocation().getY()));
 		

@@ -148,7 +148,7 @@ public class MenuMgmtDialog extends JDialog {
 				doSearchDish();
 			}
 		});
-		this.setSize(new Dimension(MainFrame.WINDOW_WIDTH, MainFrame.WINDOW_HEIGHT));
+		this.setSize(new Dimension(ConstantValue.WINDOW_WIDTH, ConstantValue.WINDOW_HEIGHT));
 		this.setLocation((int)(mainFrame.getWidth() / 2 - this.getWidth() /2 + mainFrame.getLocation().getX()), 
 				(int)(mainFrame.getHeight() / 2 - this.getHeight() / 2 + mainFrame.getLocation().getY()));
 	}
@@ -195,7 +195,7 @@ public class MenuMgmtDialog extends JDialog {
 		params.put("userId", String.valueOf(mainFrame.getOnDutyUser().getId()));
 		params.put("id", String.valueOf(dish.getId()));
 		params.put("isSoldOut", String.valueOf(isSoldout));
-		String response = HttpUtil.getJSONObjectByPost(MainFrame.SERVER_URL + url, params, "UTF-8");
+		String response = HttpUtil.getJSONObjectByPost(ConstantValue.SERVER_URL + url, params, "UTF-8");
 		if (response == null || response.length() == 0){
 			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 			logger.error("get null from server while set/cancel sold out. URL = " + url + ", param = "+ params);

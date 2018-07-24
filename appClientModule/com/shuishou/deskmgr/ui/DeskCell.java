@@ -75,7 +75,7 @@ public class DeskCell extends JPanel {
 				DeskCell.this.setBackground(colorSelect);
 			}
 		});
-		this.setPreferredSize(new Dimension(MainFrame.TABLECELL_WIDTH, MainFrame.TABLECELL_HEIGHT));
+		this.setPreferredSize(new Dimension(ConstantValue.TABLECELL_WIDTH, ConstantValue.TABLECELL_HEIGHT));
 	}
 	
 	public void setIndentInfo(Indent indent){

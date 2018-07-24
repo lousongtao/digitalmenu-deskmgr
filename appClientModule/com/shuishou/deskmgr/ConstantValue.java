@@ -129,4 +129,23 @@ public class ConstantValue {
 	
 	public static final int DISCOUNTTYPE_RATE= 1;     //折扣类型-按比例折扣
 	public static final int DISCOUNTTYPE_QUANTITY = 2;//折扣类型-直接减数量
+	
+	public static int DESK_COLUMN_AMOUNT;
+	public static int TABLECELL_WIDTH;
+	public static int TABLECELL_HEIGHT;
+	public static int WINDOW_WIDTH;
+	public static int WINDOW_HEIGHT;
+	public static int WINDOW_LOCATIONX;
+	public static int WINDOW_LOCATIONY;
+	public static String language;
+	public static String SERVER_URL;
+	public static String portCashdrawer;
+	public static String printerName;
+	public static String printerIP;
+	public static String functionlist;
+	public static int refreshInterval = 60; //default 60 seconds
+	public static int openTableDialog_Category2Layout_Row = 3;
+	public static int openTableDialog_Category2Layout_Column = 5;
+	public static int openTableDialog_DishLayout_Row = 4;
+	public static int openTableDialog_DishLayout_Column = 4;
 }

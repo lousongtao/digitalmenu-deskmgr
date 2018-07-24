@@ -10,18 +10,24 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -49,16 +55,25 @@ import com.shuishou.deskmgr.beans.Flavor;
 import com.shuishou.deskmgr.beans.HttpResult;
 import com.shuishou.deskmgr.beans.Indent;
 import com.shuishou.deskmgr.http.HttpUtil;
-import com.shuishou.deskmgr.ui.MenuMgmtDialog.DishButton;
 import com.shuishou.deskmgr.ui.components.JBlockedButton;
 import com.shuishou.deskmgr.ui.components.NumberInputDialog;
 import com.shuishou.deskmgr.ui.components.NumberTextField;
 import com.shuishou.deskmgr.ui.dishconfig.DishConfigDialog;
 
 public class OpenTableDialog extends JDialog implements ActionListener{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private final Logger logger = Logger.getLogger(OpenTableDialog.class.getName());
+	private static final Color COLOR_CHOOSE = Color.green;
+	private static final Color COLOR_UNCHOOSE = new Color(240, 240, 240);
+	private int DISHDISPLAY_ROWCOUNT = 4;
+	private int DISHDISPLAY_COLUMNCOUNT = 4;
 	private MainFrame mainFrame;
 	private Desk desk;
+	
+	private ArrayList<Category2Label> listCategory2Label = new ArrayList<>();
 	
 	private JTextField tfSearchCode = new JTextField();
 	private NumberTextField tfCustomerAmount = new NumberTextField(this, false);
@@ -68,11 +83,15 @@ public class OpenTableDialog extends JDialog implements ActionListener{
 	private JButton btnTakeaway = new JButton(Messages.getString("OpenTableDialog.Takeaway"));
 	private JBlockedButton btnConfirm = new JBlockedButton(Messages.getString("OpenTableDialog.ConfirmOrder"), null);
 	private JBlockedButton btnConfirmAndPay = new JBlockedButton(Messages.getString("OpenTableDialog.ConfirmAndPayOrder"), null);
-	private JPanel pDishes = new JPanel(new GridBagLayout());
+	private JPanel pDishes = new JPanel(new GridLayout(DISHDISPLAY_ROWCOUNT, DISHDISPLAY_COLUMNCOUNT));
 	private JList<ChoosedDish> listChoosedDish = new JList<>();
-	private ListModel<ChoosedDish> listModelChoosedDish = new ListModel();
+	private ListModel<ChoosedDish> listModelChoosedDish = new ListModel<>();
 	private JTextField tfWholeOrderComment = new JTextField();
 	private JLabel lbPrice = new JLabel();
+	private JPanel pSearch;
+	private JPanel pCategory2;
+	private Image imgNextPage;
+	private Image imgPrePage;
 	
 	public static final byte MAKENEWORDER = 1;
 	public static final byte ADDDISH = 2;
@@ -87,6 +106,12 @@ public class OpenTableDialog extends JDialog implements ActionListener{
 	}
 	
 	private void initUI(){
+		try {
+			imgNextPage = ImageIO.read(getClass().getResource("/resource/arrowdown.png"));
+			imgPrePage = ImageIO.read(getClass().getResource("/resource/arrowup.png"));
+		} catch (IOException e1) {
+			logger.error("", e1);
+		}
 		lbPrice.setFont(ConstantValue.FONT_25BOLD);
 		JLabel lbDeskNo = new JLabel(Messages.getString("OpenTableDialog.TableNo") + desk.getName());
 		lbDeskNo.setFont(ConstantValue.FONT_25BOLD);
@@ -118,14 +143,21 @@ public class OpenTableDialog extends JDialog implements ActionListener{
 		JScrollPane jspDish = new JScrollPane(pDishes, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 		JPanel pDishDishplay = new JPanel(new GridBagLayout());
 		
-		JPanel pSearch = new JPanel(new BorderLayout());
-		pSearch.setPreferredSize(new Dimension(150, 50));
-		pSearch.add(lbSearchCode, BorderLayout.WEST);
-		pSearch.add(tfSearchCode, BorderLayout.CENTER);
+		//搜索框会被拉宽, 需要用两个label把他向内挤压
+		pSearch = new JPanel(new GridBagLayout());
+		pSearch.setBorder(BorderFactory.createLineBorder(Color.gray));
+//		pSearch.add(new JLabel(), new GridBagConstraints(0, 0, 2, 1, 1, 0.2, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+		pSearch.add(lbSearchCode, new GridBagConstraints(0, 0, 1, 1, 1, 0.2, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 5), 0, 0));
+		pSearch.add(tfSearchCode, new GridBagConstraints(0, 1, 1, 1, 1, 0.2, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 0, 5), 0, 0));
+		pSearch.add(new JLabel(), new GridBagConstraints(0, 2, 2, 1, 1, 0.2, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 5, 0, 5), 0, 0));
 		
-		JPanel pCategory2 = new JPanel(new FlowLayout(FlowLayout.LEFT));//new JPanel(new GridLayout(0, 5, 5, 5));
-		pCategory2.add(pSearch, 0);
-		generateCategory2Panel(pCategory2);
+		//TODO
+		ConstantValue.openTableDialog_Category2Layout_Row = 3;
+		ConstantValue.openTableDialog_Category2Layout_Column = 5;
+		pCategory2 = new JPanel(new GridLayout(ConstantValue.openTableDialog_Category2Layout_Row, ConstantValue.openTableDialog_Category2Layout_Column));
+		pCategory2.setBorder(BorderFactory.createTitledBorder("Category2"));
+		
+		generateCategory2Panel(0);
 //		JScrollPane jspCategory2 = new JScrollPane(pCategory2, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		
 		
@@ -169,9 +201,10 @@ public class OpenTableDialog extends JDialog implements ActionListener{
 		});
 		btnFlavor.addActionListener(this);
 		btnTakeaway.addActionListener(this);
-		this.setSize(new Dimension(mainFrame.getWidth(), mainFrame.getHeight()));
-//		this.setLocation((int)(mainFrame.getWidth() / 2 - this.getWidth() /2 + mainFrame.getLocation().getX()), 
-//				(int)(mainFrame.getHeight() / 2 - this.getHeight() / 2 + mainFrame.getLocation().getY()));
+//		this.setSize(new Dimension(mainFrame.getWidth(), mainFrame.getHeight()));
+		this.setSize(new Dimension(1280, 768));
+		this.setLocation((int)(mainFrame.getWidth() / 2 - this.getWidth() /2 + mainFrame.getLocation().getX()), 
+				(int)(mainFrame.getHeight() / 2 - this.getHeight() / 2 + mainFrame.getLocation().getY()));
 	}
 	
 	@Override
@@ -221,14 +254,46 @@ public class OpenTableDialog extends JDialog implements ActionListener{
 		
 	}
 	
-	private void generateCategory2Panel(JPanel p ){
-//		JPanel p = new JPanel(new FlowLayout(FlowLayout.LEFT));
+	/**
+	 * 根据GridLayout生成Category2的面板
+	 * 如果category2数量多, 需要分页显示
+	 * 如果category2数量太少, 不足一行, 需要补充几个空控件, 否则界面会被拉长, 很难看
+	 * @param startPosition 当category2数量过多时, 需要分页显示, 这个参数指示当前页从第几个category2开始
+	 * @param prePageStartPosition, 需要显示上页图标时, 设定该值为上页图标显示的起始位置
+	 */
+	private void generateCategory2Panel(int startPosition ){
 		ArrayList<Category2> c2s = mainFrame.getAllCategory2s();
-		for (int i = 0; i < c2s.size(); i++) {
-			Category2Button btn = new Category2Button(c2s.get(i));
-			p.add(btn);
+		pCategory2.removeAll();
+		listCategory2Label.clear();
+		pCategory2.add(pSearch, 0); //搜索框始终位于第一位
+		
+		int lastPosition = startPosition + ConstantValue.openTableDialog_Category2Layout_Row * ConstantValue.openTableDialog_Category2Layout_Column - 1; //最后一个可以显示的位置
+		
+		if (startPosition > 0){
+			lastPosition--;//减去一个位置, 显示上一页
+			pCategory2.add(new Category2PrePageLabel(0));
 		}
-//		return p;
+		if (c2s.size() > lastPosition)
+			lastPosition--;//减去一个位置, 显示下一页
+		for (int i = 0; i < c2s.size(); i++) {
+			if (i < startPosition)
+				continue;
+			if (i < lastPosition || i == c2s.size() - 1){
+				Category2Label lb = new Category2Label(c2s.get(i));
+				pCategory2.add(lb);
+				listCategory2Label.add(lb);
+			} else {
+				pCategory2.add(new Category2NextPageLabel(i));
+				break;
+			}
+		}
+		//如果category2数量太少, 需要补充几个空控件, 否则组件会被拉长, 很难看. 注意: 搜索框已经占据了一个位置
+//		if (listCategory2Label.size() < ConstantValue.openTableDialog_Category2Layout_Row * ConstantValue.openTableDialog_Category2Layout_Column - 1){
+//			for (int i = 0; i < ConstantValue.openTableDialog_Category2Layout_Row * ConstantValue.openTableDialog_Category2Layout_Column - 1 - listCategory2Label.size(); i++) {
+//				pCategory2.add(new JLabel());
+//			}
+//		}
+		pCategory2.updateUI();
 	}
 	
 	private void doSearchDish(){
@@ -238,11 +303,11 @@ public class OpenTableDialog extends JDialog implements ActionListener{
 		ArrayList<Dish> allDishes = mainFrame.getAllDishes();
 		for(Dish dish : allDishes){
 			if (dish.getFirstLanguageName().toLowerCase().indexOf(tfSearchCode.getText().toLowerCase()) >= 0){
-				pDishes.add(new DishButton(dish));
+				pDishes.add(new DishLabel(dish));
 			} else if (dish.getSecondLanguageName() != null && dish.getSecondLanguageName().toLowerCase().indexOf(tfSearchCode.getText().toLowerCase()) >= 0){
-				pDishes.add(new DishButton(dish));
+				pDishes.add(new DishLabel(dish));
 			} else if (dish.getAbbreviation() != null && dish.getAbbreviation().toLowerCase().indexOf(tfSearchCode.getText().toLowerCase()) >= 0){
-				pDishes.add(new DishButton(dish));
+				pDishes.add(new DishLabel(dish));
 			}
 		}
 		pDishes.updateUI();
@@ -312,7 +377,7 @@ public class OpenTableDialog extends JDialog implements ActionListener{
 		params.put("customerAmount", tfCustomerAmount.getText());
 		params.put("comments", tfWholeOrderComment.getText());
 		
-		String response = HttpUtil.getJSONObjectByPost(MainFrame.SERVER_URL + url, params, "UTF-8");
+		String response = HttpUtil.getJSONObjectByPost(ConstantValue.SERVER_URL + url, params, "UTF-8");
 		if (response == null || response.length() == 0){
 			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 			logger.error("get null from server while making order. URL = " + url + ", param = "+ params);
@@ -355,7 +420,7 @@ public class OpenTableDialog extends JDialog implements ActionListener{
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("indents", ja.toString());
 		params.put("deskid", desk.getId()+"");
-		String response = HttpUtil.getJSONObjectByPost(MainFrame.SERVER_URL + url, params, "UTF-8");
+		String response = HttpUtil.getJSONObjectByPost(ConstantValue.SERVER_URL + url, params, "UTF-8");
 		if (response == null || response.length() == 0){
 			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 			logger.error("get null from server while add dish to order. URL = " + url + ", param = "+ params);
@@ -390,15 +455,36 @@ public class OpenTableDialog extends JDialog implements ActionListener{
 		return requires;
 	}
 	
-	private void doCategory2ButtonClick(Category2 c2){
-		int amountPerRow = 4;
+	private void generateDishPanel(Category2 c2, int startPosition){
 		pDishes.removeAll();
+		int lastPosition = startPosition + ConstantValue.openTableDialog_DishLayout_Row * ConstantValue.openTableDialog_DishLayout_Column;
+		if (startPosition > 0){
+			lastPosition--;//减去一个位置, 显示上一页
+			pDishes.add(new DishPrePageLabel(c2, 0));
+		}
+		if (c2.getDishes().size() > lastPosition){
+			lastPosition--;//减去一个位置, 显示下一页
+		}
+		
 		for(int i = 0; i < c2.getDishes().size(); i++){
-			Dish dish = c2.getDishes().get(i);
-			DishButton btn = new DishButton(dish);
-			pDishes.add(btn, new GridBagConstraints(i % amountPerRow, (int) i / amountPerRow, 1, 1, 1, 0.2, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+			if (i < startPosition)
+				continue;
+			if (i < lastPosition || i == c2.getDishes().size() - 1){
+				Dish dish = c2.getDishes().get(i);
+				DishLabel lb = new DishLabel(dish);
+				pDishes.add(lb);
+			} else {
+				pDishes.add(new DishNextPageLabel(c2, i));
+				break;
+			}
 		}
 		pDishes.updateUI();
+		for(Category2Label lb : listCategory2Label){
+			if (lb.c2.getId() == c2.getId())
+				lb.setBackground(COLOR_CHOOSE);
+			else 
+				lb.setBackground(COLOR_UNCHOOSE);
+		}
 	}
 	
 	/**
@@ -434,7 +520,7 @@ public class OpenTableDialog extends JDialog implements ActionListener{
 	 * 		如果未找到, 新加一条记录, 同时根据购买类型处理.
 	 * @param dish
 	 */
-	private void doDishButtonClick(Dish dish){
+	private void doDishLabelPress(Dish dish){
 		if (dish.getChooseMode() == ConstantValue.DISH_CHOOSEMODE_POPINFOCHOOSE
 				|| dish.getChooseMode() == ConstantValue.DISH_CHOOSEMODE_POPINFOQUIT){
 			//do this type as normal
@@ -452,14 +538,6 @@ public class OpenTableDialog extends JDialog implements ActionListener{
 			if (dlg.choosed != null)
 				cd.configs.addAll(dlg.choosed);
 		}
-//		if (dish.getChooseMode() == ConstantValue.DISH_CHOOSEMODE_SUBITEM){
-//			DishSubitemDialog dlg = new DishSubitemDialog(this, Messages.getString("OpenTableDialog.ChooseSubitem"), dish);
-//			dlg.setVisible(true);
-//			if (dlg.choosed == null || dlg.choosed.isEmpty()){
-//				return;
-//			}
-//			cd.configs.addAll(dlg.choosed);
-//		}
 		
 		if (dish.getPurchaseType() == ConstantValue.DISH_PURCHASETYPE_WEIGHT){
 			NumberInputDialog numdlg = new NumberInputDialog(this, "Input", Messages.getString("OpenTableDialog.InputWeight"), false);
@@ -509,6 +587,10 @@ public class OpenTableDialog extends JDialog implements ActionListener{
 	}
 	
 	class ChoosedDishRenderer extends JPanel implements ListCellRenderer{
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
 		private JLabel lbDish = new JLabel();
 		private JLabel lbAmountPrice = new JLabel();
 		private JLabel lbRequire = new JLabel();
@@ -565,50 +647,181 @@ public class OpenTableDialog extends JDialog implements ActionListener{
 	    }
 	}
 	
-	class Category2Button extends JButton{
+	class Category2Label extends JLabel{
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
 		private final Category2 c2;
-		public Category2Button(Category2 category2){
+		public Category2Label(Category2 category2){
 			this.c2 = category2;
-			this.setText(c2.getFirstLanguageName());
-			this.addActionListener(new ActionListener(){
+			setText(c2.getFirstLanguageName());
+			setOpaque(true);
+			setHorizontalAlignment(JLabel.CENTER);
+			addMouseListener(new MouseAdapter(){
 
 				@Override
-				public void actionPerformed(ActionEvent e) {
+				public void mousePressed(MouseEvent e) {
 					
-					doCategory2ButtonClick(c2);
+					generateDishPanel(c2, 0);
 				}
 				
 			});
+			setBorder(BorderFactory.createLineBorder(Color.gray));
 			Dimension d = this.getPreferredSize();
 			double width = d.getWidth();
 			if (width < 100)
 				width = 100;
 			d.setSize(width, 50);
 			this.setPreferredSize(d);
-//			this.setPreferredSize(buttonsize);
 		}
 	}
 	
-	class DishButton extends JButton{
+	class DishLabel extends JLabel{
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
 		private final Dish dish;
 		
-		public DishButton(Dish d){
+		public DishLabel(Dish d){
 			dish = d;
-			this.setText(d.getFirstLanguageName());
-			this.addActionListener(new ActionListener(){
+			setText(d.getFirstLanguageName());
+			setHorizontalAlignment(JLabel.CENTER);
+			setBorder(BorderFactory.createLineBorder(Color.gray));
+			addMouseListener(new MouseAdapter(){
 
 				@Override
-				public void actionPerformed(ActionEvent e) {
+				public void mousePressed(MouseEvent e) {
 					
-					doDishButtonClick(dish);
+					doDishLabelPress(dish);
 				}
 				
 			});
-			this.setPreferredSize(buttonsize);
+			setPreferredSize(buttonsize);
+		}
+	}
+	
+	class Category2NextPageLabel extends JLabel{
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+		public Category2NextPageLabel(final int nextPosition){
+			if (imgNextPage != null)
+				setIcon(new ImageIcon(imgNextPage));
+			setHorizontalAlignment(JLabel.CENTER);
+			addMouseListener(new MouseAdapter(){
+
+				@Override
+				public void mousePressed(MouseEvent e) {
+					
+					generateCategory2Panel(nextPosition);
+				}
+				
+			});
+			setBorder(BorderFactory.createLineBorder(Color.gray));
+			Dimension d = this.getPreferredSize();
+			double width = d.getWidth();
+			if (width < 100)
+				width = 100;
+			d.setSize(width, 50);
+			this.setPreferredSize(d);
+		}
+	}
+	
+	class Category2PrePageLabel extends JLabel{
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
+		public Category2PrePageLabel(final int startPosition){
+			if (imgPrePage != null)
+				setIcon(new ImageIcon(imgPrePage));
+			setHorizontalAlignment(JLabel.CENTER);
+			addMouseListener(new MouseAdapter(){
+
+				@Override
+				public void mousePressed(MouseEvent e) {
+					
+					generateCategory2Panel(startPosition);
+				}
+				
+			});
+			setBorder(BorderFactory.createLineBorder(Color.gray));
+			Dimension d = this.getPreferredSize();
+			double width = d.getWidth();
+			if (width < 100)
+				width = 100;
+			d.setSize(width, 50);
+			this.setPreferredSize(d);
+		}
+	}
+	
+	class DishNextPageLabel extends JLabel{
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+		public DishNextPageLabel(final Category2 c2, final int nextPosition){
+			if (imgNextPage != null)
+				setIcon(new ImageIcon(imgNextPage));
+			setHorizontalAlignment(JLabel.CENTER);
+			addMouseListener(new MouseAdapter(){
+
+				@Override
+				public void mousePressed(MouseEvent e) {
+					
+					generateDishPanel(c2, nextPosition);
+				}
+				
+			});
+			setBorder(BorderFactory.createLineBorder(Color.gray));
+			Dimension d = this.getPreferredSize();
+			double width = d.getWidth();
+			if (width < 100)
+				width = 100;
+			d.setSize(width, 50);
+			this.setPreferredSize(d);
+		}
+	}
+	
+	class DishPrePageLabel extends JLabel{
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
+		public DishPrePageLabel(final Category2 c2, final int startPosition){
+			if (imgPrePage != null)
+				setIcon(new ImageIcon(imgPrePage));
+			setHorizontalAlignment(JLabel.CENTER);
+			addMouseListener(new MouseAdapter(){
+
+				@Override
+				public void mousePressed(MouseEvent e) {
+					
+					generateDishPanel(c2, startPosition);
+				}
+				
+			});
+			setBorder(BorderFactory.createLineBorder(Color.gray));
+			Dimension d = this.getPreferredSize();
+			double width = d.getWidth();
+			if (width < 100)
+				width = 100;
+			d.setSize(width, 50);
+			this.setPreferredSize(d);
 		}
 	}
 	
 	class ListModel<ChoosedDish> extends DefaultListModel<ChoosedDish>{
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
 		public void refreshData(ChoosedDish cd, int start, int end){
 			super.fireContentsChanged(cd, start, end);
 		}

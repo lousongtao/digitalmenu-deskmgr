@@ -128,7 +128,7 @@ public class CheckoutDialog extends JDialog implements ActionListener, DocumentL
 			pMember.add(tfMemberPwd, 	new GridBagConstraints(4, 0, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
 		}
 		pMember.add(lbMemberInfo, 	new GridBagConstraints(0, 1, GridBagConstraints.REMAINDER, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
-		pMember.setVisible(MainFrame.functionlist.indexOf(ConstantValue.FUNCTION_MEMBER) >= 0);
+		pMember.setVisible(ConstantValue.functionlist.indexOf(ConstantValue.FUNCTION_MEMBER) >= 0);
 		
 		JPanel pPayway = new JPanel(new GridBagLayout());
 		pPayway.setBorder(BorderFactory.createTitledBorder(Messages.getString("CheckoutDialog.PayWay"))); //$NON-NLS-1$
@@ -403,7 +403,7 @@ public class CheckoutDialog extends JDialog implements ActionListener, DocumentL
 		String url = "member/querymemberhazily";
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("key", key);
-		String response = HttpUtil.getJSONObjectByPost(MainFrame.SERVER_URL + url, params, "UTF-8");
+		String response = HttpUtil.getJSONObjectByPost(ConstantValue.SERVER_URL + url, params, "UTF-8");
 		if (response == null || response.length() == 0){
 			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 			logger.error("get null from server while query member with key. URL = " + url + ", param = "+ params);
@@ -548,7 +548,7 @@ public class CheckoutDialog extends JDialog implements ActionListener, DocumentL
 		
 		WaitDialog wdlg = new WaitDialog(this, "Posting data..."){
 			public Object work(){
-				return HttpUtil.getJSONObjectByPost(MainFrame.SERVER_URL + url, params, "UTF-8");
+				return HttpUtil.getJSONObjectByPost(ConstantValue.SERVER_URL + url, params, "UTF-8");
 			}
 		};
 		String response = (String)wdlg.getReturnResult();
@@ -663,7 +663,7 @@ public class CheckoutDialog extends JDialog implements ActionListener, DocumentL
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("keys", keys);
 		params.put("goods", goods);
-		PrintJob job = new PrintJob("/payorder_template.json", params, mainFrame.printerName);
+		PrintJob job = new PrintJob("/payorder_template.json", params, ConstantValue.printerName);
 		PrintQueue.add(job);
 	}
 	
@@ -672,7 +672,7 @@ public class CheckoutDialog extends JDialog implements ActionListener, DocumentL
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("userId", mainFrame.getOnDutyUser().getId()+"");
 		params.put("memberCard", member.getMemberCard());
-		String response = HttpUtil.getJSONObjectByPost(MainFrame.SERVER_URL + url, params, "UTF-8");
+		String response = HttpUtil.getJSONObjectByPost(ConstantValue.SERVER_URL + url, params, "UTF-8");
 		if (response == null || response.length() == 0){
 			return null;
 		}
@@ -710,7 +710,7 @@ public class CheckoutDialog extends JDialog implements ActionListener, DocumentL
 		params.put("id", indent.getId() + "");
 		params.put("operatetype", ConstantValue.INDENT_OPERATIONTYPE_CANCEL+"");
 		params.put("paidCash", "0");
-		String response = HttpUtil.getJSONObjectByPost(MainFrame.SERVER_URL + url, params, "UTF-8");
+		String response = HttpUtil.getJSONObjectByPost(ConstantValue.SERVER_URL + url, params, "UTF-8");
 		JSONObject jsonObj = new JSONObject(response);
 		if (!jsonObj.getBoolean("success")){
 			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");

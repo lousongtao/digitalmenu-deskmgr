@@ -105,7 +105,7 @@ public class ViewHistoryIndentByDeskDialog extends JDialog implements ActionList
 		params.put("starttime", ConstantValue.DFYMDHMS.format(System.currentTimeMillis() - 24*60*60*1000));
 		params.put("deskname", desk.getName()); 
 		params.put("orderbydesc", "id"); 
-		String response = HttpUtil.getJSONObjectByPost(MainFrame.SERVER_URL + url, params, "UTF-8");
+		String response = HttpUtil.getJSONObjectByPost(ConstantValue.SERVER_URL + url, params, "UTF-8");
 		if (response == null || response.length() == 0){
 			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 			logger.error("get null from server while print indent. URL = " + url + ", param = "+ params);
@@ -201,7 +201,7 @@ public class ViewHistoryIndentByDeskDialog extends JDialog implements ActionList
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("keys", keys);
 		params.put("goods", goods);
-		PrintJob job = new PrintJob("/newIndent_template.json", params, mainFrame.printerName);
+		PrintJob job = new PrintJob("/newIndent_template.json", params, ConstantValue.printerName);
 		PrintQueue.add(job);
 	}
 	

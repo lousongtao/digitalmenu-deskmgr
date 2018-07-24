@@ -125,7 +125,7 @@ public class RefundIndentDetailDialog extends JDialog implements ActionListener{
 		btnRefund.addActionListener(this);
 		
 		
-		this.setSize(new Dimension(MainFrame.WINDOW_WIDTH, 600));
+		this.setSize(new Dimension(ConstantValue.WINDOW_WIDTH, 600));
 		this.setLocation((int)(mainFrame.getWidth() / 2 - this.getWidth() /2 + mainFrame.getLocation().getX()), 
 				(int)(mainFrame.getHeight() / 2 - this.getHeight() / 2 + mainFrame.getLocation().getY()));
 		
@@ -213,7 +213,7 @@ public class RefundIndentDetailDialog extends JDialog implements ActionListener{
 		params.put("userId", mainFrame.getOnDutyUser().getId() + "");
 		params.put("id", indent.getId() + "");
 		
-		String response = HttpUtil.getJSONObjectByPost(MainFrame.SERVER_URL + url, params, "UTF-8");
+		String response = HttpUtil.getJSONObjectByPost(ConstantValue.SERVER_URL + url, params, "UTF-8");
 		JSONObject jsonObj = new JSONObject(response);
 		if (!jsonObj.getBoolean("success")){
 			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
@@ -235,7 +235,7 @@ public class RefundIndentDetailDialog extends JDialog implements ActionListener{
 			public Object work(){
 				for (int i = 0; i < indentDetailIdList.size(); i++) {
 					params.put("indentDetailId", indentDetailIdList.get(i) + "");
-					String response = HttpUtil.getJSONObjectByPost(MainFrame.SERVER_URL + url, params, "UTF-8");
+					String response = HttpUtil.getJSONObjectByPost(ConstantValue.SERVER_URL + url, params, "UTF-8");
 					if (response == null || response.length() == 0){
 						logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
 						logger.error("get null from server while delete indent detail. URL = " + url + ", param = "+ params);

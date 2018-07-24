@@ -32,3 +32,7 @@
 	
 20180716
 	add price display in the open table dialog
+	
+20180724
+	1. move constant values to ConstantValue from MainFrame.
+	2. change the display components in OpenTableDialog from JButton to JLabel
