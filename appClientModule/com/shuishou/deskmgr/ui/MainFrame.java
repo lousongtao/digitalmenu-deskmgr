@@ -1098,6 +1098,7 @@ public class MainFrame extends JFrame implements ActionListener{
 			ConstantValue.openTableDialog_Category2Layout_Column = Integer.parseInt(prop.getProperty("OpenTableDialog.Category2Layout.Column"));
 			ConstantValue.openTableDialog_DishLayout_Row = Integer.parseInt(prop.getProperty("OpenTableDialog.DishLayout.Row"));
 			ConstantValue.openTableDialog_DishLayout_Column = Integer.parseInt(prop.getProperty("OpenTableDialog.DishLayout.Column"));
+			ConstantValue.dishConfig_Column = Integer.parseInt(prop.getProperty("DishConfigDialog.Column"));
 		} catch (NumberFormatException e){
 			e.printStackTrace();
 		}

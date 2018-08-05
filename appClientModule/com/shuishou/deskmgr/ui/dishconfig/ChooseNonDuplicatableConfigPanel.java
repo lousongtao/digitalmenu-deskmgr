@@ -37,12 +37,6 @@ public class ChooseNonDuplicatableConfigPanel extends JPanel implements DishConf
 	private void initUI(){
 		if (group.getDishConfigs() == null || group.getDishConfigs().isEmpty())
 			return;
-		int COMPONENT_ROWAMOUNT = 5;
-		if (ConstantValue.WINDOW_WIDTH < 800){
-			COMPONENT_ROWAMOUNT = 4;
-		} else if (ConstantValue.WINDOW_WIDTH > 1000){
-			COMPONENT_ROWAMOUNT = 6;
-		}
 		this.setLayout(new GridBagLayout());
 		if (!group.getDishConfigs().isEmpty()){
 			Collections.sort(group.getDishConfigs(), new Comparator<DishConfig>(){
@@ -55,7 +49,7 @@ public class ChooseNonDuplicatableConfigPanel extends JPanel implements DishConf
 				DishConfig config = group.getDishConfigs().get(i);
 				
 				DishConfigCheckBox cb = new DishConfigCheckBox(parent, config);
-				this.add(cb, new GridBagConstraints(i % COMPONENT_ROWAMOUNT, (int)i/COMPONENT_ROWAMOUNT, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 0, 0, 0), 0, 0));
+				this.add(cb, new GridBagConstraints(i % ConstantValue.dishConfig_Column, (int)i/ConstantValue.dishConfig_Column, 1, 1, 1, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 0, 0, 0), 0, 0));
 				components.add(cb);
 			}
 		}
