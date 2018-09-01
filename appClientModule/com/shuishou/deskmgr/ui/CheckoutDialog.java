@@ -427,11 +427,11 @@ public class CheckoutDialog extends JDialog implements ActionListener, DocumentL
 			lbMemberInfo.setText("");
 		} else {
 			tfMember.setText(m.getName());
-			String memberInfo = Messages.getString("CheckoutDialog.MemberInfo.Name")+ m.getName() + ", " 
-				+ Messages.getString("CheckoutDialog.MemberInfo.DiscountRate") + m.getDiscountRate() + ", "
-				+ Messages.getString("CheckoutDialog.MemberInfo.Balance") + String.format(ConstantValue.FORMAT_DOUBLE, m.getBalanceMoney());
+			String memberInfo = Messages.getString("CheckoutDialog.MemberInfo.Name") + ": "+ m.getName() + ", " 
+				+ Messages.getString("CheckoutDialog.MemberInfo.DiscountRate") +": "+ m.getDiscountRate() + ", "
+				+ Messages.getString("CheckoutDialog.MemberInfo.Balance") +": "+ String.format(ConstantValue.FORMAT_DOUBLE, m.getBalanceMoney());
 			if (Boolean.getBoolean(mainFrame.getConfigsMap().get(ConstantValue.CONFIGS_MEMBERMGR_BYSCORE))){
-				memberInfo += ", " + Messages.getString("CheckoutDialog.MemberInfo.Score") + String.format(ConstantValue.FORMAT_DOUBLE, m.getScore()); 
+				memberInfo += ", " + Messages.getString("CheckoutDialog.MemberInfo.Score")+": " + String.format(ConstantValue.FORMAT_DOUBLE, m.getScore()); 
 			}
 			lbMemberInfo.setText(memberInfo);
 		}
@@ -557,8 +557,12 @@ public class CheckoutDialog extends JDialog implements ActionListener, DocumentL
 //		if (!jsonObj.getBoolean("success")){
 		if (!result.success){
 			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
-			logger.error("Do checkout failed. URL = " + url + ", param = "+ params);
-			JOptionPane.showMessageDialog(mainFrame, result.result); //$NON-NLS-1$
+			logger.error("Do checkout failed. URL = " + url + ", param = "+ params+ ", result = " + result.result);
+			if (result.result != null && result.result.indexOf("password is wrong") >= 0){
+				JOptionPane.showMessageDialog(mainFrame, "Password is wrong");
+			} else {
+				JOptionPane.showMessageDialog(mainFrame, result.result); //$NON-NLS-1$
+			}
 		}
 		CheckoutDialog.this.setVisible(false);
 		
