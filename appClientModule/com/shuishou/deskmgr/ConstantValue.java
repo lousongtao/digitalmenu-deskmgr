@@ -148,4 +148,6 @@ public class ConstantValue {
 	public static int openTableDialog_Category2Layout_Column = 5;
 	public static int openTableDialog_DishLayout_Row = 4;
 	public static int openTableDialog_DishLayout_Column = 4;
+	public static int dishConfig_Column = 6;
+	
 }

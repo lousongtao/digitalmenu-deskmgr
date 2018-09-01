@@ -68,8 +68,6 @@ public class OpenTableDialog extends JDialog implements ActionListener{
 	private final Logger logger = Logger.getLogger(OpenTableDialog.class.getName());
 	private static final Color COLOR_CHOOSE = Color.green;
 	private static final Color COLOR_UNCHOOSE = new Color(240, 240, 240);
-	private int DISHDISPLAY_ROWCOUNT = 4;
-	private int DISHDISPLAY_COLUMNCOUNT = 4;
 	private MainFrame mainFrame;
 	private Desk desk;
 	
@@ -83,7 +81,7 @@ public class OpenTableDialog extends JDialog implements ActionListener{
 	private JButton btnTakeaway = new JButton(Messages.getString("OpenTableDialog.Takeaway"));
 	private JBlockedButton btnConfirm = new JBlockedButton(Messages.getString("OpenTableDialog.ConfirmOrder"), null);
 	private JBlockedButton btnConfirmAndPay = new JBlockedButton(Messages.getString("OpenTableDialog.ConfirmAndPayOrder"), null);
-	private JPanel pDishes = new JPanel(new GridLayout(DISHDISPLAY_ROWCOUNT, DISHDISPLAY_COLUMNCOUNT));
+	private JPanel pDishes = new JPanel(new GridLayout(ConstantValue.openTableDialog_DishLayout_Row, ConstantValue.openTableDialog_DishLayout_Column));
 	private JList<ChoosedDish> listChoosedDish = new JList<>();
 	private ListModel<ChoosedDish> listModelChoosedDish = new ListModel<>();
 	private JTextField tfWholeOrderComment = new JTextField();
@@ -151,9 +149,6 @@ public class OpenTableDialog extends JDialog implements ActionListener{
 		pSearch.add(tfSearchCode, new GridBagConstraints(0, 1, 1, 1, 1, 0.2, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 0, 5), 0, 0));
 		pSearch.add(new JLabel(), new GridBagConstraints(0, 2, 2, 1, 1, 0.2, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 5, 0, 5), 0, 0));
 		
-		//TODO
-		ConstantValue.openTableDialog_Category2Layout_Row = 3;
-		ConstantValue.openTableDialog_Category2Layout_Column = 5;
 		pCategory2 = new JPanel(new GridLayout(ConstantValue.openTableDialog_Category2Layout_Row, ConstantValue.openTableDialog_Category2Layout_Column));
 		pCategory2.setBorder(BorderFactory.createTitledBorder("Category2"));
 		
@@ -201,8 +196,8 @@ public class OpenTableDialog extends JDialog implements ActionListener{
 		});
 		btnFlavor.addActionListener(this);
 		btnTakeaway.addActionListener(this);
-//		this.setSize(new Dimension(mainFrame.getWidth(), mainFrame.getHeight()));
-		this.setSize(new Dimension(1280, 768));
+		this.setSize(new Dimension(mainFrame.getWidth(), mainFrame.getHeight()));
+//		this.setSize(new Dimension(1280, 768));
 		this.setLocation((int)(mainFrame.getWidth() / 2 - this.getWidth() /2 + mainFrame.getLocation().getX()), 
 				(int)(mainFrame.getHeight() / 2 - this.getHeight() / 2 + mainFrame.getLocation().getY()));
 	}
