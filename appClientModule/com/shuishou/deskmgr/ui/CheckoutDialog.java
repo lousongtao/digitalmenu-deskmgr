@@ -434,6 +434,7 @@ public class CheckoutDialog extends JDialog implements ActionListener, DocumentL
 				memberInfo += ", " + Messages.getString("CheckoutDialog.MemberInfo.Score")+": " + String.format(ConstantValue.FORMAT_DOUBLE, m.getScore()); 
 			}
 			lbMemberInfo.setText(memberInfo);
+			tfMemberPwd.requestFocus();
 		}
 	}
 	
@@ -629,12 +630,27 @@ public class CheckoutDialog extends JDialog implements ActionListener, DocumentL
 			keys.put("change", "0");
 		}
 		if (ConstantValue.INDENT_PAYWAY_MEMBER.equals(payway)){
-			Member m = doLookforMember(member.getMemberCard());
-			if (m == null)
-				keys.put("memberinfo", "");
-			else keys.put("memberinfo", "Member: balance \\$" + String.format(ConstantValue.FORMAT_DOUBLE, m.getBalanceMoney()) + ", score " + m.getScore());
+			Member m = doLookforMemberByCard(member.getMemberCard());
+			if (m == null){
+				keys.put("memberbalance", "");
+				keys.put("memberscore", "");
+			} else {
+				keys.put("memberbalance", "Member Balance: \\$" + String.format(ConstantValue.FORMAT_DOUBLE, m.getBalanceMoney()));
+				keys.put("memberscore",   "Member Score: " + m.getScore());
+				//替换本地会员数据
+				ArrayList<Member> members = mainFrame.getMemberList();
+				if (members != null){
+					for (int i = 0; i < members.size(); i++) {
+						Member mi = members.get(i);
+						if (mi.getId() == m.getId()){
+							mi.setBalanceMoney(m.getBalanceMoney());
+						}
+					}
+				}
+			}
 		} else {
-			keys.put("memberinfo", "");
+			keys.put("memberbalance", "");
+			keys.put("memberscore", "");
 		}
 		boolean print2ndLanguage = Boolean.parseBoolean(mainFrame.getConfigsMap().get(ConstantValue.CONFIGS_PRINT2NDLANGUAGENAME));
 		List<Map<String, String>> goods = new ArrayList<Map<String, String>>();
@@ -671,8 +687,8 @@ public class CheckoutDialog extends JDialog implements ActionListener, DocumentL
 		PrintQueue.add(job);
 	}
 	
-	private Member doLookforMember(String memberCard){
-		String url = "member/querymember";
+	private Member doLookforMemberByCard(String memberCard){
+		String url = "member/querymemberbycard";
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("userId", mainFrame.getOnDutyUser().getId()+"");
 		params.put("memberCard", member.getMemberCard());
@@ -681,16 +697,11 @@ public class CheckoutDialog extends JDialog implements ActionListener, DocumentL
 			return null;
 		}
 		Gson gsonTime = new GsonBuilder().setDateFormat(ConstantValue.DATE_PATTERN_YMDHMS).create();
-		HttpResult<ArrayList<Member>> result = gsonTime.fromJson(response, new TypeToken<HttpResult<ArrayList<Member>>>(){}.getType());
+		HttpResult<Member> result = gsonTime.fromJson(response, new TypeToken<HttpResult<Member>>(){}.getType());
 		if (!result.success){
 			return null;
 		}
-		ArrayList<Member> ms = result.data;
-		if (ms == null || ms.isEmpty()){
-			return null;
-		} else {
-			return ms.get(0);
-		} 
+		return result.data;
 	}
 	
 	private void doSplitIndent(){
