@@ -109,8 +109,11 @@ public class LoginDialog extends JDialog {
 			} else {
 				LoginDialog.this.setVisible(false);
 			}
-		} else if ("invalid_password".equals(logResult.getString("result"))){
-			JOptionPane.showMessageDialog(LoginDialog.this, "Password Error");
+			if (logResult.getString("licenseWarning") != null){
+				JOptionPane.showMessageDialog(mainFrame, logResult.getString("licenseWarning"), "License Warning", JOptionPane.WARNING_MESSAGE);
+			}
+		} else {
+			JOptionPane.showMessageDialog(LoginDialog.this, logResult.getString("result"));
 		}
 	}
 }
