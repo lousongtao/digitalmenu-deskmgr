@@ -7,6 +7,8 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -15,11 +17,15 @@ import java.util.Map;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import javax.swing.table.AbstractTableModel;
 
 import org.apache.log4j.Logger;
@@ -35,12 +41,14 @@ import com.shuishou.deskmgr.beans.Dish;
 import com.shuishou.deskmgr.beans.HttpResult;
 import com.shuishou.deskmgr.beans.Indent;
 import com.shuishou.deskmgr.beans.IndentDetail;
+import com.shuishou.deskmgr.beans.PayWay;
 import com.shuishou.deskmgr.http.HttpUtil;
 import com.shuishou.deskmgr.printertool.PrintJob;
 import com.shuishou.deskmgr.printertool.PrintQueue;
 
 public class ViewHistoryIndentByDeskDialog extends JDialog implements ActionListener {
 	private final Logger logger = Logger.getLogger(ViewHistoryIndentByDeskDialog.class.getName());
+	private final static String ACTIONCODE_CHANGEPAYWAY = "CHANGEPAYWAY"; 
 	private MainFrame mainFrame;
 	private Desk desk;
 	private ArrayList<Indent> indents;
@@ -51,7 +59,8 @@ public class ViewHistoryIndentByDeskDialog extends JDialog implements ActionList
 	private JTable table = new JTable();
 	private IndentModel tableModel = null;
 	private Gson gsonTime = new GsonBuilder().setDateFormat(ConstantValue.DATE_PATTERN_YMDHMS).create();
-	
+	private JPopupMenu popupmenu = new JPopupMenu();
+	private JMenu mChangePayway = new JMenu("Change Payway");
 	
 	public ViewHistoryIndentByDeskDialog(MainFrame mainFrame,String title, boolean modal, Desk desk){
 		super(mainFrame, title, modal);
@@ -79,6 +88,40 @@ public class ViewHistoryIndentByDeskDialog extends JDialog implements ActionList
 		table.getColumnModel().getColumn(6).setPreferredWidth(120);
 		JScrollPane jspTable = new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		table.addMouseListener(new MouseAdapter(){
+			public void mouseReleased(MouseEvent e) {
+				if (e.isPopupTrigger()){
+                    JTable source = (JTable)e.getSource();
+                    int row = source.rowAtPoint( e.getPoint() );
+                    int column = source.columnAtPoint( e.getPoint() );
+
+                    if (! source.isRowSelected(row)){
+                        source.changeSelection(row, column, false, false);
+                    }
+                    popupmenu.show(e.getComponent(), e.getX(), e.getY());
+				}
+			}
+		});
+		popupmenu.add(mChangePayway);
+		JMenuItem miCash = new JMenuItem(ConstantValue.INDENT_PAYWAY_CASH);
+		miCash.addActionListener(this);
+		miCash.setActionCommand(ACTIONCODE_CHANGEPAYWAY);
+		mChangePayway.add(miCash);
+		JMenuItem miBankcard = new JMenuItem(ConstantValue.INDENT_PAYWAY_BANKCARD);
+		miBankcard.addActionListener(this);
+		miBankcard.setActionCommand(ACTIONCODE_CHANGEPAYWAY);
+		mChangePayway.add(miBankcard);
+		JMenuItem miMember = new JMenuItem(ConstantValue.INDENT_PAYWAY_MEMBER);
+		miMember.addActionListener(this);
+		miMember.setActionCommand(ACTIONCODE_CHANGEPAYWAY);
+		mChangePayway.add(miMember);
+		for (int i = 0; i < mainFrame.getPaywayList().size(); i++) {
+			PayWay pw = mainFrame.getPaywayList().get(i);
+			JMenuItem mii = new JMenuItem(pw.getName());
+			mii.addActionListener(this);
+			mii.setActionCommand(ACTIONCODE_CHANGEPAYWAY);
+			mChangePayway.add(mii);
+		}
 		JPanel pFunction = new JPanel(new GridBagLayout());
 		pFunction.add(btnPrint, 		new GridBagConstraints(0, 0, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
 		pFunction.add(btnRefund, 		new GridBagConstraints(1, 0, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 50, 0, 0), 0, 0));
@@ -134,6 +177,48 @@ public class ViewHistoryIndentByDeskDialog extends JDialog implements ActionList
 			doPrint();
 		} else if (e.getSource() == btnRefund){
 			doRefund();
+		} else if (e.getSource() instanceof JMenuItem){
+			if (ACTIONCODE_CHANGEPAYWAY.equals(e.getActionCommand())){
+				doChangePayway(((JMenuItem)e.getSource()).getText());
+			}
+		}
+	}
+	
+	private void doChangePayway(String payway){
+		int row = table.getSelectedRow();
+		if (row < 0)
+			return;
+		Indent indent = tableModel.getObjectAt(row);
+		if (indent.getStatus() != ConstantValue.INDENT_STATUS_PAID){
+			JOptionPane.showMessageDialog(mainFrame, "This order is not PAID status, cannot change payway.");
+			return;
+		}
+		if (payway.equals(indent.getPayWay())){
+			return;
+		}
+		String url = "indent/dochangepaywayindent";
+		Map<String, String> params = new HashMap<String, String>();
+		params.put("userId", mainFrame.getOnDutyUser().getId()+"");
+		params.put("id", String.valueOf(indent.getId()));
+		params.put("payway", payway);
+		String response = HttpUtil.getJSONObjectByPost(ConstantValue.SERVER_URL + url, params, "UTF-8");
+		if (response == null || response.length() == 0){
+			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
+			logger.error("get null from server while change indent's payway. URL = " + url + ", param = "+ params);
+			JOptionPane.showMessageDialog(this, "get null from server while change indent's payway. URL = " + url + ", param = "+ params);
+			return;
+		}
+		HttpResult<ArrayList<Indent>> result = gsonTime.fromJson(response, new TypeToken<HttpResult<ArrayList<Indent>>>(){}.getType());
+		if (!result.success){
+			logger.error(ConstantValue.DFYMDHMS.format(new Date()) + "\n");
+			logger.error("return false while change indent's payway. URL = " + url + ", response = "+response);
+			JOptionPane.showMessageDialog(this, result.result);
+			return;
+		}
+		if (result.data == null || result.data.isEmpty()){
+			JOptionPane.showMessageDialog(this, "Change payway successfully.");
+			this.setVisible(false);
+			return;
 		}
 	}
 

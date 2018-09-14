@@ -36,3 +36,6 @@
 20180724
 	1. move constant values to ConstantValue from MainFrame.
 	2. change the display components in OpenTableDialog from JButton to JLabel
+	
+20180914
+	1. change PAYWAY for paid order

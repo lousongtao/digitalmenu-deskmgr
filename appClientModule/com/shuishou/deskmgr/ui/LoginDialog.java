@@ -109,7 +109,8 @@ public class LoginDialog extends JDialog {
 			} else {
 				LoginDialog.this.setVisible(false);
 			}
-			if (logResult.getString("licenseWarning") != null){
+			//license 无异常时, logResult.get("licenseWarning")返回值是null, 非空也非字符串, 不知道是个什么类型, 目前只能用长度为4来判断
+			if (logResult.get("licenseWarning") != null && logResult.get("licenseWarning").toString().length() > 4){
 				JOptionPane.showMessageDialog(mainFrame, logResult.getString("licenseWarning"), "License Warning", JOptionPane.WARNING_MESSAGE);
 			}
 		} else {
