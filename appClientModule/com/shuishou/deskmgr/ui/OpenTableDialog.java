@@ -613,7 +613,7 @@ public class OpenTableDialog extends JDialog implements ActionListener{
 				txt = txt.substring(0, 17) + "...";
 			lbDish.setText(txt);
 			if (dish.getPurchaseType() == ConstantValue.DISH_PURCHASETYPE_UNIT)
-				lbAmountPrice.setText(cd.amount+" / $"+cd.getPrice());
+				lbAmountPrice.setText(cd.amount+" / $"+ String.format(ConstantValue.FORMAT_DOUBLE, cd.getPrice()));
 			else if (dish.getPurchaseType() == ConstantValue.DISH_PURCHASETYPE_WEIGHT)
 				lbAmountPrice.setText(cd.amount+" / "+cd.weight);
 			lbRequire.setText(generateRequires(cd));
