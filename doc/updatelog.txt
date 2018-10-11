@@ -39,3 +39,6 @@
 	
 20180914
 	1. change PAYWAY for paid order
+
+20181011
+    1. split order with a fix price

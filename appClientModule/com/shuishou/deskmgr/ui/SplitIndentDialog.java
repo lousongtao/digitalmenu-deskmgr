@@ -21,6 +21,7 @@ import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.AbstractTableModel;
 
+import com.shuishou.deskmgr.ui.components.NumberInputDialog;
 import org.apache.log4j.Logger;
 
 import com.shuishou.deskmgr.ConstantValue;
@@ -34,8 +35,13 @@ import com.shuishou.deskmgr.ui.components.IconButton;
 /**
  * 把一个账单分割成多个子账单支付
  * 原则: 将Indent.item罗列在表格中, 由用户点选要支付的项; 如果该项数量为多个, 每次只减少一个, 直到减少到0为止;
- * 支付: 付款时, 将移入到列表里面items, 重新生成一个订单(虚拟订单, 未持久化到服务端), 弹出付款界面, 收集付款信息, 
- * 然后将此虚拟订单连同付款信息一同发给服务端做持久化. 
+ *
+ * 支付: 付款时, 将移入到列表里面items, 重新生成一个订单(虚拟订单, 未持久化到服务端), 弹出付款界面, 收集付款信息,
+ * 然后将此虚拟订单连同付款信息一同发给服务端做持久化.
+ *
+ * 固定金额分帐: 用于将部分账单单独付费, 其他部分使用另一种支付方式付费; 使用此功能类似于分帐功能, 但是要用户输入计划分帐
+ * 的金额(此金额只能小于账单整体金额), 然后要用户必须选取至少一个菜作为IndentDetail信息(为避免空指针异常), 然后再生成一个
+ * 虚拟订单, 弹出付款的界面.
  * 
  * 预防用户点击关闭操作, 所以该界面的上下移动操作, 不可以直接改变indent数据, 而是应该使用copy的数据. 当做完一个操作, 
  * 完成了数据库的持久化以后, 从服务端同步indent的最新结果
@@ -52,6 +58,7 @@ public class SplitIndentDialog extends JDialog {
 	private IconButton btnMoveUp = new IconButton(Messages.getString("SplitIndentDialog.MoveUp"), "/resource/arrowup.png");
 	private IconButton btnPay = new IconButton(Messages.getString("SplitIndentDialog.Pay"), "/resource/checkout.png");
 	private IconButton btnPayRest = new IconButton(Messages.getString("SplitIndentDialog.PayRest"), "/resource/checkout.png");
+    private IconButton btnPayFixPrice = new IconButton(Messages.getString("SplitIndentDialog.PayFixPrice"), "/resource/checkout.png");
 	private JButton btnClose = new JButton(Messages.getString("CloseDialog"));
 	private JLabel lbPrice = new JLabel();
 	private JTable tableIndentUp = new JTable();
@@ -112,10 +119,11 @@ public class SplitIndentDialog extends JDialog {
 		
 		JPanel pFunction = new JPanel(new GridBagLayout());
 		pFunction.add(btnMoveDown, 		new GridBagConstraints(0, 0, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
-		pFunction.add(btnMoveUp,		new GridBagConstraints(1, 0, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 50, 0, 0), 0, 0));
-		pFunction.add(btnPay,			new GridBagConstraints(2, 0, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 50, 0, 0), 0, 0));
-		pFunction.add(btnPayRest,		new GridBagConstraints(3, 0, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 50, 0, 0), 0, 0));
-		pFunction.add(btnClose,			new GridBagConstraints(4, 0, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 50, 0, 0), 0, 0));
+		pFunction.add(btnMoveUp,		new GridBagConstraints(1, 0, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 30, 0, 0), 0, 0));
+		pFunction.add(btnPay,			new GridBagConstraints(2, 0, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 30, 0, 0), 0, 0));
+		pFunction.add(btnPayRest,		new GridBagConstraints(3, 0, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 30, 0, 0), 0, 0));
+        pFunction.add(btnPayFixPrice,	new GridBagConstraints(4, 0, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 30, 0, 0), 0, 0));
+		pFunction.add(btnClose,			new GridBagConstraints(5, 0, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 30, 0, 0), 0, 0));
 		Dimension dPButton = pFunction.getPreferredSize();
 		dPButton.height = 60;
 		pFunction.setPreferredSize(dPButton);
@@ -158,6 +166,12 @@ public class SplitIndentDialog extends JDialog {
 			public void actionPerformed(ActionEvent e) {
 				doPayRest();
 			}});
+		btnPayFixPrice.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                doPayFixPrice();
+            }
+        });
 		this.setSize(new Dimension(ConstantValue.WINDOW_WIDTH, ConstantValue.WINDOW_HEIGHT));
 		this.setLocation((int)(mainFrame.getWidth() / 2 - this.getWidth() /2 + mainFrame.getLocation().getX()), 
 				(int)(mainFrame.getHeight() / 2 - this.getHeight() / 2 + mainFrame.getLocation().getY()));
@@ -213,7 +227,69 @@ public class SplitIndentDialog extends JDialog {
 			tableIndentUp.setRowSelectionInterval(row, row);
 		}
 	}
-	
+
+    /**
+     * 固定金额付款, 用于一个账单, 使用多种支付方式, 分割出来一个固定金额的订单.
+     * 1. 检查列表中是否选择了一定数目的菜, 如果没有选择, 给出提示:至少选择一道菜; 如果列表中选择的菜包含了订单全部的菜, 即上方列表已经为空, 给予错误提示: 不能把所有菜都选择进新订单.
+     * 2. 弹出数字输入框, 由用户输入一个固定金额, 要求该金额大于零并小于原订单金额. 如果输入值超出范围, 给予错误提示.
+     * 3. 根据用户输入的金额, 选择的菜, 生成一个临时订单. 订单的paid_Price设定为输入金额
+     */
+	private void doPayFixPrice(){
+        if (tableModelIndentDown.items == null || tableModelIndentDown.items.isEmpty()){
+            JOptionPane.showMessageDialog(mainFrame, Messages.getString("SplitIndentDialog.MustChooseOneDish"));
+            return;
+        }
+        if (tableModelIndentUp.items == null || tableModelIndentUp.items.isEmpty()){
+            JOptionPane.showMessageDialog(mainFrame, Messages.getString("SplitIndentDialog.ChoseAllDishes"));
+            return;
+        }
+        NumberInputDialog numdlg = new NumberInputDialog(this, "Input", "Input a price", true);
+        numdlg.setVisible(true);
+        if (!numdlg.isConfirm)
+            return;
+        if (numdlg.inputDouble <= 0 || numdlg.inputDouble >= indent.getTotalPrice()){
+            JOptionPane.showMessageDialog(mainFrame, Messages.getString("SplitIndentDialog.PriceNotAvailable") + indent.getFormatTotalPrice());
+            return;
+        }
+        //build a indent object
+        Indent tempIndent = new Indent();
+        tempIndent.setItems(tableModelIndentDown.items);
+        tempIndent.setTotalPrice(numdlg.inputDouble);
+        CheckoutSplitFixPriceIndentDialog dlg = new CheckoutSplitFixPriceIndentDialog(mainFrame, Messages.getString("MainFrame.CheckoutTitle"), true, desk, tempIndent, this.indent.getId());
+        dlg.setVisible(true);
+        if (dlg.isCancel)
+            return;
+        //clear down table
+        tableModelIndentDown.items.clear();
+        tableModelIndentDown.fireTableDataChanged();
+        //get the return data(the left without paid for the indent)
+        indent = dlg.getIndentAfterSplit();
+        if (indent == null){
+            tableModelIndentUp.items.clear();
+            tableModelIndentUp.fireTableDataChanged();
+            lbPrice.setText("0");
+        } else {
+            tableModelIndentUp.items = indent.copy().getItems();
+            tableModelIndentUp.fireTableDataChanged();
+            lbPrice.setText("$"+this.indent.getTotalPrice());
+        }
+        //refresh mainframe deskcell
+        for(DeskCell dc : mainFrame.getDeskcellList()){
+            if (dc.getDesk().getName().equals(desk.getName())){
+                dc.setIndent(this.indent);
+                if (indent != null && indent.getStatus() == ConstantValue.INDENT_STATUS_PAID){
+                    dc.setIndent(null);
+                }
+            }
+            //if the indent status changed to paid, then clear the merge data
+            if (indent != null && indent.getStatus() == ConstantValue.INDENT_STATUS_PAID){
+                if (desk.getName().equals(dc.getDesk().getMergeTo())){
+                    dc.getDesk().setMergeTo(null);
+                    dc.setMergeTo(null);
+                }
+            }
+        }
+    }
 	/**
 	 * 把订单的剩余项全部支付
 	 */

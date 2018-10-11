@@ -254,7 +254,6 @@ public class OpenTableDialog extends JDialog implements ActionListener{
 	 * 如果category2数量多, 需要分页显示
 	 * 如果category2数量太少, 不足一行, 需要补充几个空控件, 否则界面会被拉长, 很难看
 	 * @param startPosition 当category2数量过多时, 需要分页显示, 这个参数指示当前页从第几个category2开始
-	 * @param prePageStartPosition, 需要显示上页图标时, 设定该值为上页图标显示的起始位置
 	 */
 	private void generateCategory2Panel(int startPosition ){
 		ArrayList<Category2> c2s = mainFrame.getAllCategory2s();

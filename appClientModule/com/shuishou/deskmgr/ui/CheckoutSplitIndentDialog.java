@@ -73,7 +73,10 @@ public class CheckoutSplitIndentDialog extends CheckoutDialog{
 		getBtnCancelOrder().setVisible(false);
 		this.originIndentId = originIndentId;
 	}
-	
+
+	public String getServerURL(){
+	    return "indent/splitindentandpay";
+    }
 	public void doPay(){
 		if (rbPayMember.isSelected()){
 			if (member == null){
@@ -100,7 +103,7 @@ public class CheckoutSplitIndentDialog extends CheckoutDialog{
 			ja.put(jo);
 		}
 		
-		final String url = "indent/splitindentandpay";
+		final String url = getServerURL();
 		final Map<String, String> params = new HashMap<String, String>();
 		params.put("userId", mainFrame.getOnDutyUser().getId() + "");
 		params.put("confirmCode", mainFrame.getConfigsMap().get(ConstantValue.CONFIGS_CONFIRMCODE));
@@ -193,7 +196,7 @@ public class CheckoutSplitIndentDialog extends CheckoutDialog{
 		if (rbPayCash.isSelected()){
 			JOptionPane.showMessageDialog(mainFrame, Messages.getString("CheckoutDialog.GetCash") + numGetCash.getText()
 			+ "\n" + Messages.getString("CheckoutDialog.ShouldPayAmount") + String.format(ConstantValue.FORMAT_DOUBLE, discountPrice)
-			+ "\n" + Messages.getString("CheckoutDialog.Charge") + change);
+			+ "\n" + Messages.getString("CheckoutDialog.Change") + change);
 		}
 	}
 
