@@ -395,16 +395,23 @@ public class MainFrame extends JFrame implements ActionListener{
 			memberList.addAll(result.data);
 	}
 	
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private void buildDeskCells(){
 		pDeskArea.removeAll();
 		deskcellList.clear();
-		
-		for (int i = 0; i < deskList.size(); i++) {
-			DeskCell dc = new DeskCell(this, deskList.get(i));
-			pDeskArea.add(dc, new GridBagConstraints(i % ConstantValue.DESK_COLUMN_AMOUNT, (int)(i / ConstantValue.DESK_COLUMN_AMOUNT), 1, 1,1,1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,0,0),0,0));
-			deskcellList.add(dc);
+		if (!deskList.isEmpty()){
+			Collections.sort(deskList, new Comparator<Desk>(){
+
+				@Override
+				public int compare(Desk o1, Desk o2) {
+					return o1.getSequence() - o2.getSequence();
+				}});
+			for (int i = 0; i < deskList.size(); i++) {
+				DeskCell dc = new DeskCell(this, deskList.get(i));
+				pDeskArea.add(dc, new GridBagConstraints(i % ConstantValue.DESK_COLUMN_AMOUNT, (int)(i / ConstantValue.DESK_COLUMN_AMOUNT), 1, 1,1,1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5,5,0,0),0,0));
+				deskcellList.add(dc);
+			}
 		}
+		
 		pDeskArea.updateUI();
 	}
 	
@@ -429,6 +436,7 @@ public class MainFrame extends JFrame implements ActionListener{
 		}
 		deskList.clear();
 		deskList.addAll(result.data);
+		
 		//rebind desk objects to deskcell objects
 		for(DeskCell dc : deskcellList){
 			for(Desk desk: deskList){
