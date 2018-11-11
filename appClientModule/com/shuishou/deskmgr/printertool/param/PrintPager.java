@@ -20,7 +20,7 @@ public class PrintPager {
 	/** 纸张宽度(默认:80 * 2.1)*/
 	public Integer pagerWidth = (int) (220);
 	/** 纸张高度(默认:80 * 2.1)*/
-	public Integer pagerHeight = (int) (800);//佳博打印机每页高度是800
+	public Integer pagerHeight = (int) (530);//佳博打印机每页高度是530
 	/** 起始位置横向偏移量(默认:10)*/
 	public Integer offsetX = 5;
 	/** 起始位置纵向偏移量(默认:10)*/

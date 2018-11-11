@@ -1,44 +1,59 @@
-20180521
-	1. use code to open cashdrawer
-	
-20180601
-	1. define 2 ways to open cashdrawer, via printer and COM port. Printer is the first priority
-	2. put a new button to allow openning payment dialog immediately after make order
-	
-20180603
-	1. build new component for dishconfig choice; make the choice selected easily and clearly
-	
-20180608
-	1. correct a bug to cancel selection of the DishConfigCheckBox
-	2. shrinke the icon size in change desk dialog 
+20181111
+    1. set print page height as 530. The old value is 800, there are some lines cannot print out.
 
-20180612
-	1. extend JRadioButton, making it is easily touchable and highlight
-	
-20180613
-	1. correct the bug about that the REQUIREMENT in indentdetail cannot be controlled by font and bold
-	   REMEMBER: update the print template file while the restaurant do upgrade.
-	   
-20180617
-	1. add log to track exception in print thread
-	
-20180621
-	1. add discount template on payment ticket
-	
+20181011
+    1. split order with a fix price
+
+20180914
+	1. change PAYWAY for paid order
+
+20180724
+	1. move constant values to ConstantValue from MainFrame.
+	2. change the display components in OpenTableDialog from JButton to JLabel
+
+20180716
+	add price display in the open table dialog
+
 20180626
 	1. change the dish requirements' print style, reduce one empty line
 	2. add a config parameter for refresh interval
 	3. refund, allow only refund part of the order
-	
-20180716
-	add price display in the open table dialog
-	
-20180724
-	1. move constant values to ConstantValue from MainFrame.
-	2. change the display components in OpenTableDialog from JButton to JLabel
-	
-20180914
-	1. change PAYWAY for paid order
 
-20181011
-    1. split order with a fix price
+20180621
+	1. add discount template on payment ticket
+
+20180617
+	1. add log to track exception in print thread
+
+20180613
+	1. correct the bug about that the REQUIREMENT in indentdetail cannot be controlled by font and bold
+	   REMEMBER: update the print template file while the restaurant do upgrade.
+
+20180612
+	1. extend JRadioButton, making it is easily touchable and highlight
+
+20180608
+	1. correct a bug to cancel selection of the DishConfigCheckBox
+	2. shrinke the icon size in change desk dialog
+
+20180603
+	1. build new component for dishconfig choice; make the choice selected easily and clearly
+
+20180601
+	1. define 2 ways to open cashdrawer, via printer and COM port. Printer is the first priority
+	2. put a new button to allow openning payment dialog immediately after make order
+
+20180521
+	1. use code to open cashdrawer
+	
+
+
+
+
+
+
+
+
+
+
+

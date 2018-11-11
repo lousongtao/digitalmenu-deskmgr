@@ -2,15 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="98d36b4c-ff20-42d5-99c4-81c9308ae869" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/appClientModule/com/shuishou/deskmgr/ui/CheckoutSplitFixPriceIndentDialog.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/digitalmenu-deskmgr.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/appClientModule/com/shuishou/deskmgr/messages_cn.properties" beforeDir="false" afterPath="$PROJECT_DIR$/appClientModule/com/shuishou/deskmgr/messages_cn.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/appClientModule/com/shuishou/deskmgr/messages_en.properties" beforeDir="false" afterPath="$PROJECT_DIR$/appClientModule/com/shuishou/deskmgr/messages_en.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/appClientModule/com/shuishou/deskmgr/ui/CheckoutSplitIndentDialog.java" beforeDir="false" afterPath="$PROJECT_DIR$/appClientModule/com/shuishou/deskmgr/ui/CheckoutSplitIndentDialog.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/appClientModule/com/shuishou/deskmgr/ui/OpenTableDialog.java" beforeDir="false" afterPath="$PROJECT_DIR$/appClientModule/com/shuishou/deskmgr/ui/OpenTableDialog.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/appClientModule/com/shuishou/deskmgr/ui/SplitIndentDialog.java" beforeDir="false" afterPath="$PROJECT_DIR$/appClientModule/com/shuishou/deskmgr/ui/SplitIndentDialog.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/appClientModule/log4j.properties" beforeDir="false" afterPath="$PROJECT_DIR$/appClientModule/log4j.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/appClientModule/com/shuishou/deskmgr/printertool/param/PrintPager.java" beforeDir="false" afterPath="$PROJECT_DIR$/appClientModule/com/shuishou/deskmgr/printertool/param/PrintPager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/digitalmenu-deskmgr.iml" beforeDir="false" afterPath="$PROJECT_DIR$/digitalmenu-deskmgr.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/doc/updatelog.txt" beforeDir="false" afterPath="$PROJECT_DIR$/doc/updatelog.txt" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/build/classes/" />
@@ -24,40 +18,46 @@
     <session id="2103181310">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="4" />
-          <entry key="project.open.time.1" value="2" />
+          <entry key="project.closed" value="11" />
+          <entry key="project.open.time.1" value="3" />
           <entry key="project.open.time.12" value="1" />
+          <entry key="project.open.time.2" value="1" />
           <entry key="project.open.time.21" value="1" />
-          <entry key="project.open.time.9" value="1" />
-          <entry key="project.opened" value="5" />
+          <entry key="project.open.time.22" value="1" />
+          <entry key="project.open.time.29" value="1" />
+          <entry key="project.open.time.33" value="1" />
+          <entry key="project.open.time.9" value="2" />
+          <entry key="project.opened" value="11" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
-          <entry key="java" value="6" />
-          <entry key="properties" value="3" />
-          <entry key="txt" value="1" />
+          <entry key="class" value="1" />
+          <entry key="java" value="16" />
+          <entry key="properties" value="4" />
+          <entry key="txt" value="2" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
-          <entry key="JAVA" value="6" />
-          <entry key="PLAIN_TEXT" value="1" />
-          <entry key="Properties" value="3" />
+          <entry key="CLASS" value="1" />
+          <entry key="JAVA" value="16" />
+          <entry key="PLAIN_TEXT" value="2" />
+          <entry key="Properties" value="4" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="java" value="809" />
-          <entry key="properties" value="274" />
-          <entry key="txt" value="44" />
+          <entry key="java" value="832" />
+          <entry key="properties" value="282" />
+          <entry key="txt" value="204" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="JAVA" value="809" />
-          <entry key="PLAIN_TEXT" value="44" />
-          <entry key="Properties" value="274" />
+          <entry key="JAVA" value="832" />
+          <entry key="PLAIN_TEXT" value="204" />
+          <entry key="Properties" value="282" />
         </counts>
       </usages-collector>
     </session>
@@ -68,45 +68,40 @@
         <entry file="file://$PROJECT_DIR$/appClientModule/com/shuishou/deskmgr/ui/MainFrame.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="396">
-              <caret line="95" column="43" lean-forward="true" selection-start-line="95" selection-start-column="43" selection-end-line="95" selection-end-column="43" />
+              <caret line="95" column="43" selection-start-line="95" selection-start-column="43" selection-end-line="95" selection-end-column="43" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/appClientModule/com/shuishou/deskmgr/ui/SplitIndentDialog.java">
+        <entry file="file://$PROJECT_DIR$/appClientModule/com/shuishou/deskmgr/printertool/DriverPos.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="184">
-              <caret line="283" column="38" selection-start-line="283" selection-start-column="38" selection-end-line="283" selection-end-column="38" />
+            <state relative-caret-position="492">
+              <caret line="142" column="26" selection-start-line="142" selection-start-column="26" selection-end-line="142" selection-end-column="26" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/appClientModule/com/shuishou/deskmgr/printertool/param/Printer.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="322">
+              <caret line="244" column="17" lean-forward="true" selection-start-line="244" selection-start-column="17" selection-end-line="244" selection-end-column="17" />
               <folding>
-                <element signature="e#7497#7603#0" expanded="true" />
-                <element signature="e#7602#7603#0" expanded="true" />
-                <element signature="e#8102#8252#0" expanded="true" />
-                <element signature="e#8251#8252#0" expanded="true" />
-                <element signature="method#doMoveUp#0;class#SplitIndentDialog#0" />
-                <element signature="method#doMoveDown#0;class#SplitIndentDialog#0" />
+                <element signature="imports" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/appClientModule/com/shuishou/deskmgr/messages_cn.properties">
+        <entry file="file://$PROJECT_DIR$/appClientModule/com/shuishou/deskmgr/printertool/param/PrintPager.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="225">
-              <caret line="23" column="18" selection-start-line="23" selection-start-column="18" selection-end-line="23" selection-end-column="18" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/appClientModule/com/shuishou/deskmgr/ui/CheckoutSplitIndentDialog.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="384">
-              <caret line="201" lean-forward="true" selection-start-line="201" selection-end-line="201" />
+            <state relative-caret-position="180">
+              <caret line="22" column="59" selection-start-line="22" selection-start-column="59" selection-end-line="22" selection-end-column="59" />
               <folding>
-                <element signature="e#2761#2762#0" expanded="true" />
-                <element signature="e#2806#2807#0" expanded="true" />
+                <element signature="e#906#907#0" expanded="true" />
+                <element signature="e#943#944#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -115,8 +110,44 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/doc/updatelog.txt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="617">
-              <caret line="43" column="35" selection-start-line="43" selection-start-column="35" selection-end-line="43" selection-end-column="35" />
+            <state relative-caret-position="176">
+              <caret line="8" lean-forward="true" selection-start-line="8" selection-end-line="8" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="jar://G:/jdk/jdk1.7.0_80/jre/lib/rt.jar!/sun/print/RasterPrinterJob.class">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="191">
+              <caret line="1159" column="33" lean-forward="true" selection-start-line="1159" selection-start-column="33" selection-end-line="1159" selection-end-column="33" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/appClientModule/com/shuishou/deskmgr/ui/ViewHistoryIndentByDeskDialog.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="355">
+              <caret line="170" column="4" selection-start-line="170" selection-start-column="4" selection-end-line="170" selection-end-column="4" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/appClientModule/com/shuishou/deskmgr/printertool/PrintThread.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="355">
+              <caret line="41" column="44" selection-start-line="41" selection-start-column="44" selection-end-line="41" selection-end-column="44" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/appClientModule/com/shuishou/deskmgr/printertool/PrintQueue.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="330">
+              <caret line="15" column="13" selection-start-line="15" selection-start-column="13" selection-end-line="15" selection-end-column="13" />
             </state>
           </provider>
         </entry>
@@ -128,6 +159,7 @@
       <find>checkoutdialog.char</find>
       <find>change</find>
       <find>charge</find>
+      <find>printSize</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -142,6 +174,8 @@
         <option value="$PROJECT_DIR$/appClientModule/com/shuishou/deskmgr/ui/SplitIndentDialog.java" />
         <option value="$PROJECT_DIR$/appClientModule/com/shuishou/deskmgr/ui/CheckoutSplitIndentDialog.java" />
         <option value="$PROJECT_DIR$/appClientModule/com/shuishou/deskmgr/ui/CheckoutSplitFixPriceIndentDialog.java" />
+        <option value="$PROJECT_DIR$/appClientModule/config.properties" />
+        <option value="$PROJECT_DIR$/appClientModule/com/shuishou/deskmgr/printertool/param/PrintPager.java" />
         <option value="$PROJECT_DIR$/doc/updatelog.txt" />
       </list>
     </option>
@@ -152,11 +186,17 @@
     <detection-done>true</detection-done>
     <sorting>DEFINITION_ORDER</sorting>
   </component>
+  <component name="MavenProjectNavigator">
+    <treeState>
+      <expand />
+      <select />
+    </treeState>
+  </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="1903" />
-    <option name="y" value="94" />
-    <option name="width" value="1400" />
-    <option name="height" value="970" />
+    <option name="x" value="8" />
+    <option name="y" value="2" />
+    <option name="width" value="1696" />
+    <option name="height" value="1026" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
@@ -260,6 +300,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -283,7 +324,15 @@
               <item name="desk" type="462c0819:PsiDirectoryNode" />
               <item name="appClientModule" type="462c0819:PsiDirectoryNode" />
               <item name="deskmgr" type="462c0819:PsiDirectoryNode" />
-              <item name="ui" type="462c0819:PsiDirectoryNode" />
+              <item name="printertool" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="digitalmenu-desk" type="b2602c69:ProjectViewProjectNode" />
+              <item name="desk" type="462c0819:PsiDirectoryNode" />
+              <item name="appClientModule" type="462c0819:PsiDirectoryNode" />
+              <item name="deskmgr" type="462c0819:PsiDirectoryNode" />
+              <item name="printertool" type="462c0819:PsiDirectoryNode" />
+              <item name="param" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="digitalmenu-desk" type="b2602c69:ProjectViewProjectNode" />
@@ -295,11 +344,55 @@
               <item name="desk" type="462c0819:PsiDirectoryNode" />
               <item name="doc" type="462c0819:PsiDirectoryNode" />
             </path>
+            <path>
+              <item name="digitalmenu-desk" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
+            </path>
+            <path>
+              <item name="digitalmenu-desk" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
+              <item name="&lt; 1.7 &gt;" type="70bed36:NamedLibraryElementNode" />
+            </path>
+            <path>
+              <item name="digitalmenu-desk" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
+              <item name="&lt; 1.7 &gt;" type="70bed36:NamedLibraryElementNode" />
+              <item name="rt.jar" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="digitalmenu-desk" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
+              <item name="&lt; 1.7 &gt;" type="70bed36:NamedLibraryElementNode" />
+              <item name="rt.jar" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="digitalmenu-desk" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
+              <item name="&lt; 1.7 &gt;" type="70bed36:NamedLibraryElementNode" />
+              <item name="rt.jar" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="util" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="digitalmenu-desk" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
+              <item name="&lt; 1.7 &gt;" type="70bed36:NamedLibraryElementNode" />
+              <item name="rt.jar" type="462c0819:PsiDirectoryNode" />
+              <item name="sun" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="digitalmenu-desk" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
+              <item name="&lt; 1.7 &gt;" type="70bed36:NamedLibraryElementNode" />
+              <item name="rt.jar" type="462c0819:PsiDirectoryNode" />
+              <item name="sun" type="462c0819:PsiDirectoryNode" />
+              <item name="print" type="462c0819:PsiDirectoryNode" />
+            </path>
           </expand>
           <select />
         </subPane>
       </pane>
-      <pane id="PackagesPane" />
       <pane id="Scope" />
       <pane id="AndroidView" />
     </panes>
@@ -307,8 +400,8 @@
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1539267633940" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/mylibs/RXTXcomm.jar!/" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1541939388952" />
+    <property name="last_opened_file_path" value="G:/jdk/jdk1.7.0_80/src.zip!/" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
     <property name="project.structure.last.edited" value="Project" />
@@ -367,18 +460,24 @@
       <workItem from="1539237122859" duration="610000" />
       <workItem from="1539255315926" duration="657000" />
       <workItem from="1539256233950" duration="72000" />
-      <workItem from="1539258049843" duration="7142000" />
+      <workItem from="1539258049843" duration="7799000" />
+      <workItem from="1539325795638" duration="3037000" />
+      <workItem from="1539365020133" duration="619000" />
+      <workItem from="1539380475806" duration="680000" />
+      <workItem from="1539412570029" duration="1789000" />
+      <workItem from="1541853499655" duration="3844000" />
+      <workItem from="1541896526509" duration="12525000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="9281000" />
+    <option name="totallyTimeSpent" value="32432000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="1672" y="-8" width="1936" height="1216" extended-state="6" />
+    <frame x="-8" y="-8" width="1696" height="1026" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.26066098" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.27811736" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Image Layers" order="2" />
       <window_info id="Designer" order="3" />
@@ -386,9 +485,9 @@
       <window_info id="Capture Tool" order="5" />
       <window_info id="Favorites" order="6" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.39981097" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.32949308" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.32986766" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.39976957" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
@@ -396,7 +495,7 @@
       <window_info anchor="bottom" id="Database Changes" order="8" show_stripe_button="false" />
       <window_info anchor="bottom" id="Terminal" order="9" />
       <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
-      <window_info anchor="bottom" id="Messages" order="11" visible="true" weight="0.32986766" />
+      <window_info anchor="bottom" id="Messages" order="11" weight="0.32986766" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -405,7 +504,7 @@
       <window_info anchor="right" id="Database" order="5" />
       <window_info anchor="right" id="Theme Preview" order="6" />
       <window_info anchor="right" id="Palette&#9;" order="7" />
-      <window_info anchor="right" id="Maven Projects" order="8" />
+      <window_info anchor="right" id="Maven Projects" order="8" weight="0.3294621" />
     </layout>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -414,14 +513,23 @@
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
   </component>
+  <component name="XDebuggerManager">
+    <watches-manager>
+      <configuration name="Application">
+        <watch expression="tableModel.getObjectAt(3)" language="JAVA" />
+      </configuration>
+    </watches-manager>
+  </component>
+  <component name="debuggerHistoryManager">
+    <expressions id="watch">
+      <expression>
+        <expression-string>tableModel.getObjectAt(3)</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+    </expressions>
+  </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/appClientModule/com/shuishou/deskmgr/ui/MainFrame.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="396">
-          <caret line="95" column="43" lean-forward="true" selection-start-line="95" selection-start-column="43" selection-end-line="95" selection-end-column="43" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/appClientModule/com/shuishou/deskmgr/ui/OpenTableDialog.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="578">
@@ -436,28 +544,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/appClientModule/com/shuishou/deskmgr/messages_cn.properties">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="225">
-          <caret line="23" column="18" selection-start-line="23" selection-start-column="18" selection-end-line="23" selection-end-column="18" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/appClientModule/com/shuishou/deskmgr/ui/SplitIndentDialog.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="184">
-          <caret line="283" column="38" selection-start-line="283" selection-start-column="38" selection-end-line="283" selection-end-column="38" />
-          <folding>
-            <element signature="e#7497#7603#0" expanded="true" />
-            <element signature="e#7602#7603#0" expanded="true" />
-            <element signature="e#8102#8252#0" expanded="true" />
-            <element signature="e#8251#8252#0" expanded="true" />
-            <element signature="method#doMoveUp#0;class#SplitIndentDialog#0" />
-            <element signature="method#doMoveDown#0;class#SplitIndentDialog#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/appClientModule/com/shuishou/deskmgr/ui/CheckoutDialog.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="208">
@@ -465,33 +551,123 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/appClientModule/com/shuishou/deskmgr/ui/CheckoutSplitIndentDialog.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="384">
-          <caret line="201" lean-forward="true" selection-start-line="201" selection-end-line="201" />
-          <folding>
-            <element signature="e#2761#2762#0" expanded="true" />
-            <element signature="e#2806#2807#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/appClientModule/com/shuishou/deskmgr/ui/CheckoutSplitFixPriceIndentDialog.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="88">
           <caret line="4" lean-forward="true" selection-start-line="4" selection-end-line="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/appClientModule/com/shuishou/deskmgr/ui/MainFrame.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="396">
+          <caret line="95" column="43" selection-start-line="95" selection-start-column="43" selection-end-line="95" selection-end-column="43" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/appClientModule/com/shuishou/deskmgr/ui/SplitIndentDialog.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3982">
+          <caret line="283" column="38" selection-start-line="283" selection-start-column="38" selection-end-line="283" selection-end-column="38" />
+          <folding>
+            <element signature="method#doMoveUp#0;class#SplitIndentDialog#0" />
+            <element signature="method#doMoveDown#0;class#SplitIndentDialog#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/appClientModule/com/shuishou/deskmgr/messages_cn.properties">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="506">
+          <caret line="23" column="18" selection-start-line="23" selection-start-column="18" selection-end-line="23" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/appClientModule/com/shuishou/deskmgr/ui/CheckoutSplitIndentDialog.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2992">
+          <caret line="201" selection-start-line="201" selection-end-line="201" />
+          <folding>
+            <element signature="e#2761#2762#0" expanded="true" />
+            <element signature="e#2807#2808#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/appClientModule/config.properties">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="638">
+          <caret line="29" column="21" selection-start-line="29" selection-start-column="21" selection-end-line="29" selection-end-column="21" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/appClientModule/com/shuishou/deskmgr/printertool/PrintQueue.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="330">
+          <caret line="15" column="13" selection-start-line="15" selection-start-column="13" selection-end-line="15" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/appClientModule/com/shuishou/deskmgr/printertool/PrintThread.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="355">
+          <caret line="41" column="44" selection-start-line="41" selection-start-column="44" selection-end-line="41" selection-end-column="44" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/appClientModule/com/shuishou/deskmgr/printertool/DriverPos.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="492">
+          <caret line="142" column="26" selection-start-line="142" selection-start-column="26" selection-end-line="142" selection-end-column="26" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/appClientModule/com/shuishou/deskmgr/ui/ViewHistoryIndentByDeskDialog.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="355">
+          <caret line="170" column="4" selection-start-line="170" selection-start-column="4" selection-end-line="170" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://G:/jdk/jdk1.7.0_80/jre/lib/rt.jar!/sun/print/RasterPrinterJob.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="191">
+          <caret line="1159" column="33" lean-forward="true" selection-start-line="1159" selection-start-column="33" selection-end-line="1159" selection-end-column="33" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://G:/jdk/jdk1.7.0_80/src.zip!/java/util/ArrayList.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-495">
+          <caret line="101" column="13" selection-start-line="101" selection-start-column="13" selection-end-line="101" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/appClientModule/com/shuishou/deskmgr/printertool/param/Printer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="322">
+          <caret line="244" column="17" lean-forward="true" selection-start-line="244" selection-start-column="17" selection-end-line="244" selection-end-column="17" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#1153#1154#0" expanded="true" />
-            <element signature="e#1199#1200#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/appClientModule/com/shuishou/deskmgr/printertool/param/PrintPager.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="22" column="59" selection-start-line="22" selection-start-column="59" selection-end-line="22" selection-end-column="59" />
+          <folding>
+            <element signature="e#906#907#0" expanded="true" />
+            <element signature="e#943#944#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/doc/updatelog.txt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="617">
-          <caret line="43" column="35" selection-start-line="43" selection-start-column="35" selection-end-line="43" selection-end-column="35" />
+        <state relative-caret-position="176">
+          <caret line="8" lean-forward="true" selection-start-line="8" selection-end-line="8" />
         </state>
       </provider>
     </entry>
@@ -535,7 +711,7 @@
       </state>
       <state key="JdkListConfigurable.UI">
         <settings>
-          <last-edited>1.7</last-edited>
+          <last-edited>1.8</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
@@ -552,7 +728,6 @@
             <option name="proportions">
               <list>
                 <option value="0.2" />
-                <option value="0.6" />
               </list>
             </option>
           </splitter-proportions>
@@ -572,6 +747,7 @@
       </state>
       <state key="ProjectLibrariesConfigurable.UI">
         <settings>
+          <last-edited>src</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
